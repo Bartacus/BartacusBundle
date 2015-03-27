@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Component\Kernel;
+namespace Bartacus\Bundle\BartacusBundle\Kernel;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
@@ -66,14 +66,14 @@ abstract class Kernel extends BaseKernel {
 	 * {@inheritdoc}
 	 */
 	public function getCacheDir() {
-		return $this->rootDir . '/../typo3temp/' . $this->environment;
+		return $this->normalizePath($this->rootDir . '/../typo3temp/' . $this->environment);
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function getLogDir() {
-		return $this->getRootDir() . '/../typo3temp/logs';
+		return $this->normalizePath($this->getRootDir() . '/../typo3temp/logs');
 	}
 
 	/**
@@ -87,5 +87,42 @@ abstract class Kernel extends BaseKernel {
 		$environment = strtolower(preg_replace('/(?<=\\w)(?=[A-Z])/', '_$1', $this->getEnvironment()));
 
 		$loader->load($this->getRootDir() . '/config/config_' . $environment . '.yml');
+	}
+
+	/**
+	 * Normalize a path. This replaces backslashes with slashes, removes ending
+	 * slash and collapses redundant separators and up-level references.
+	 *
+	 * @param  string $path Path to the file or directory
+	 * @return string
+	 */
+	private function normalizePath($path) {
+		$parts = array();
+		$path = strtr($path, '\\', '/');
+		$prefix = '';
+		$absolute = FALSE;
+
+		if (preg_match('{^([0-9a-z]+:(?://(?:[a-z]:)?)?)}i', $path, $match)) {
+			$prefix = $match[1];
+			$path = substr($path, strlen($prefix));
+		}
+
+		if (substr($path, 0, 1) === '/') {
+			$absolute = TRUE;
+			$path = substr($path, 1);
+		}
+
+		$up = FALSE;
+		foreach (explode('/', $path) as $chunk) {
+			if ('..' === $chunk && ($absolute || $up)) {
+				array_pop($parts);
+				$up = !(empty($parts) || '..' === end($parts));
+			} elseif ('.' !== $chunk && '' !== $chunk) {
+				$parts[] = $chunk;
+				$up = '..' !== $chunk;
+			}
+		}
+
+		return $prefix . ($absolute ? '/' : '') . implode('/', $parts);
 	}
 }

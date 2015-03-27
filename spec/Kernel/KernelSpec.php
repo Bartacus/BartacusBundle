@@ -1,0 +1,121 @@
+<?php
+
+/*
+ * This file is part of the Bartacus project.
+ *
+ * Copyright (c) 2015 Patrik Karisch, pixelart GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+namespace spec\Bartacus\Bundle\BartacusBundle\Kernel;
+
+use PhpSpec\ObjectBehavior;
+use Bartacus\Bundle\BartacusBundle\Kernel\Kernel;
+use Prophecy\Argument;
+use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+
+/**
+ * @author Patrik Karisch <p.karisch@pixelart.at>
+ */
+class KernelSpec extends ObjectBehavior {
+
+	public function let() {
+		$this->beAnInstanceOf('spec\Bartacus\Bundle\BartacusBundle\Kernel\SpecKernel');
+		$this->beConstructedWith('Production/Staging', TRUE);
+	}
+
+	public function it_should_extend_symfony_kernel() {
+		$this->shouldBeAnInstanceOf('Symfony\Component\HttpKernel\Kernel');
+	}
+
+	public function it_should_return_cache_dir_normalized() {
+		$this->getCacheDir()->shouldBeNormalizedAndContain('typo3temp/ProductionStaging');
+	}
+
+	public function it_should_return_log_dir_normalized() {
+		$this->getLogDir()->shouldBeNormalizedAndContain('typo3temp/logs');
+	}
+
+	public function it_should_load_config_file_normalized(LoaderInterface $loader) {
+		$loader->load($this->getWrappedObject()->getRootDir() . '/config/config_production_staging.yml')->shouldBeCalled();
+
+		$this->registerContainerConfiguration($loader);
+	}
+
+	public function getMatchers() {
+		return array(
+			'beNormalizedAndContain' => function ($subject, $path) {
+				return $this->normalizePath($subject) === $subject && FALSE !== strpos($subject, $path);
+			}
+		);
+	}
+
+	/**
+	 * Normalize a path. This replaces backslashes with slashes, removes ending
+	 * slash and collapses redundant separators and up-level references.
+	 *
+	 * @param  string $path Path to the file or directory
+	 * @return string
+	 */
+	private function normalizePath($path) {
+		$parts = array();
+		$path = strtr($path, '\\', '/');
+		$prefix = '';
+		$absolute = FALSE;
+
+		if (preg_match('{^([0-9a-z]+:(?://(?:[a-z]:)?)?)}i', $path, $match)) {
+			$prefix = $match[1];
+			$path = substr($path, strlen($prefix));
+		}
+
+		if (substr($path, 0, 1) === '/') {
+			$absolute = TRUE;
+			$path = substr($path, 1);
+		}
+
+		$up = FALSE;
+		foreach (explode('/', $path) as $chunk) {
+			if ('..' === $chunk && ($absolute || $up)) {
+				array_pop($parts);
+				$up = !(empty($parts) || '..' === end($parts));
+			} elseif ('.' !== $chunk && '' !== $chunk) {
+				$parts[] = $chunk;
+				$up = '..' !== $chunk;
+			}
+		}
+
+		return $prefix . ($absolute ? '/' : '') . implode('/', $parts);
+	}
+}
+
+/**
+ * Must be created to spec the abstract class
+ *
+ * @author Patrik Karisch <p.karisch@pixelart.at>
+ */
+class SpecKernel extends Kernel {
+
+	/**
+	 * Returns an array of bundles to register.
+	 *
+	 * @return BundleInterface[] An array of bundle instances.
+	 *
+	 * @api
+	 */
+	public function registerBundles() {
+		return array();
+	}
+}
