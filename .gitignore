@@ -2,3 +2,8 @@
 composer.lock
 composer.phar
 vendor/
+
+### Typo3
+typo3
+typo3_src
+/index.php

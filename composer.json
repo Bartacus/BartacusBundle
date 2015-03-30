@@ -15,7 +15,8 @@
 	],
 	"require": {
 		"php": "~5.4",
-		"symfony/symfony": "~2.3"
+		"symfony/symfony": "~2.3",
+		"typo3/cms": "~6.2.10"
 	},
 	"require-dev": {
 		"phpspec/phpspec": "~2.1",
