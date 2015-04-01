@@ -78,6 +78,17 @@ abstract class Kernel extends BaseKernel {
 
 	/**
 	 * {@inheritdoc}
+	 */
+	public function registerBundles() {
+		return array(
+			new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
+			new \Symfony\Bundle\TwigBundle\TwigBundle(),
+			new \Bartacus\Bundle\BartacusBundle\BartacusBundle(),
+		);
+	}
+
+	/**
+	 * {@inheritdoc}
 	 *
 	 * @return void
 	 */
