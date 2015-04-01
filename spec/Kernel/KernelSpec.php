@@ -27,6 +27,9 @@ use Prophecy\Argument;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
+// define PATH_site as fake for typo3 one.
+define('PATH_site', '/tmp/');
+
 /**
  * @author Patrik Karisch <p.karisch@pixelart.at>
  */
