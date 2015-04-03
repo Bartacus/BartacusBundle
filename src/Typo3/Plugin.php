@@ -53,6 +53,7 @@ abstract class Plugin extends AbstractPlugin {
 		$this->container = $GLOBALS['container'];
 		$this->content = $content;
 		$this->conf = $conf;
+		$this->pi_setPiVarDefaults();
 
 		return $this->execute();
 	}
