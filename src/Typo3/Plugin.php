@@ -61,7 +61,7 @@ abstract class Plugin extends AbstractPlugin {
 	/**
 	 * Execute the plugin, e.g. retrieve data, render it's content..
 	 *
-	 * @return string The The content that is displayed on the website
+	 * @return string The content that is displayed on the website
 	 */
 	abstract protected function execute();
 
