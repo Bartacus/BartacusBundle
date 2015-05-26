@@ -5,6 +5,14 @@ Integrates the [Symfony][1] full-stack framework into [TYPO3 CMS][2].
 Yes! Really! This package integrates most of the Symfony framework
 into TYPO3 CMS, for sure!
 
+Motivation
+----------
+
+We don't like pi_base extensions and we don't like Extbase too. So I
+had the idea to integrate Symfony to make extensions, which are like
+bundles. This has some nice advantages like Twig rendering, service
+container and dependency injection and so on.
+
 License
 -------
 
