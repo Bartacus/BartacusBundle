@@ -5,6 +5,18 @@ Integrates the [Symfony][1] full-stack framework into [TYPO3 CMS][2].
 Yes! Really! This package integrates most of the Symfony framework
 into TYPO3 CMS, for sure!
 
+Installation
+------------
+
+```
+composer require bartacus/bartacus-bundle
+```
+
+and take a look at the [Bartacus Standard Edition][3] to know which
+extra files and configuration is needed to get it running. Basic
+Symfony knowledge about how a Symfony project is structured would be
+an advantage.
+
 Motivation
 ----------
 
@@ -31,3 +43,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 [1]: http://symfony.com
 [2]: http://typo3.org
+[3]: https://github.com/Bartacus/Bartacus-Standard
