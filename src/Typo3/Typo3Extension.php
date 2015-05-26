@@ -28,17 +28,18 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  *
  * @author Patrik Karisch <p.karisch@pixelart.at>
  */
-class Typo3Extension extends Bundle {
+class Typo3Extension extends Bundle
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function getPath()
+    {
+        if (null === $this->path) {
+            $reflected = new \ReflectionObject($this);
+            $this->path = dirname(dirname($reflected->getFileName()));
+        }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getPath() {
-		if (NULL === $this->path) {
-			$reflected = new \ReflectionObject($this);
-			$this->path = dirname(dirname($reflected->getFileName()));
-		}
-
-		return $this->path;
-	}
+        return $this->path;
+    }
 }

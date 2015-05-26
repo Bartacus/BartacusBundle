@@ -28,6 +28,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  *
  * @author Patrik Karisch <p.karisch@pixelart.at>
  */
-class BartacusBundle extends Bundle {
+class BartacusBundle extends Bundle
+{
 
 }

@@ -33,70 +33,74 @@ use Symfony\Component\HttpKernel\Kernel as BaseKernel;
  *
  * @api
  */
-abstract class Kernel extends BaseKernel {
+abstract class Kernel extends BaseKernel
+{
+    const VERSION = '0.1.0-DEV';
+    const VERSION_ID = '00100';
+    const MAJOR_VERSION = '0';
+    const MINOR_VERSION = '1';
+    const RELEASE_VERSION = '0';
+    const EXTRA_VERSION = 'DEV';
 
-	const VERSION = '0.1.0-DEV';
-	const VERSION_ID = '00100';
-	const MAJOR_VERSION = '0';
-	const MINOR_VERSION = '1';
-	const RELEASE_VERSION = '0';
-	const EXTRA_VERSION = 'DEV';
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct($environment, $debug)
+    {
+        $environment = str_replace('/', '', $environment);
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function __construct($environment, $debug) {
-		$environment = str_replace('/', '', $environment);
+        parent::__construct($environment, $debug);
+    }
 
-		parent::__construct($environment, $debug);
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        parent::boot();
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return void
-	 */
-	public function boot() {
-		parent::boot();
+        $GLOBALS['container'] = $this->getContainer();
+    }
 
-		$GLOBALS['container'] = $this->getContainer();
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function getCacheDir()
+    {
+        return PATH_site.'typo3temp/'.$this->environment;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getCacheDir() {
-		return PATH_site . 'typo3temp/' . $this->environment;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function getLogDir()
+    {
+        return PATH_site.'typo3temp/logs';
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getLogDir() {
-		return PATH_site . 'typo3temp/logs';
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function registerBundles()
+    {
+        return [
+            new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
+            new \Symfony\Bundle\TwigBundle\TwigBundle(),
+            new \Bartacus\Bundle\BartacusBundle\BartacusBundle(),
+        ];
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function registerBundles() {
-		return array(
-			new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
-			new \Symfony\Bundle\TwigBundle\TwigBundle(),
-			new \Bartacus\Bundle\BartacusBundle\BartacusBundle(),
-		);
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function registerContainerConfiguration(LoaderInterface $loader)
+    {
+        // transform CamelCase to underscore_case, 'cause Typo3 environments are
+        // e.g. Development or Production/Staging, but the / is dropped by us.
+        $environment = strtolower(preg_replace('/(?<=\\w)(?=[A-Z])/', '_$1', $this->getEnvironment()));
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return void
-	 */
-	public function registerContainerConfiguration(LoaderInterface $loader) {
-		// transform CamelCase to underscore_case, 'cause Typo3 environments are
-		// e.g. Development or Production/Staging, but the / is dropped by us.
-		$environment = strtolower(preg_replace('/(?<=\\w)(?=[A-Z])/', '_$1', $this->getEnvironment()));
-
-		$loader->load($this->getRootDir() . '/config/config_' . $environment . '.yml');
-	}
+        $loader->load($this->getRootDir().'/config/config_'.$environment.'.yml');
+    }
 }

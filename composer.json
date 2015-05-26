@@ -1,36 +1,35 @@
 {
-	"name": "bartacus/bartacus-bundle",
-	"description": "Integrates the Symfony full-stack framework into Typo3",
-	"keywords": ["typo3", "symfony", "framework", "integration", "container", "services", "service container", "twig"],
-	"license": "GPL-3.0+",
-	"authors": [
-		{
-			"name": "Patrik Karisch",
-			"email": "p.karisch@pixelart.at"
-		},
-		{
-			"name": "pixelart GmbH",
-			"homepage": "http://www.pixelart.at"
-		}
-	],
-	"require": {
-		"php": "~5.4",
-		"symfony/symfony": "~2.3",
-		"typo3/cms": "~6.2.10"
-	},
-	"require-dev": {
-		"phpspec/phpspec": "~2.1",
-		"roave/security-advisories": "dev-master",
-		"typo3-ci/typo3cms": "6.2.*"
-	},
-	"autoload": {
-		"psr-4": {
-			"Bartacus\\Bundle\\BartacusBundle\\": "src/"
-		}
-	},
-	"extra": {
-		"branch-alias": {
-			"dev-master": "0.1.x-dev"
-		}
-	}
+    "name": "bartacus/bartacus-bundle",
+    "description": "Integrates the Symfony full-stack framework into Typo3",
+    "keywords": [ "typo3", "symfony", "framework", "integration", "container", "services", "service container", "twig"],
+    "license": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "Patrik Karisch",
+            "email": "p.karisch@pixelart.at"
+        },
+        {
+            "name": "pixelart GmbH",
+            "homepage": "http://www.pixelart.at"
+        }
+    ],
+    "require": {
+        "php": "~5.4",
+        "symfony/symfony": "~2.3",
+        "typo3/cms": "~6.2.10"
+    },
+    "require-dev": {
+        "phpspec/phpspec": "~2.1",
+        "roave/security-advisories": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bartacus\\Bundle\\BartacusBundle\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
+    }
 }

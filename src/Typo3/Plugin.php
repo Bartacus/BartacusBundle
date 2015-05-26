@@ -29,95 +29,101 @@ use TYPO3\CMS\Frontend\Plugin\AbstractPlugin;
  *
  * @author Patrik Karisch <p.karisch@pixelart.at>
  */
-abstract class Plugin extends AbstractPlugin {
+abstract class Plugin extends AbstractPlugin
+{
+    /**
+     * @var Container
+     */
+    protected $container;
 
-	/**
-	 * @var Container
-	 */
-	protected $container;
+    /**
+     * @var string
+     */
+    protected $content;
 
-	/**
-	 * @var string
-	 */
-	protected $content;
+    /**
+     * typo3 main plugin entry point
+     *
+     * @param string $content The plugin content
+     * @param array  $conf    The plugin configuration
+     *
+     * @return string The content that is displayed on the website
+     */
+    public function main($content, $conf)
+    {
+        $this->container = $GLOBALS['container'];
+        $this->content = $content;
+        $this->conf = $conf;
+        $this->pi_setPiVarDefaults();
 
-	/**
-	 * typo3 main plugin entry point
-	 *
-	 * @param string $content The plugin content
-	 * @param array $conf The plugin configuration
-	 *
-	 * @return string The content that is displayed on the website
-	 */
-	public function main($content, $conf) {
-		$this->container = $GLOBALS['container'];
-		$this->content = $content;
-		$this->conf = $conf;
-		$this->pi_setPiVarDefaults();
+        return $this->execute();
+    }
 
-		return $this->execute();
-	}
+    /**
+     * Execute the plugin, e.g. retrieve data, render it's content..
+     *
+     * @return string The content that is displayed on the website
+     */
+    abstract protected function execute();
 
-	/**
-	 * Execute the plugin, e.g. retrieve data, render it's content..
-	 *
-	 * @return string The content that is displayed on the website
-	 */
-	abstract protected function execute();
+    /**
+     * Returns a rendered view.
+     *
+     * @param string $view       The view name
+     * @param array  $parameters An array of parameters to pass to the view
+     *
+     * @return string The rendered view
+     */
+    protected function render($view, array $parameters = [])
+    {
+        return $this->container->get('templating')->render($view, $parameters);
+    }
 
-	/**
-	 * Returns a rendered view.
-	 *
-	 * @param string $view The view name
-	 * @param array $parameters An array of parameters to pass to the view
-	 *
-	 * @return string The rendered view
-	 */
-	protected function render($view, array $parameters = array()) {
-		return $this->container->get('templating')->render($view, $parameters);
-	}
+    /**
+     * Returns true if the service id is defined.
+     *
+     * @param string $id The service id
+     *
+     * @return bool TRUE if the service id is defined, FALSE otherwise
+     */
+    protected function has($id)
+    {
+        return $this->container->has($id);
+    }
 
-	/**
-	 * Returns true if the service id is defined.
-	 *
-	 * @param string $id The service id
-	 *
-	 * @return bool TRUE if the service id is defined, FALSE otherwise
-	 */
-	protected function has($id) {
-		return $this->container->has($id);
-	}
+    /**
+     * Gets a service by id.
+     *
+     * @param string $id The service id
+     *
+     * @return object The service
+     */
+    protected function get($id)
+    {
+        return $this->container->get($id);
+    }
 
-	/**
-	 * Gets a service by id.
-	 *
-	 * @param string $id The service id
-	 *
-	 * @return object The service
-	 */
-	protected function get($id) {
-		return $this->container->get($id);
-	}
+    /**
+     * Returns true if the parameter name is defined.
+     *
+     * @param string $name The parameter name
+     *
+     * @return bool TRUE if the parameter name is defined, FALSE otherwise
+     */
+    protected function hasParameter($name)
+    {
+        return $this->container->hasParameter($name);
+    }
 
-	/**
-	 * Returns true if the parameter name is defined.
-	 *
-	 * @param string $name The parameter name
-	 *
-	 * @return bool TRUE if the parameter name is defined, FALSE otherwise
-	 */
-	protected function hasParameter($name) {
-		return $this->container->hasParameter($name);
-	}
-
-	/**
-	 * Gets a parameter by name.
-	 *
-	 * @param string $name The parameter name
-	 *
-	 * @return mixed The parameter
-	 */
-	protected function getParameter($name) {
-		return $this->container->getParameter($name);
-	}
+    /**
+     * Gets a parameter by name.
+     *
+     * @param string $name The parameter name
+     *
+     * @return mixed The parameter
+     */
+    protected function getParameter($name)
+    {
+        return $this->container->getParameter($name);
+    }
 }
