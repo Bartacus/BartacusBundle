@@ -29,6 +29,7 @@ framework:
         resource: "%kernel.root_dir%/config/routing.yml"
         strict_requirements: ~
     session:
+        storage_id: session.storage.php_bridge
         handler_id:  ~
 
 # Twig Configuration
