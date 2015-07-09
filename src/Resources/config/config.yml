@@ -20,11 +20,16 @@
 # Symfony framework configuration
 framework:
     secret: "%secret%"
+    form:            ~
+    csrf_protection: ~
+    validation:      { enable_annotations: true }
     templating:
         engines: ['twig']
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
         strict_requirements: ~
+    session:
+        handler_id:  ~
 
 # Twig Configuration
 twig:
