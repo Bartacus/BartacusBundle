@@ -39,11 +39,14 @@ class BartacusBundle extends Bundle
      */
     public function boot()
     {
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer'] = [
+            'className' => 'Bartacus\\Bundle\\BartacusBundle\\Typo3\\Xclass\\ContentObjectRenderer'
+        ];
         /** @var UserObjAndFuncManager $userObjAndFuncManager */
         $userObjAndFuncManager = $this->container->get(
             'typo3.user_obj_and_func_manager'
         );
-        
+
         $userObjAndFuncManager->generateUserObjs();
         $userObjAndFuncManager->generateUserFuncs();
     }
