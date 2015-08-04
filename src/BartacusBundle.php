@@ -21,6 +21,10 @@
 
 namespace Bartacus\Bundle\BartacusBundle;
 
+use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\Typo3UserFuncCompilerPass;
+use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\Typo3UserObjCompilerPass;
+use Bartacus\Bundle\BartacusBundle\Typo3\UserObjAndFuncManager;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -30,5 +34,28 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class BartacusBundle extends Bundle
 {
+    /**
+     * {@inheritDoc}
+     */
+    public function boot()
+    {
+        /** @var UserObjAndFuncManager $userObjAndFuncManager */
+        $userObjAndFuncManager = $this->container->get(
+            'typo3.user_obj_and_func_manager'
+        );
+        
+        $userObjAndFuncManager->generateUserObjs();
+        $userObjAndFuncManager->generateUserFuncs();
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+
+        $container->addCompilerPass(new Typo3UserObjCompilerPass());
+        $container->addCompilerPass(new Typo3UserFuncCompilerPass());
+    }
 }
