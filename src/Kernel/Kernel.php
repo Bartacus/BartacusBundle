@@ -35,11 +35,11 @@ use Symfony\Component\HttpKernel\Kernel as BaseKernel;
  */
 abstract class Kernel extends BaseKernel
 {
-    const VERSION = '0.1.0-DEV';
-    const VERSION_ID = '00100';
+    const VERSION = '0.2.1-DEV';
+    const VERSION_ID = '00201';
     const MAJOR_VERSION = '0';
-    const MINOR_VERSION = '1';
-    const RELEASE_VERSION = '0';
+    const MINOR_VERSION = '2';
+    const RELEASE_VERSION = '1';
     const EXTRA_VERSION = 'DEV';
 
     /**
