@@ -16,3 +16,4 @@ User Guide
 
     overview
     quickstart
+    services_typoscript

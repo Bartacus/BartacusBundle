@@ -22,8 +22,9 @@ The only way to install Bartacus is  with `Composer <http://getcomposer.org>`_.
 Now take a look at the
 `Bartacus Standard Edition <https://github .com/Bartacus/Bartacus-Standard>`_
 to know which extra files and configuration is needed to get it running. The
-most important file is `typo3conf/AdditionalConfiguration.php` where the main
-part of Bartacus is initialised.
+most important file is ``typo3conf/AdditionalConfiguration.php`` where the main
+part of Bartacus is initialised and ``fileadmin/app/AppKernel.php`` where all
+Symfony bundles and extensions which are turned into bundles are loaded.
 
 License
 =======
