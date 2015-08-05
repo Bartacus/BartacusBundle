@@ -7,3 +7,7 @@ vendor/
 typo3
 typo3_src
 /index.php
+
+### Sphinx
+docs/_build
+docs/*.pyc
