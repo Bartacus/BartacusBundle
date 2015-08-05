@@ -6,7 +6,7 @@ Requirements
 ============
 
 * PHP 5.4
-* Symfony 2.3 or later
+* Symfony 2.7
 
 .. _installation:
 

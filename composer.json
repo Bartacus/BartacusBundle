@@ -15,7 +15,7 @@
     ],
     "require": {
         "php": "~5.4",
-        "symfony/symfony": "~2.3",
+        "symfony/symfony": "~2.7",
         "typo3/cms": "~6.2.14"
     },
     "require-dev": {
