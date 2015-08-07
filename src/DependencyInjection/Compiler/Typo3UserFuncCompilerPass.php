@@ -51,8 +51,19 @@ class Typo3UserFuncCompilerPass implements CompilerPassInterface
 
         foreach ($taggedServices as $id => $tags) {
             $taggedDefinition = $container->findDefinition($id);
+            $taggedClass = $taggedDefinition->getClass();
+
+            if (
+                '%' === substr($taggedClass, 0, 1)
+                && '%' === substr($taggedClass, -1, 1)
+            ) {
+                $taggedClass = $container->getParameter(
+                    substr($taggedClass, 1, -1)
+                );
+            }
+
             $reflectionObject = new \ReflectionClass(
-                $taggedDefinition->getClass()
+                $taggedClass
             );
 
             $methods = $reflectionObject->getMethods(
