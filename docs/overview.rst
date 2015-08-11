@@ -17,7 +17,7 @@ The only way to install Bartacus is  with `Composer <http://getcomposer.org>`_.
 
 .. code-block:: bash
 
-    composer require bartacus/bartacus-bundle:~0.2.1
+    composer require bartacus/bartacus-bundle ~0.3.0@dev
 
 Now take a look at the
 `Bartacus Standard Edition <https://github .com/Bartacus/Bartacus-Standard>`_
