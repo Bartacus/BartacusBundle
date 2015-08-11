@@ -21,6 +21,7 @@
 
 namespace Bartacus\Bundle\BartacusBundle;
 
+use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\NopCompilerPass;
 use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\Typo3UserFuncCompilerPass;
 use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\Typo3UserObjCompilerPass;
 use Bartacus\Bundle\BartacusBundle\Typo3\UserObjAndFuncManager;
@@ -58,6 +59,7 @@ class BartacusBundle extends Bundle
     {
         parent::build($container);
 
+        $container->addCompilerPass(new NopCompilerPass());
         $container->addCompilerPass(new Typo3UserObjCompilerPass());
         $container->addCompilerPass(new Typo3UserFuncCompilerPass());
     }
