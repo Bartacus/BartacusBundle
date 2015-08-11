@@ -22,6 +22,7 @@
 namespace Bartacus\Bundle\BartacusBundle\Typo3\Xclass;
 
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer as BaseContentObjectRenderer;
 
 /**
@@ -32,33 +33,22 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer as BaseContentObjectR
 class ContentObjectRenderer extends BaseContentObjectRenderer
 {
     /**
-     * @var Container
-     */
-    private $container;
-
-    /**
-     * Be aware if the base class gets a constructor in future..
-     */
-    public function __construct()
-    {
-        $this->container = $GLOBALS['container'];
-    }
-
-
-    /**
      * Allows userFunc calls to services from the container
      *
      * {@inheritDoc}
      */
     public function callUserFunction($funcName, $conf, $content)
     {
+        /** @var ContainerInterface $container */
+        $container = $GLOBALS['container'];
+
         $parts = explode('->', $funcName);
-        if (2 === count($parts) && $this->container->has($parts[0])) {
-            $instance = $this->container->get($parts[0]);
+        if (2 === count($parts) && $container->has($parts[0])) {
+            $instance = $container->get($parts[0]);
             if (method_exists($instance, $parts[1])) {
                 return call_user_func_array(
                     [$instance, $parts[1]],
-                    [$content, $conf]
+                    [$content, $conf, $this]
                 );
             }
         }

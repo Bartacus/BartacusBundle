@@ -18,3 +18,5 @@ User Guide
     changelog
     quickstart
     services_typoscript
+    translations
+    content_elements

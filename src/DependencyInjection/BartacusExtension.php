@@ -42,7 +42,34 @@ class BartacusExtension extends Extension
             $container,
             new FileLocator(__DIR__.'/../Resources/config')
         );
-
         $loader->load('services.xml');
+
+        $configuration = new Configuration();
+        $config = $this->processConfiguration($configuration, $configs);
+
+        if (isset($config['plugins'])) {
+            $this->registerRouterConfiguration($config['plugins'], $container, $loader);
+        }
+    }
+
+    /**
+     * Loads the router configuration.
+     *
+     * @param array            $config    A router configuration array
+     * @param ContainerBuilder $container A ContainerBuilder instance
+     * @param XmlFileLoader    $loader    An XmlFileLoader instance
+     */
+    private function registerRouterConfiguration(array $config, ContainerBuilder $container, XmlFileLoader $loader)
+    {
+        $loader->load('routing.xml');
+
+        $container->setParameter('router.plugins.resource', $config['resource']);
+        $router = $container->findDefinition('router.plugins');
+        $argument = $router->getArgument(2);
+        $argument['strict_requirements'] = $config['strict_requirements'];
+        if (isset($config['type'])) {
+            $argument['resource_type'] = $config['type'];
+        }
+        $router->replaceArgument(2, $argument);
     }
 }

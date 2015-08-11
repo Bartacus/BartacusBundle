@@ -25,8 +25,11 @@ use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\NopCompilerPass;
 use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\Typo3UserFuncCompilerPass;
 use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\Typo3UserObjCompilerPass;
 use Bartacus\Bundle\BartacusBundle\Typo3\UserObjAndFuncManager;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\Routing\Route;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /**
  * The bundle!
@@ -40,9 +43,14 @@ class BartacusBundle extends Bundle
      */
     public function boot()
     {
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['TYPO3\\CMS\\Frontend\\Controller\\TypoScriptFrontendController'] = [
+            'className' => 'Bartacus\\Bundle\\BartacusBundle\\Typo3\\Xclass\\TypoScriptFrontendController'
+        ];
+
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer'] = [
             'className' => 'Bartacus\\Bundle\\BartacusBundle\\Typo3\\Xclass\\ContentObjectRenderer'
         ];
+
         /** @var UserObjAndFuncManager $userObjAndFuncManager */
         $userObjAndFuncManager = $this->container->get(
             'typo3.user_obj_and_func_manager'
@@ -50,6 +58,8 @@ class BartacusBundle extends Bundle
 
         $userObjAndFuncManager->generateUserObjs();
         $userObjAndFuncManager->generateUserFuncs();
+
+        $this->registerPlugins();
     }
 
     /**
@@ -62,5 +72,47 @@ class BartacusBundle extends Bundle
         $container->addCompilerPass(new NopCompilerPass());
         $container->addCompilerPass(new Typo3UserObjCompilerPass());
         $container->addCompilerPass(new Typo3UserFuncCompilerPass());
+    }
+
+    private function registerPlugins()
+    {
+        /** @var Router $router */
+        $router = $this->container->get('router.plugins');
+
+        /** @var Route $route */
+        foreach ($router->getRouteCollection()->getIterator() as $route) {
+            $path = $route->getPath();
+            $path = ltrim($path, '/');
+            list($extensionName, $pluginName) = explode('/', $path);
+
+            $cached = $route->getDefault('_cached');
+            $cached = null === $cached ? true : $cached;
+
+            $pluginSignature = strtolower($extensionName . '_' . $pluginName);
+            $pluginContent = trim('
+plugin.tx_'.$pluginSignature.' = USER'.($cached ? '' : '_INT').'
+plugin.tx_'.$pluginSignature.' {
+	userFunc = bartacus.plugin_dispatcher->handle
+	extensionName = '.$extensionName.'
+	pluginName = '.$pluginName.'
+}');
+
+            ExtensionManagementUtility::addTypoScript($extensionName, 'setup', '
+# Setting '.$pluginSignature.' plugin TypoScript
+'.$pluginContent);
+
+            $addLine = trim('
+tt_content.'.$pluginSignature.' = COA
+tt_content.'.$pluginSignature.' {
+	10 = < lib.stdheader
+	20 = < plugin.tx_'.$pluginSignature.'
+}
+');
+
+            ExtensionManagementUtility::addTypoScript($extensionName, 'setup', '
+# Setting '.$pluginSignature.' plugin TypoScript
+'.$addLine.'
+', 'defaultContentRendering');
+        }
     }
 }

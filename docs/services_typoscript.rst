@@ -85,6 +85,10 @@ Now you can use your service in a TypoScript ``userFunc`` and consorts:
         }
     }
 
+Normally you would get passed the calling ``ContentObjectRender`` passed into a
+public property ``cObj``. When using services for user functions you get passed
+the calling content object as third parameter to the method.
+
 Bonus: Hooks
 ============
 

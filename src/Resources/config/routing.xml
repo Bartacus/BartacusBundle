@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="bartacus.plugin_dispatcher.class">Bartacus\Bundle\BartacusBundle\Typo3\PluginDispatcher</parameter>
+        <parameter key="router.plugins.options.matcher.cache_class">%router.cache_class_prefix%PluginsUrlMatcher</parameter>
+        <parameter key="router.plugins.options.generator.cache_class">%router.cache_class_prefix%PluginsUrlGenerator</parameter>
+    </parameters>
+
+    <services>
+        <service id="router.plugins" class="%router.class%">
+            <tag name="monolog.logger" channel="router" />
+            <argument type="service" id="service_container" />
+            <argument>%router.plugins.resource%</argument>
+            <argument type="collection">
+                <argument key="cache_dir">%kernel.cache_dir%</argument>
+                <argument key="debug">%kernel.debug%</argument>
+                <argument key="generator_class">%router.options.generator_class%</argument>
+                <argument key="generator_base_class">%router.options.generator_base_class%</argument>
+                <argument key="generator_dumper_class">%router.options.generator_dumper_class%</argument>
+                <argument key="generator_cache_class">%router.plugins.options.generator.cache_class%</argument>
+                <argument key="matcher_class">%router.options.matcher_class%</argument>
+                <argument key="matcher_base_class">%router.options.matcher_base_class%</argument>
+                <argument key="matcher_dumper_class">%router.options.matcher_dumper_class%</argument>
+                <argument key="matcher_cache_class">%router.plugins.options.matcher.cache_class%</argument>
+            </argument>
+            <argument type="service" id="router.request_context" on-invalid="ignore" />
+            <argument type="service" id="logger" on-invalid="ignore" />
+        </service>
+
+
+        <service id="bartacus.plugin_dispatcher" class="%bartacus.plugin_dispatcher.class%">
+            <argument type="service" id="request_stack"/>
+            <argument type="service" id="http_kernel"/>
+            <argument type="service" id="bartacus.plugins_router_listener"/>
+            <argument type="service" id="controller_resolver" />
+            <tag name="typo3.user_func" />
+        </service>
+
+        <service id="bartacus.plugins_router_listener" class="%router_listener.class%">
+            <tag name="kernel.event_subscriber" />
+            <tag name="monolog.logger" channel="request" />
+            <argument type="service" id="router.plugins" />
+            <argument type="service" id="router.request_context" on-invalid="ignore" />
+            <argument type="service" id="logger" on-invalid="ignore" />
+            <argument type="service" id="request_stack" />
+        </service>
+    </services>
+</container>
