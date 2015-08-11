@@ -15,5 +15,6 @@ User Guide
     :maxdepth: 2
 
     overview
+    changelog
     quickstart
     services_typoscript
