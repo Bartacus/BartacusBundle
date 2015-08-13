@@ -104,7 +104,6 @@ plugin.tx_'.$pluginSignature.' {
             $addLine = trim('
 tt_content.'.$pluginSignature.' = COA
 tt_content.'.$pluginSignature.' {
-	10 = < lib.stdheader
 	20 = < plugin.tx_'.$pluginSignature.'
 }
 ');
