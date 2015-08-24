@@ -24,10 +24,12 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
+        <parameter key="typo3.class">Bartacus\Bundle\BartacusBundle\Typo3\BartacusTypo3Bridge</parameter>
         <parameter key="typo3.user_obj_and_func_manager.class">Bartacus\Bundle\BartacusBundle\Typo3\UserObjAndFuncManager</parameter>
     </parameters>
 
     <services>
+        <service id="typo3" class="%typo3.class%"/>
         <service id="typo3.user_obj_and_func_manager" class="%typo3.user_obj_and_func_manager.class%"/>
     </services>
 </container>
