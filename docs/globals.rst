@@ -28,6 +28,7 @@ calculator, the ``PageRepository`` and a database connection:
         services:
             app.menu:
                 class: %app.menu%
+                lazy: true
                 arguments:
                     - "@=service('typo3').makeInstance('TYPO3\\CMS\\Frontend\\Page\\CacheHashCalculator')"
                     - "@=service('typo3').getGlobal('TSFE').sys_page"
@@ -36,7 +37,7 @@ calculator, the ``PageRepository`` and a database connection:
     .. code-block:: xml
 
         <services>
-            <service id="app.menu" class="%app.menu.class%">
+            <service id="app.menu" class="%app.menu.class%" lazy="true">
                 <argument type="expression">service('typo3').makeInstance('TYPO3\\CMS\\Frontend\\Page\\CacheHashCalculator')</argument>
                 <argument type="expression">service('typo3').getGlobal('TSFE').sys_page</argument>
                 <argument type="expression">service('typo3').getGlobal('TYPO3_DB')</argument>
@@ -48,8 +49,19 @@ calculator, the ``PageRepository`` and a database connection:
         use Symfony\Component\DependencyInjection\Definition;
         use Symfony\Component\ExpressionLanguage\Expression;
 
-        $container->setDefinition('app.menu', new Definition($appMenuClass, [
+        $definition = new Definition($appMenuClass, [
             new Expression('service("typo3").makeInstance("TYPO3\\CMS\\Frontend\\Page\\CacheHashCalculator")'),
             new Expression('service("typo3").getGlobal("TSFE").sys_page'),
             new Expression('service("typo3").getGlobal("TYPO3_DB")'),
-        ]));
+        ]);
+        $definition->setLazy(true);
+        $container->setDefinition('app.menu', $definition);
+
+.. note::
+
+    The service example above is marked as a
+    `lazy service <http://symfony.com/doc/current/components/dependency_injection/lazy_services.html>`_.
+    These is a MUST if you want to use the service as ``typo3.user_func`` or
+    ``typo3.user_obj`` to have a correct instance injected. Otherwise your
+    service is created too early and you have a wrong cHash calculator and no
+    database connection available.

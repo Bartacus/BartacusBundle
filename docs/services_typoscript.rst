@@ -31,13 +31,14 @@ the service container see the
         services:
             helper.frontend:
                 class: Acme\Extensions\Content\Helper\FrontendHelper
+                lazy: true
                 tags:
                     -  { name: typo3.user_func }
 
     .. code-block:: xml
 
         <services>
-            <service id="helper.frontend" class="Acme\Extensions\Content\Helper\FrontendHelper">
+            <service id="helper.frontend" class="Acme\Extensions\Content\Helper\FrontendHelper" lazy="true">
                 <tag name="typo3.user_func"/>
             </service>
         </services>
@@ -47,8 +48,16 @@ the service container see the
         use Symfony\Component\DependencyInjection\Definition;
 
         $definition = new Definition('Acme\Extensions\Content\Helper\FrontendHelper');
+        $definition->setLazy(true);
         $definition->addTag('typo3.user_func');
         $container->setDefinition('helper.frontend', $definition);
+
+.. note::
+
+    The service example above is marked as a
+    `lazy service <http://symfony.com/doc/current/components/dependency_injection/lazy_services.html>`_.
+    These is a MUST to have a correct instance injected. Otherwise your
+    service is created too early and you have a wrong dependencies injected.
 
 Now you can use your service in a TypoScript ``userFunc`` and consorts:
 
