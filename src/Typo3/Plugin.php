@@ -30,6 +30,9 @@ use TYPO3\CMS\Frontend\Plugin\AbstractPlugin;
  * The base plugin for Typo3 plugins to fly to the sky ;)
  *
  * @author Patrik Karisch <p.karisch@pixelart.at>
+ *
+ * @deprecated Deprecated since 0.3.0, will be removed in 1.0.0, use Controllers
+ *             instead.
  */
 abstract class Plugin extends AbstractPlugin
 {

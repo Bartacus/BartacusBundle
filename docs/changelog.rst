@@ -12,3 +12,5 @@ Changelog
 * Add the content object as third parameter to user functions from services.
 * Configure Symfony translator with locale from TypoScript setup.
 * Add routing for content elements to controllers.
+* Retrieve globals and ``makeInstance`` in service configurations.
+* The ``Plugin`` class is deprecated. Create Symfony controllers instead.

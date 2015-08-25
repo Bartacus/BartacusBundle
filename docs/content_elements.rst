@@ -1,3 +1,5 @@
+.. _content:
+
 ================
 Content Elements
 ================
@@ -46,8 +48,8 @@ a ``tx_contact_form`` plugin class of pi_base plugins.
 The ``_cached`` parameter is optional and if not given, it defaults to true.
 If false, the content element is created as ``USER_INT`` and will not be cached.
 
-You can also import the plugin configuration with the usage of a prexif, which
-simplifies the path a little
+You can also import the plugin configuration with the usage of a prefix, which
+simplifies the path a little:
 
 .. code-block:: yaml
 
@@ -77,9 +79,8 @@ The code for the content element is simple like a Symfony controller.
 
 .. code-block:: php
 
-    // typo3conf/ext/contact/Classes/Controller/ContactController.php
-
     <?php
+    // typo3conf/ext/contact/Classes/Controller/ContactController.php
 
     namespace Acme\Extensions\Contact\Controller;
 
@@ -87,7 +88,6 @@ The code for the content element is simple like a Symfony controller.
     use Acme\Extensions\Contact\Form\Type\ContactType;
     use Symfony\Bundle\FrameworkBundle\Controller\Controller;
     use Symfony\Component\HttpFoundation\Request;
-    use Symfony\Component\HttpFoundation\Response;
 
     class ContactController extends Controller
     {
@@ -136,7 +136,7 @@ plugin is now injected into the ``$data`` parameter of the method if it exists.
 
 .. note::
 
-    Bartacus does mocks the Symfony http foundation kernel requests, which means
-    you have access to the ``Request`` instance as sub request as seen above and
+    Bartacus mocks the Symfony http foundation kernel requests, which means you
+    have access to the ``Request`` instance as a sub request as seen above and
     must return a ``Response`` instance, but none of the usual kernel events are
     dispatched.

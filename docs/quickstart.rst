@@ -16,17 +16,17 @@ Typical TYPO3 extension files are not shown.
 
     typo3conf/ext/content
     +-- Classes
+    |   +-- Controller
+    |   |   +-- TextController.php
     |   +-- AcmeContent.php
     +-- Resources
-    |   +-- views
-    |       +-- Text
-    |           +-- text.html.twig
-    +-- plugins
-        +-- class.tx_content_text.php
+        +-- views
+            +-- Text
+                +-- text.html.twig
 
 As you can see, the important class in your extension is the ``AcmeContent.php``,
-which transforms your extension into a Symfony bundle. Obviously it uses the
-similar naming convention to Symfony, so take a vendor name and your extension
+which transforms your extension into a Symfony bundle. Obviously it uses
+similar naming convention as Symfony, so take a vendor name and your extension
 name and camel case it together. Don't forget to add the ``AcmeContent`` class
 to your ``AppKernel``.
 
@@ -46,33 +46,45 @@ to your ``AppKernel``.
 
     }
 
-Now the content element plugin. Old style, but simple.
+Now the content element controller:
 
 .. code-block:: php
 
     <?php
+    // typo3conf/ext/acme/Classes/Controller/TextController.php
 
-    use Bartacus\Bundle\BartacusBundle\Typo3\Plugin;
+    namespace Acme\Extensions\Contact\Controller;
 
-    class tx_content_text extends Plugin
+    use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
+    class TextController extends Controller
     {
-        /**
-         * Execute the plugin, e.g. retrieve data, render it's content..
-         *
-         * @return string The content that is displayed on the website
-         */
-        protected function execute()
+        public function showAction($data)
         {
             return $this->render('AcmeContent:Text:text.html.twig', [
-                'data' => $this->cObj->data,
+                'data' => $data,
             ]);
         }
     }
 
+To get the content element controller registered in the frontend, add the
+following to your global ``plugins.yml``:
+
+.. code-block:: yaml
+
+    # fileadmin/app/config/plugins.yml
+
+    content_text:
+        path: /content/text
+        defaults: { _controller: AcmeContent:Text:show }
+
+For the backend, add the TCA stuff as usual. More information about content
+elements as controllers are found in the :ref:`content` section.
+
 Accessing the container
 =======================
 
-The ``Plugin`` class from Bartacus provides some convenient methods to access
+The ``Controller`` class from Symfony provides some convenient methods to access
 the container. Alternative the container is accessible via ``$this->container``.
 
 .. code-block:: php

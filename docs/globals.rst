@@ -2,7 +2,7 @@
 Globals and ``makeInstace``
 ===========================
 
-Altough you have a service container, sometimes you need access to some of the
+Although you have a service container, sometimes you need access to some of the
 TYPO3 globals or retrieve TYPO3 classes with ``GeneralUtility::makeInstance()``.
 This will clutter your code and is really bad as it makes your services not
 testable.
@@ -15,7 +15,7 @@ are also able to use some special sort of
 `Expression Language <http://symfony.com/doc/current/book/service_container.html#using-the-expression-language>`_
 to inject more complex dependencies.
 
-Baratacus supplies a little service bridge to call ``makeInstance()`` and TYPO3
+Bartacus supplies a little service bridge to call ``makeInstance()`` and TYPO3
 globals from the service expressions.
 
 For example if you define a service which needs an instance of the cHash
