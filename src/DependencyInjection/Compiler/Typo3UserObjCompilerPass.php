@@ -50,6 +50,14 @@ class Typo3UserObjCompilerPass implements CompilerPassInterface
         );
 
         foreach ($taggedServices as $id => $tags) {
+            $taggedDefinition = $container->findDefinition($id);
+            if (!$taggedDefinition->isLazy()) {
+                throw new \DomainException(sprintf(
+                    'The service with the id "%s" must be lazy!',
+                    $id
+                ));
+            }
+
             $definition->addMethodCall(
                 'addUserObj',
                 [$id, new Reference($id)]

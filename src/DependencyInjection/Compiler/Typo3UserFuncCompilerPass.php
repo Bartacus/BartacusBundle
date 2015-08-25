@@ -51,6 +51,13 @@ class Typo3UserFuncCompilerPass implements CompilerPassInterface
 
         foreach ($taggedServices as $id => $tags) {
             $taggedDefinition = $container->findDefinition($id);
+            if (!$taggedDefinition->isLazy()) {
+                throw new \DomainException(sprintf(
+                    'The service with the id "%s" must be lazy!',
+                    $id
+                ));
+            }
+
             $taggedClass = $taggedDefinition->getClass();
 
             if (
