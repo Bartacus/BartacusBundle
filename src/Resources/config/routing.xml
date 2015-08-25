@@ -32,7 +32,7 @@
         </service>
 
 
-        <service id="bartacus.plugin_dispatcher" class="%bartacus.plugin_dispatcher.class%">
+        <service id="bartacus.plugin_dispatcher" class="%bartacus.plugin_dispatcher.class%" lazy="true">
             <argument type="service" id="request_stack"/>
             <argument type="service" id="http_kernel"/>
             <argument type="service" id="bartacus.plugins_router_listener"/>
