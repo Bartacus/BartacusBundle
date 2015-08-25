@@ -69,8 +69,8 @@ simplifies the path a little:
         defaults: { _controller: AcmeContact:Contact:send, _cached: false }
 
 Configuration of the TCA for inserting the plugin in the backend and available
-fields MUST be done in ``ext_tables.php``, ``Configuration/TCA`` or
-``Configuration/TCA/Overrides`` as always.
+fields MUST be done in ``Configuration/TCA`` and ``Configuration/TCA/Overrides``
+as usual.
 
 Usage
 =====
