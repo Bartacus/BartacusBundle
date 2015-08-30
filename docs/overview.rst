@@ -26,6 +26,20 @@ most important file is ``typo3conf/AdditionalConfiguration.php`` where the main
 part of Bartacus is initialised and ``fileadmin/app/AppKernel.php`` where all
 Symfony bundles and extensions which are turned into bundles are loaded.
 
+The Symfony Cache
+=================
+
+The Symfony cache gets cleared from the TYPO3 backend on system and all cache
+clear commands. If your ``TYPO3_CONTEXT`` is ``Development`` or a sub-context
+of it, Symfony watches all your files for building the container and rebuilds
+the container automatically. A manual cache clear is only needed if you add
+new files.
+
+In all other cases if you change anything in the Twig templates, config or
+service definitions you have to clear the cache from the TYPO3 backend. While
+doing this, Bartacus calls some cache warmers to, so you never start with a
+complete empty cache.
+
 License
 =======
 

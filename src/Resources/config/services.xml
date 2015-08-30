@@ -31,5 +31,12 @@
     <services>
         <service id="typo3" class="%typo3.class%"/>
         <service id="typo3.user_obj_and_func_manager" class="%typo3.user_obj_and_func_manager.class%"/>
+
+        <service id="bartacus.cache_clearer" class="Bartacus\Bundle\BartacusBundle\CacheClearer" lazy="true">
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+            <tag name="typo3.user_func"/>
+        </service>
     </services>
 </container>

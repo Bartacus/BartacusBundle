@@ -60,6 +60,8 @@ class BartacusBundle extends Bundle
         $userObjAndFuncManager->generateUserFuncs();
 
         $this->registerPlugins();
+
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc'][] = 'bartacus.cache_clearer->clear';
     }
 
     /**
