@@ -5,12 +5,13 @@ Changelog
 0.3.0
 =====
 
+* Clear the Symfony cache from TYPO3 backend.
+* The ``Plugin`` class is deprecated. Create Symfony controllers instead.
+* Retrieve globals and ``makeInstance`` in service configurations.
+* Add routing for content elements to controllers.
+* Configure Symfony translator with locale from TypoScript setup.
+* Add the content object as third parameter to user functions from services.
 * The ``@BartacusBundle/Resources/config/config.yml`` file is removed. Take a
   look at the
   `Bartacus Standard Edition <https://github .com/Bartacus/Bartacus-Standard>`_
   how to fill your own ``config.yml``.
-* Add the content object as third parameter to user functions from services.
-* Configure Symfony translator with locale from TypoScript setup.
-* Add routing for content elements to controllers.
-* Retrieve globals and ``makeInstance`` in service configurations.
-* The ``Plugin`` class is deprecated. Create Symfony controllers instead.
