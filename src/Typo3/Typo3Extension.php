@@ -21,6 +21,7 @@
 
 namespace Bartacus\Bundle\BartacusBundle\Typo3;
 
+use Symfony\Component\Console\Application;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -41,5 +42,18 @@ class Typo3Extension extends Bundle
         }
 
         return $this->path;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function registerCommands(Application $application)
+    {
+        $oldPath = $this->getPath();
+        $this->path = $oldPath.'/Classes';
+
+        parent::registerCommands($application);
+
+        $this->path = $oldPath;
     }
 }
