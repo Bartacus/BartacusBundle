@@ -62,6 +62,7 @@ abstract class Kernel extends BaseKernel
         parent::boot();
 
         $GLOBALS['container'] = $this->getContainer();
+        $GLOBALS['kernel'] = $this;
     }
 
     /**
