@@ -86,6 +86,6 @@ class TypoScriptFrontendController extends BaseTypoScriptFrontendController
      */
     protected function addLocaleToRequest(Request $request)
     {
-        $request->setLocale($this->config['config']['language']);
+        $request->setLocale(explode('.', $this->config['config']['locale_all'])[0]);
     }
 }
