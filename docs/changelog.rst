@@ -2,6 +2,13 @@
 Changelog
 =========
 
+0.3.1
+=====
+
+* Use ``locale_all`` from TypoScript config instead of language. Leads to
+  locales with countries.
+* Find console command like in normal symfony bundles.
+
 0.3.0
 =====
 
