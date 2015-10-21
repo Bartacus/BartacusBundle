@@ -64,10 +64,12 @@ class Typo3UserObjCompilerPass implements CompilerPassInterface
             );
 
             foreach ($tags as $attributes) {
-                $definition->addMethodCall(
-                    'addUserObj',
-                    [$id.':&'.$attributes['alias'], new Reference($id)]
-                );
+                if (array_key_exists('alias', $attributes)) {
+                    $definition->addMethodCall(
+                        'addUserObj',
+                        [$id.':&'.$attributes['alias'], new Reference($id)]
+                    );
+                }
             }
         }
     }
