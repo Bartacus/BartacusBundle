@@ -2,6 +2,11 @@
 Changelog
 =========
 
+0.3.2
+=====
+
+* Add aliases to user obj hooks to allow references like ``service_id?:alias``.
+
 0.3.1
 =====
 

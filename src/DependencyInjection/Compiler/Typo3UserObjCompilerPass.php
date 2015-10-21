@@ -62,6 +62,13 @@ class Typo3UserObjCompilerPass implements CompilerPassInterface
                 'addUserObj',
                 [$id, new Reference($id)]
             );
+
+            foreach ($tags as $attributes) {
+                $definition->addMethodCall(
+                    'addUserObj',
+                    [$id.':&'.$attributes['alias'], new Reference($id)]
+                );
+            }
         }
     }
 }

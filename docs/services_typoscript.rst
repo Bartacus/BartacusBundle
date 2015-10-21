@@ -123,3 +123,8 @@ tag to your service.
 
     In future iterations Bartacus will abstract the way of defining hooks.
     Either with another service tag or through the Symfony event dispatcher.
+
+If there are services which expects user objects, but are special in case of
+the using syntax like custom TCA eval functions, you can add an alias to the
+tag e.g. ``<tag name="typo3.user_obj" alias="my_alias"/>`` and the resulting
+string for using in user obj is ``my_service:&my_alias``.
