@@ -21,8 +21,15 @@
 
 namespace Bartacus\Bundle\BartacusBundle\Kernel;
 
+use Bartacus\Bundle\BartacusBundle\Typo3\Xclass\TypoScriptFrontendController;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
+use TYPO3\CMS\Core\Core\Bootstrap;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\Utility\EidUtility;
 
 /**
  * The kernel is the heart of the Typo3 Symfony integration.
@@ -68,6 +75,38 @@ abstract class Kernel extends BaseKernel
     /**
      * {@inheritdoc}
      */
+    public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
+    {
+        if (false === $this->booted) {
+            $this->boot();
+        }
+
+        // we are handling the request fully in Symfony, which means we dispatched in
+        // TYPO3 via eID.
+        if (HttpKernelInterface::MASTER_REQUEST === $type) {
+            $this->initTsfe($request);
+        }
+
+        return $this->getHttpKernel()->handle($request, $type, $catch);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @api
+     */
+    public function terminate(Request $request, Response $response)
+    {
+        parent::terminate($request, $response);
+
+        /** @var TypoScriptFrontendController $tsfe */
+        $tsfe = $GLOBALS['TSFE'];
+        $tsfe->storeSessionData();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getCacheDir()
     {
         return PATH_site.'typo3temp/'.$this->environment;
@@ -103,5 +142,48 @@ abstract class Kernel extends BaseKernel
         $environment = strtolower(preg_replace('/(?<=\\w)(?=[A-Z])/', '_$1', $this->getEnvironment()));
 
         $loader->load($this->getRootDir().'/config/config_'.$environment.'.yml');
+    }
+
+    /**
+     * Init the TypoScript frontend controller
+     *
+     * @param Request $request
+     *
+     * @throws \TYPO3\CMS\Core\Error\Http\ServiceUnavailableException
+     */
+    private function initTsfe(Request $request)
+    {
+        /** @var TypoScriptFrontendController $tsfe */
+        $tsfe = GeneralUtility::makeInstance(
+            'TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController',
+            $GLOBALS['TYPO3_CONF_VARS'],
+            0,  // pid
+            0,  // type
+            0,  // no_cache
+            '', // cHash
+            '', // jumpurl
+            '', // MP,
+            ''  // RDCT
+        );
+        $GLOBALS['TSFE'] = $tsfe;
+
+        // Initialize Language
+        EidUtility::initLanguage();
+
+        // Initialize FE User.
+        $GLOBALS['TSFE']->initFEuser();
+
+        // Important: no Cache for Ajax stuff
+        $GLOBALS['TSFE']->set_no_cache();
+        $GLOBALS['TSFE']->determineId();
+        $GLOBALS['TSFE']->initTemplate();
+        $GLOBALS['TSFE']->getConfigArray();
+        Bootstrap::getInstance()->loadCachedTca();
+        $GLOBALS['TSFE']->cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
+        $GLOBALS['TSFE']->settingLanguage();
+        $GLOBALS['TSFE']->settingLocale();
+
+        session_start();
+        $request->setLocale(explode('.', $GLOBALS['TSFE']->config['config']['locale_all'])[0]);
     }
 }
