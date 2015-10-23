@@ -50,6 +50,10 @@ class BartacusExtension extends Extension
         if (isset($config['plugins'])) {
             $this->registerRouterConfiguration($config['plugins'], $container, $loader);
         }
+
+        if (isset($config['dispatch_uris'])) {
+            $container->setParameter('bartacus.dispatch_uris', $config['dispatch_uris']);
+        }
     }
 
     /**

@@ -51,6 +51,18 @@ class BartacusBundle extends Bundle
             'className' => 'Bartacus\\Bundle\\BartacusBundle\\Typo3\\Xclass\\ContentObjectRenderer'
         ];
 
+        if (
+            isset($_SERVER['REQUEST_URI'])
+            && ($dispatchUris = $this->container->getParameter('bartacus.dispatch_uris'))
+        ) {
+            foreach ($dispatchUris as $dispatchUri) {
+                if (0 === strpos($_SERVER['REQUEST_URI'], $dispatchUri)) {
+                    $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['bartacus_app'] = __DIR__.'/app.php';
+                    $_GET['eID'] = 'bartacus_app';
+                }
+            }
+        }
+
         /** @var UserObjAndFuncManager $userObjAndFuncManager */
         $userObjAndFuncManager = $this->container->get(
             'typo3.user_obj_and_func_manager'

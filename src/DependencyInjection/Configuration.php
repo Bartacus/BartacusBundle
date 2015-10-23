@@ -58,6 +58,10 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('dispatch_uris')
+                    ->info('Which uris starting with the given pattern should be fully dispatched by Symfony?')
+                    ->prototype('scalar')->end()
+                ->end()
             ->end()
         ;
 
