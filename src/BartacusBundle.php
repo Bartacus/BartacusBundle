@@ -57,7 +57,12 @@ class BartacusBundle extends Bundle
         ) {
             foreach ($dispatchUris as $dispatchUri) {
                 if (0 === strpos($_SERVER['REQUEST_URI'], $dispatchUri)) {
-                    $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['bartacus_app'] = __DIR__.'/app.php';
+                    $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['bartacus_app'] = str_replace(
+                        realpath(PATH_site).'/',
+                        '',
+                        __DIR__.'/app.php'
+                    );
+
                     $_GET['eID'] = 'bartacus_app';
                 }
             }
