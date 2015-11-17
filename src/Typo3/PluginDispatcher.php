@@ -21,6 +21,7 @@
 
 namespace Bartacus\Bundle\BartacusBundle\Typo3;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -143,6 +144,11 @@ class PluginDispatcher
             )
         );
         $this->requestStack->pop();
+
+        if ($response instanceof RedirectResponse) {
+            $response->send();
+            die();
+        }
 
         return $response->getContent();
     }
