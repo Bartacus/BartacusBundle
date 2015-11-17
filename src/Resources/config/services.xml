@@ -26,6 +26,7 @@
     <parameters>
         <parameter key="typo3.class">Bartacus\Bundle\BartacusBundle\Typo3\BartacusTypo3Bridge</parameter>
         <parameter key="typo3.user_obj_and_func_manager.class">Bartacus\Bundle\BartacusBundle\Typo3\UserObjAndFuncManager</parameter>
+        <parameter key="session.storage.php_bridge.class">Bartacus\Bundle\BartacusBundle\Session\Storage\PhpBridgeSessionStorage</parameter>
     </parameters>
 
     <services>
