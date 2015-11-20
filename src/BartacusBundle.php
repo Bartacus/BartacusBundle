@@ -81,7 +81,11 @@ class BartacusBundle extends Bundle
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc'][] = 'bartacus.cache_clearer->clear';
 
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['cliKeys']['symfony'] = array(
-            str_replace(PATH_site, '', __DIR__.'/console.php'),
+            str_replace(
+                realpath(PATH_site).'/',
+                '',
+                __DIR__.'/console.php'
+            ),
             '_CLI_symfony',
         );
     }
