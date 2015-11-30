@@ -47,12 +47,32 @@ class BartacusExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        $this->addTypo3ConfVar($container, $GLOBALS['TYPO3_CONF_VARS'], 'typo3_conf_vars');
+
         if (isset($config['plugins'])) {
             $this->registerRouterConfiguration($config['plugins'], $container, $loader);
         }
 
         if (isset($config['dispatch_uris'])) {
             $container->setParameter('bartacus.dispatch_uris', $config['dispatch_uris']);
+        }
+    }
+
+    /**
+     * Add a part of the typo3 conf vars to the container.
+     *
+     * @param ContainerBuilder $container
+     * @param mixed            $typoConfVars
+     * @param string           $baseName The recursive base name of the parameters
+     */
+    private function addTypo3ConfVar(ContainerBuilder $container, $typoConfVars, $baseName)
+    {
+        $container->setParameter($baseName, $typoConfVars);
+
+        if (is_array($typoConfVars)) {
+            foreach ($typoConfVars as $key => $typoConfVar) {
+                $this->addTypo3ConfVar($container, $typoConfVar, $baseName.'.'.$key);
+            }
         }
     }
 

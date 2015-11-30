@@ -22,6 +22,7 @@
 namespace Bartacus\Bundle\BartacusBundle;
 
 use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\NopCompilerPass;
+use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\Typo3ConfVarsCompilerPass;
 use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\Typo3UserFuncCompilerPass;
 use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\Typo3UserObjCompilerPass;
 use Bartacus\Bundle\BartacusBundle\Typo3\UserObjAndFuncManager;
