@@ -150,6 +150,10 @@ class PluginDispatcher
             die();
         }
 
+        if (count($response->headers) || $response->getStatusCode() !== 200) {
+            $response->sendHeaders();
+        }
+
         return $response->getContent();
     }
 
