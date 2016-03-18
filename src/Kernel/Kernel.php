@@ -183,7 +183,6 @@ abstract class Kernel extends BaseKernel
         $GLOBALS['TSFE']->settingLanguage();
         $GLOBALS['TSFE']->settingLocale();
 
-        session_start();
         $request->setLocale(explode('.', $GLOBALS['TSFE']->config['config']['locale_all'])[0]);
     }
 }
