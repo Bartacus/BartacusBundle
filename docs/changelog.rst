@@ -2,6 +2,16 @@
 Changelog
 =========
 
+0.3.3
+=====
+
+* Add full symfony routing/kernel dispatch within TYPO3 eID context and TSFE
+  available.
+* Handle redirect responses from content element actions.
+* Create a bridge session storage to start session if not already started.
+* Fix path to console and eID dispatch if deployed in a symlinked environment.
+* Access to frozen ``TYPO3_CONF_VARS`` within Symfony container.
+
 0.3.2
 =====
 
