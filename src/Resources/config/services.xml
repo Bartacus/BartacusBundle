@@ -24,12 +24,10 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="typo3.class">Bartacus\Bundle\BartacusBundle\Typo3\BartacusTypo3Bridge</parameter>
         <parameter key="typo3.user_obj_and_func_manager.class">Bartacus\Bundle\BartacusBundle\Typo3\UserObjAndFuncManager</parameter>
     </parameters>
 
     <services>
-        <service id="typo3" class="%typo3.class%"/>
         <service id="typo3.user_obj_and_func_manager" class="%typo3.user_obj_and_func_manager.class%"/>
 
         <service id="bartacus.cache_clearer" class="Bartacus\Bundle\BartacusBundle\CacheClearer" lazy="true">
@@ -43,6 +41,53 @@
             <argument>%session.storage.options%</argument>
             <argument type="service" id="session.handler" on-invalid="null" />
             <argument type="service" id="session.storage.metadata_bag" />
+        </service>
+
+
+        <service id="typo3" class="Bartacus\Bundle\BartacusBundle\Typo3\BartacusTypo3Bridge"/>
+
+        <service id="typo3.cache.cache_manager" class="TYPO3\CMS\Core\Cache\CacheManager" shared="false">
+            <factory service="typo3" method="makeInstance"/>
+            <argument>TYPO3\CMS\Core\Cache\CacheManager</argument>
+        </service>
+        <service id="typo3.cache.cache_hash" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface">
+            <factory service="typo3.cache.cache_manager" method="getCache"/>
+            <argument>cache_hash</argument>
+        </service>
+        <service id="typo3.cache.cache_pages" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface">
+            <factory service="typo3.cache.cache_manager" method="getCache"/>
+            <argument>cache_pages</argument>
+        </service>
+        <service id="typo3.cache.cache_pagesection" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface">
+            <factory service="typo3.cache.cache_manager" method="getCache"/>
+            <argument>cache_pagesection</argument>
+        </service>
+        <service id="typo3.cache.cache_rootline" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface">
+            <factory service="typo3.cache.cache_manager" method="getCache"/>
+            <argument>cache_rootline</argument>
+        </service>
+
+        <service id="typo3.content_object_renderer" class="TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer">
+            <factory service="typo3" method="getContentObjectRenderer"/>
+        </service>
+
+        <service id="typo3.db" class="TYPO3\CMS\Core\Database\DatabaseConnection">
+            <factory service="typo3" method="getGlobal"/>
+            <argument>TYPO3_DB</argument>
+        </service>
+
+        <service id="typo3.file_repository" class="TYPO3\CMS\Core\Resource\FileRepository" shared="false">
+            <factory service="typo3" method="makeInstance"/>
+            <argument>TYPO3\CMS\Core\Resource\FileRepository</argument>
+        </service>
+
+        <service id="typo3.frontend_controller" class="TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController">
+            <factory service="typo3" method="getGlobal"/>
+            <argument>TSFE</argument>
+        </service>
+
+        <service id="typo3.page_repository" class="TYPO3\CMS\Frontend\Page\PageRepository">
+            <factory service="typo3" method="getPageRepository"/>
         </service>
     </services>
 </container>

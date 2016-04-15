@@ -1,46 +1,50 @@
-===========================
+=========================
+TYPO3 bridge and services
+=========================
+
+The common TYPO3 classes are available in the service container for you:
+
+The ``TYPO3\CMS\Core\Cache\CacheManager`` is available as
+``typo3.cache.cache_manager`` and the commom caches can be retrieved via
+``typo3.cache.cache_hash``, ``typo3.cache.cache_pages``,
+``typo3.cache.cache_pagesection`` and ``typo3.cache.cache_rootline``.
+
+The ``TSFE`` is available as ``typo3.frontend_controller``, the ``sys_page`` on
+the TSFE as ``typo3.page_repository`` and the ``cObj`` on the TSFE as
+``typo3.content_object_renderer`` service.
+
+The ``TYPO3_DB`` is available as ``typo3.db`` service.
+
+The ``TYPO3\CMS\Core\Resource\FileRepository`` for the FAL is available as
+``typo3.file_repository``.
+
 Globals and ``makeInstace``
 ===========================
 
-Although you have a service container, sometimes you need access to some of the
-TYPO3 globals or retrieve TYPO3 classes with ``GeneralUtility::makeInstance()``.
-This will clutter your code and is really bad as it makes your services not
-testable.
+Although you have a common set of services available above, sometimes you need
+access to some of the other TYPO3 globals or retrieve other TYPO3 classes with
+``GeneralUtility::makeInstance()``. This will clutter your code and is really
+bad as it makes your services not testable.
 
-Expression Language to the rescue
-=================================
-
-You can not only inject other services and parameters into your services, you
-are also able to use some special sort of
-`Expression Language <http://symfony.com/doc/current/book/service_container.html#using-the-expression-language>`_
-to inject more complex dependencies.
-
-Bartacus supplies a little service bridge to call ``makeInstance()`` and TYPO3
-globals from the service expressions.
-
-For example if you define a service which needs an instance of the cHash
-calculator, the ``PageRepository`` and a database connection:
+Instead you can create services from TYPO3 globals with the factory pattern:
 
 .. configuration-block::
 
     .. code-block:: yaml
 
         services:
-            app.menu:
-                class: %app.menu%
-                lazy: true
+            app.typo3.backend_user:
+                class: TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+                factory: ["@typo3", getGlobal]
                 arguments:
-                    - "@=service('typo3').makeInstance('TYPO3\\CMS\\Frontend\\Page\\CacheHashCalculator')"
-                    - "@=service('typo3').getGlobal('TSFE').sys_page"
-                    - "@=service('typo3').getGlobal('TYPO3_DB')"
+                    - BE_USER
 
     .. code-block:: xml
 
         <services>
-            <service id="app.menu" class="%app.menu.class%" lazy="true">
-                <argument type="expression">service('typo3').makeInstance('TYPO3\\CMS\\Frontend\\Page\\CacheHashCalculator')</argument>
-                <argument type="expression">service('typo3').getGlobal('TSFE').sys_page</argument>
-                <argument type="expression">service('typo3').getGlobal('TYPO3_DB')</argument>
+            <service id="app.typo3.backend_user" class="TYPO3\CMS\Core\Authentication\BackendUserAuthentication">
+                <factory service="typo3" method="getGlobal"/>
+                <argument>BE_USER</argument>
             </service>
         </services>
 
@@ -49,19 +53,98 @@ calculator, the ``PageRepository`` and a database connection:
         use Symfony\Component\DependencyInjection\Definition;
         use Symfony\Component\ExpressionLanguage\Expression;
 
-        $definition = new Definition($appMenuClass, [
-            new Expression('service("typo3").makeInstance("TYPO3\\CMS\\Frontend\\Page\\CacheHashCalculator")'),
-            new Expression('service("typo3").getGlobal("TSFE").sys_page'),
-            new Expression('service("typo3").getGlobal("TYPO3_DB")'),
+        $definition = new Definition(
+            'TYPO3\\CMS\\Core\\Authentication\\BackendUserAuthentication',
+            ['BE_USER']
         ]);
-        $definition->setLazy(true);
-        $container->setDefinition('app.menu', $definition);
+        $definition->setFactory([
+            new Reference('typo3'),
+            'getGlobal'
+        ]);
+        $container->setDefinition('app.typo3.backend_user', $definition);
 
-.. note::
+The same it possible with classes from ``GeneralUtility::makeInstance()``, but
+the must be set shared to false, so ``makeInstance()`` is still in control
+whether you get the same instance or a new one every time you inject the
+service.
 
-    The service example above is marked as a
-    `lazy service <http://symfony.com/doc/current/components/dependency_injection/lazy_services.html>`_.
-    These is a MUST if you want to use the service as ``typo3.user_func`` or
-    ``typo3.user_obj`` to have a correct instance injected. Otherwise your
-    service is created too early and you have a wrong cHash calculator and no
-    database connection available.
+.. configuration-block::
+
+    .. code-block:: yaml
+
+        services:
+            app.typo3.template_service:
+                class: TYPO3\CMS\Core\TypoScript\TemplateService
+                shared: false
+                factory: ["@typo3", makeInstance]
+                arguments:
+                    - "TYPO3\\CMS\\Core\\TypoScript\\TemplateService"
+
+    .. code-block:: xml
+
+        <services>
+            <service id="app.typo3.template_service" class="TYPO3\CMS\Core\TypoScript\TemplateService" shared="false">
+                <factory service="typo3" method="makeInstance"/>
+                <argument>TYPO3\CMS\Core\TypoScript\TemplateService</argument>
+            </service>
+        </services>
+
+    .. code-block:: php
+
+        use Symfony\Component\DependencyInjection\Definition;
+        use Symfony\Component\ExpressionLanguage\Expression;
+
+        $definition = new Definition(
+            'TYPO3\\CMS\\Core\\TypoScript\\TemplateService',
+            ['TYPO3\\CMS\\Core\\TypoScript\\TemplateService']
+        ]);
+        $definition->setShared(false);
+        $definition->setFactory([
+            new Reference('typo3'),
+            'makeInstance'
+        ]);
+        $container->setDefinition('app.typo3.template_service', $definition);
+
+Other caches as service
+=======================
+
+If you have defined your own cache in your extension, make it available to the
+service container to. It's the same as getting a global from TYPO3, but instead
+you are using the cache manager as a factory.
+
+The configured cache in this example is ``acme_geocoding``:
+
+.. configuration-block::
+
+    .. code-block:: yaml
+
+        services:
+            app.cache.acme_geocoding:
+                class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+                factory: ["@typo3.cache.cache_manager", getCache]
+                arguments:
+                    - acme_geocoding
+
+    .. code-block:: xml
+
+        <services>
+            <service id="app.cache.acme_geocoding" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface">
+                <factory service="typo3.cache.cache_manager" method="getCache"/>
+                <argument>acme_geocoding</argument>
+            </service>
+        </services>
+
+    .. code-block:: php
+
+        use Symfony\Component\DependencyInjection\Definition;
+        use Symfony\Component\ExpressionLanguage\Expression;
+
+        $definition = new Definition(
+            'TYPO3\\CMS\\Core\\Cache\\Frontend\\FrontendInterface',
+            ['acme_geocoding']
+        ]);
+        $definition->setFactory([
+            new Reference('typo3.cache.cache_manager'),
+            'getCache'
+        ]);
+        $container->setDefinition('app.cache.acme_geocoding', $definition);

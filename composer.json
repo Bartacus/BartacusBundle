@@ -16,7 +16,7 @@
     "require": {
         "php": "~5.4",
         "ocramius/proxy-manager": "~1.0",
-        "symfony/symfony": "~2.7",
+        "symfony/symfony": "~2.8",
         "typo3/cms": "~6.2.14"
     },
     "require-dev": {

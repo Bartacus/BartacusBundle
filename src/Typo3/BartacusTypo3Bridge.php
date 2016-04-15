@@ -22,6 +22,8 @@
 namespace Bartacus\Bundle\BartacusBundle\Typo3;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
  * Service bridge to TYPO3 instantiation and global instances.
@@ -54,11 +56,27 @@ class BartacusTypo3Bridge
     {
         if (!isset($GLOBALS[$global])) {
             throw new \InvalidArgumentException(sprintf(
-                'The global %s does not exist.',
+                'The global %s does not exist (yet).',
                 $global
             ));
         }
 
         return $GLOBALS[$global];
+    }
+
+    /**
+     * @return ContentObjectRenderer
+     */
+    public function getContentObjectRenderer()
+    {
+        return $this->getGlobal('TSFE')->cObj;
+    }
+
+    /**
+     * @return PageRepository
+     */
+    public function getPageRepository()
+    {
+        return $this->getGlobal('TSFE')->sys_page;
     }
 }

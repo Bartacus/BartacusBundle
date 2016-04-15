@@ -11,6 +11,7 @@ Changelog
 * Create a bridge session storage to start session if not already started.
 * Fix path to console and eID dispatch if deployed in a symlinked environment.
 * Access to frozen ``TYPO3_CONF_VARS`` within Symfony container.
+* Improve the typo3 bridge with predefined services and better docs.
 
 0.3.2
 =====
