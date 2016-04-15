@@ -2,6 +2,11 @@
 Changelog
 =========
 
+0.3.4
+=====
+
+* Add the cache hash calculator as TYPO3 bridge service
+
 0.3.3
 =====
 

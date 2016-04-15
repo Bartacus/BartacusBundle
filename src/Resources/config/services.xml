@@ -67,6 +67,11 @@
             <argument>cache_rootline</argument>
         </service>
 
+        <service id="typo3.cache_hash_calculator" class="TYPO3\CMS\Frontend\Page\CacheHashCalculator" shared="false">
+            <factory service="typo3" method="makeInstance"/>
+            <argument>TYPO3\CMS\Frontend\Page\CacheHashCalculator</argument>
+        </service>
+
         <service id="typo3.content_object_renderer" class="TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer">
             <factory service="typo3" method="getContentObjectRenderer"/>
         </service>

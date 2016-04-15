@@ -18,6 +18,8 @@ The ``TYPO3_DB`` is available as ``typo3.db`` service.
 The ``TYPO3\CMS\Core\Resource\FileRepository`` for the FAL is available as
 ``typo3.file_repository``.
 
+The ``TYPO3\CMS\Frontend\Page\CacheHashCalculator`` is available as
+
 Globals and ``makeInstace``
 ===========================
 
