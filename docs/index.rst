@@ -21,3 +21,4 @@ User Guide
     globals
     translations
     content_elements
+    ajax
