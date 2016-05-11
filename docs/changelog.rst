@@ -2,6 +2,11 @@
 Changelog
 =========
 
+0.3.6
+=====
+
+* Initialize backend user for TSFE on Symfony dispatch too
+
 0.3.5
 =====
 

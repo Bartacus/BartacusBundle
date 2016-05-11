@@ -42,11 +42,11 @@ use TYPO3\CMS\Frontend\Utility\EidUtility;
  */
 abstract class Kernel extends BaseKernel
 {
-    const VERSION = '0.3.5';
-    const VERSION_ID = '00305';
+    const VERSION = '0.3.6';
+    const VERSION_ID = '00306';
     const MAJOR_VERSION = '0';
     const MINOR_VERSION = '3';
-    const RELEASE_VERSION = '5';
+    const RELEASE_VERSION = '6';
     const EXTRA_VERSION = '';
 
     /**
@@ -172,6 +172,7 @@ abstract class Kernel extends BaseKernel
 
         // Initialize FE User.
         $GLOBALS['TSFE']->initFEuser();
+        $GLOBALS['BE_USER'] = $GLOBALS['TSFE']->initializeBackendUser();
 
         // Important: no Cache for Ajax stuff
         $GLOBALS['TSFE']->set_no_cache();
