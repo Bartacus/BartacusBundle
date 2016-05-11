@@ -15,6 +15,8 @@ the TSFE as ``typo3.page_repository`` and the ``cObj`` on the TSFE as
 
 The ``TYPO3_DB`` is available as ``typo3.db`` service.
 
+The ``BE_USER`` is available as ``typo3.backend_user`` service.
+
 The ``TYPO3\CMS\Core\Resource\FileRepository`` for the FAL is available as
 ``typo3.file_repository``.
 
@@ -35,18 +37,18 @@ Instead you can create services from TYPO3 globals with the factory pattern:
     .. code-block:: yaml
 
         services:
-            app.typo3.backend_user:
-                class: TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+            app.typo3.frontend_user:
+                class: TYPO3\CMS\Core\Authentication\FrontendUserAuthentication
                 factory: ["@typo3", getGlobal]
                 arguments:
-                    - BE_USER
+                    - FE_USER
 
     .. code-block:: xml
 
         <services>
-            <service id="app.typo3.backend_user" class="TYPO3\CMS\Core\Authentication\BackendUserAuthentication">
+            <service id="app.typo3.frontend_user" class="TYPO3\CMS\Core\Authentication\FrontendUserAuthentication">
                 <factory service="typo3" method="getGlobal"/>
-                <argument>BE_USER</argument>
+                <argument>FE_USER</argument>
             </service>
         </services>
 
@@ -56,14 +58,14 @@ Instead you can create services from TYPO3 globals with the factory pattern:
         use Symfony\Component\ExpressionLanguage\Expression;
 
         $definition = new Definition(
-            'TYPO3\\CMS\\Core\\Authentication\\BackendUserAuthentication',
-            ['BE_USER']
+            'TYPO3\\CMS\\Core\\Authentication\\FrontendUserAuthentication',
+            ['FE_USER']
         ]);
         $definition->setFactory([
             new Reference('typo3'),
             'getGlobal'
         ]);
-        $container->setDefinition('app.typo3.backend_user', $definition);
+        $container->setDefinition('app.typo3.frontend_user', $definition);
 
 The same it possible with classes from ``GeneralUtility::makeInstance()``, but
 the must be set shared to false, so ``makeInstance()`` is still in control

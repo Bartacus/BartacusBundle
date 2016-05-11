@@ -2,6 +2,11 @@
 Changelog
 =========
 
+0.3.5
+=====
+
+* Add the ``BE_USER`` global as TYPO3 bridge service
+
 0.3.4
 =====
 

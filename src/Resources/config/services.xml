@@ -46,6 +46,11 @@
 
         <service id="typo3" class="Bartacus\Bundle\BartacusBundle\Typo3\BartacusTypo3Bridge"/>
 
+        <service id="typo3.backend_user" class="TYPO3\CMS\Core\Authentication\BackendUserAuthentication">
+            <factory service="typo3" method="getGlobal"/>
+            <argument>BE_USER</argument>
+        </service>
+
         <service id="typo3.cache.cache_manager" class="TYPO3\CMS\Core\Cache\CacheManager" shared="false">
             <factory service="typo3" method="makeInstance"/>
             <argument>TYPO3\CMS\Core\Cache\CacheManager</argument>
