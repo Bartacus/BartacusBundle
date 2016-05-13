@@ -46,7 +46,7 @@
 
         <service id="typo3" class="Bartacus\Bundle\BartacusBundle\Typo3\BartacusTypo3Bridge"/>
 
-        <service id="typo3.backend_user" class="TYPO3\CMS\Core\Authentication\BackendUserAuthentication" lazy="true">
+        <service id="typo3.backend_user" class="TYPO3\CMS\Core\Authentication\BackendUserAuthentication">
             <factory service="typo3" method="getGlobal"/>
             <argument>BE_USER</argument>
         </service>

@@ -15,7 +15,8 @@ the TSFE as ``typo3.page_repository`` and the ``cObj`` on the TSFE as
 
 The ``TYPO3_DB`` is available as ``typo3.db`` service.
 
-The ``BE_USER`` is available as ``typo3.backend_user`` service.
+The ``BE_USER`` is available as ``typo3.backend_user`` service. This service
+may be ``null`` if no backend user is logged in.
 
 The ``TYPO3\CMS\Core\Resource\FileRepository`` for the FAL is available as
 ``typo3.file_repository``.

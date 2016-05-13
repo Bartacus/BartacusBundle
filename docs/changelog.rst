@@ -2,6 +2,12 @@
 Changelog
 =========
 
+0.3.7
+=====
+
+* TYPO3 globals are not checked anymore, before accessing them. This prevents
+  errors with not yet existing globals.
+
 0.3.6
 =====
 

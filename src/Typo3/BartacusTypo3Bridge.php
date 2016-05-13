@@ -54,13 +54,6 @@ class BartacusTypo3Bridge
      */
     public function getGlobal($global)
     {
-        if (!isset($GLOBALS[$global])) {
-            throw new \InvalidArgumentException(sprintf(
-                'The global %s does not exist (yet).',
-                $global
-            ));
-        }
-
         return $GLOBALS[$global];
     }
 
