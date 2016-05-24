@@ -42,7 +42,9 @@ class CacheClearer extends ContainerAware
     {
         if (in_array($params['cacheCmd'], ['system', 'all'], true)) {
             $realCacheDir = $this->getContainer()->getParameter('kernel.cache_dir');
-            $oldCacheDir = $realCacheDir.'_old';
+            // the old cache dir name must not be longer than the real one to avoid exceeding
+            // the maximum length of a directory or file path within it (esp. Windows MAX_PATH)
+            $oldCacheDir = substr($realCacheDir, 0, -1).('~' === substr($realCacheDir, -1) ? '+' : '~');
             $filesystem = $this->getContainer()->get('filesystem');
 
             if (!is_writable($realCacheDir)) {
@@ -64,7 +66,7 @@ class CacheClearer extends ContainerAware
                 $filesystem->remove($warmupDir);
             }
 
-            $this->warmup($warmupDir, $realCacheDir);
+            $this->warmup($warmupDir, $realCacheDir, false);
 
             $filesystem->rename($realCacheDir, $oldCacheDir);
             if ('\\' === DIRECTORY_SEPARATOR) {
@@ -83,8 +85,6 @@ class CacheClearer extends ContainerAware
      */
     protected function warmup($warmupDir, $realCacheDir, $enableOptionalWarmers = true)
     {
-        $this->getContainer()->get('filesystem')->remove($warmupDir);
-
         // create a temporary kernel
         /** @var KernelInterface $realKernel */
         $realKernel = $this->getContainer()->get('kernel');
@@ -112,14 +112,11 @@ class CacheClearer extends ContainerAware
         $realKernelFQN = get_class($realKernel);
 
         foreach (Finder::create()->files()->name('*.meta')->in($warmupDir) as $file) {
-            file_put_contents(
-                $file,
-                preg_replace(
-                    '/(C\:\d+\:)"'.$safeTempKernel.'"/',
-                    sprintf('$1"%s"', $realKernelFQN),
-                    file_get_contents($file)
-                )
-            );
+            file_put_contents($file, preg_replace(
+                '/(C\:\d+\:)"'.$safeTempKernel.'"/',
+                sprintf('$1"%s"', $realKernelFQN),
+                file_get_contents($file)
+            ));
         }
 
         // fix references to cached files with the real cache directory name
@@ -131,9 +128,18 @@ class CacheClearer extends ContainerAware
         }
 
         // fix references to kernel/container related classes
-        $search = $tempKernel->getName().ucfirst($tempKernel->getEnvironment());
-        $replace = $realKernel->getName().ucfirst($realKernel->getEnvironment());
-        foreach (Finder::create()->files()->name($search.'*')->in($warmupDir) as $file) {
+        $fileSearch = $tempKernel->getName().ucfirst($tempKernel->getEnvironment()).'*';
+        $search = [
+            $tempKernel->getName().ucfirst($tempKernel->getEnvironment()),
+            sprintf('\'kernel.name\' => \'%s\'', $tempKernel->getName()),
+            sprintf('key="kernel.name">%s<', $tempKernel->getName()),
+        ];
+        $replace = [
+            $realKernel->getName().ucfirst($realKernel->getEnvironment()),
+            sprintf('\'kernel.name\' => \'%s\'', $realKernel->getName()),
+            sprintf('key="kernel.name">%s<', $realKernel->getName()),
+        ];
+        foreach (Finder::create()->files()->name($fileSearch)->in($warmupDir) as $file) {
             $content = str_replace($search, $replace, file_get_contents($file));
             file_put_contents(str_replace($search, $replace, $file), $content);
             unlink($file);

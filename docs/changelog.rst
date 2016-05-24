@@ -2,6 +2,11 @@
 Changelog
 =========
 
+0.3.8
+=====
+
+* Fix cache warmup
+
 0.3.7
 =====
 
