@@ -139,6 +139,7 @@ class BartacusBundle extends Bundle
                     'title' => $wizard['title'],
                     'description' => $wizard['description'],
                     'icon' => '../typo3conf/ext/'.$extensionName.'/Resources/icons/wizard/'.$wizard['icon'],
+                    'rootline' => !empty($wizard['rootline']) ? $wizard['rootline'] : null,
                 ];
             }
 
@@ -184,7 +185,7 @@ tt_content.'.$pluginSignature.' {
 
         foreach ($wizards as $header => $newWizards) {
             foreach ($newWizards as $plugin => $wizard) {
-                $tsConfig .= "mod.wizards.newContentElement.wizardItems.{$header}.elements.{$plugin} {
+                $wizardTs = "mod.wizards.newContentElement.wizardItems.{$header}.elements.{$plugin} {
     title = {$wizard['title']}
     description = {$wizard['description']}
     icon = {$wizard['icon']}
@@ -193,6 +194,12 @@ tt_content.'.$pluginSignature.' {
 	}
 }
 mod.wizards.newContentElement.wizardItems.{$header}.show := addToList({$plugin})\n";
+
+                if (null !== $wizard['rootline']) {
+                    $wizardTs = "[PIDinRootline = {$wizard['rootline']}]\n{$wizardTs}[end]\n";
+                }
+
+                $tsConfig .= $wizardTs;
             }
         }
 

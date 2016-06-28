@@ -184,3 +184,25 @@ To put the element into your own tab/header simply add the ``header`` param to
                 title: Contact form
                 description: A form for the user to contact you
                 icon: contact_form.png
+
+Restrict in rootline
+--------------------
+
+Maybe element in the wizard should be only shown in given page rootline? Simply
+add the ``rootline`` param:
+
+.. code-block:: yaml
+
+    # typo3conf/ext/contact/Resources/config/plugins.yml
+
+    contact_form:
+        path: /form
+        defaults:
+            _controller: AcmeContact:Contact:send
+            _cached: false
+            _wizard:
+                header: Special forms
+                title: Contact form
+                description: A form for the user to contact you
+                icon: contact_form.png
+                rootline: 181
