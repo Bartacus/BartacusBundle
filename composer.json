@@ -20,10 +20,14 @@
         "typo3/cms": "~6.2.14"
     },
     "require-dev": {
+        "cocur/slugify": "^1.4 || ^2.1",
         "phpspec/phpspec": "~2.1",
         "matthiasnoback/symfony-dependency-injection-test": "~0.7.4",
         "phpunit/phpunit": "~4.7",
         "roave/security-advisories": "dev-master"
+    },
+    "suggest": {
+        "cocur/slugify": "If you want the wizards in plugins.yml with custom headers (^1.4 || ^2.1)"
     },
     "autoload": {
         "psr-4": {

@@ -140,3 +140,47 @@ plugin is now injected into the ``$data`` parameter of the method if it exists.
     have access to the ``Request`` instance as a sub request as seen above and
     must return a ``Response`` instance, but none of the usual kernel events are
     dispatched.
+
+TYPO3 new content element wizard
+================================
+
+If you want to have a content element in the new content element wizard it's as
+easy as adding some defaults to the plugin configuartion:
+
+.. code-block:: yaml
+
+    # typo3conf/ext/contact/Resources/config/plugins.yml
+
+    contact_form:
+        path: /form
+        defaults:
+            _controller: AcmeContact:Contact:send
+            _cached: false
+            _wizard:
+                title: Contact form
+                description: A form for the user to contact you
+                icon: contact_form.png
+
+The icon is expected to live in ``typo3conf/ext/contact/Resources/icons/wizard/contact_form.png``
+and should be 32x32 pixels big.
+
+Organise in new tab
+-------------------
+
+To put the element into your own tab/header simply add the ``header`` param to
+``_wizard``:
+
+.. code-block:: yaml
+
+    # typo3conf/ext/contact/Resources/config/plugins.yml
+
+    contact_form:
+        path: /form
+        defaults:
+            _controller: AcmeContact:Contact:send
+            _cached: false
+            _wizard:
+                header: Special forms
+                title: Contact form
+                description: A form for the user to contact you
+                icon: contact_form.png

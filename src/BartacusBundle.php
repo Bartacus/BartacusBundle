@@ -26,6 +26,7 @@ use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\Typo3ConfVarsCom
 use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\Typo3UserFuncCompilerPass;
 use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\Typo3UserObjCompilerPass;
 use Bartacus\Bundle\BartacusBundle\Typo3\UserObjAndFuncManager;
+use Cocur\Slugify\Slugify;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -108,6 +109,9 @@ class BartacusBundle extends Bundle
         /** @var Router $router */
         $router = $this->container->get('router.plugins');
 
+        $wizards = [];
+        $newWizardHeaders = [];
+
         /** @var Route $route */
         foreach ($router->getRouteCollection()->getIterator() as $route) {
             $path = $route->getPath();
@@ -118,6 +122,26 @@ class BartacusBundle extends Bundle
             $cached = null === $cached ? true : $cached;
 
             $pluginSignature = strtolower($extensionName . '_' . $pluginName);
+
+            if ($route->hasDefault('_wizard')) {
+                $wizard = $route->getDefault('_wizard');
+                $header = 'common';
+
+                if (!empty($wizard['header'])) {
+                    /** @var Slugify $slugify */
+                    $slugify = $this->container->get('slugify');
+
+                    $header = $slugify->slugify($wizard['header']);
+                    $newWizardHeaders[$header] = $wizard['header'];
+                }
+
+                $wizards[$header][$pluginSignature] = [
+                    'title' => $wizard['title'],
+                    'description' => $wizard['description'],
+                    'icon' => '../typo3conf/ext/'.$extensionName.'/Resources/icons/wizard/'.$wizard['icon'],
+                ];
+            }
+
             $pluginContent = trim('
 plugin.tx_'.$pluginSignature.' = USER'.($cached ? '' : '_INT').'
 plugin.tx_'.$pluginSignature.' {
@@ -142,5 +166,36 @@ tt_content.'.$pluginSignature.' {
 '.$addLine.'
 ', 'defaultContentRendering');
         }
+
+        $this->registerWizards($wizards, $newWizardHeaders);
+    }
+
+    /**
+     * @param array $wizards [header => [plugin => wizard]
+     * @param array $newWizardHeaders [header => name]
+     */
+    private function registerWizards(array $wizards, array $newWizardHeaders)
+    {
+        $tsConfig = '';
+
+        foreach ($newWizardHeaders as $header => $name) {
+            $tsConfig .= "mod.wizards.newContentElement.wizardItems.{$header}.header = {$name}\n";
+        }
+
+        foreach ($wizards as $header => $newWizards) {
+            foreach ($newWizards as $plugin => $wizard) {
+                $tsConfig .= "mod.wizards.newContentElement.wizardItems.{$header}.elements.{$plugin} {
+    title = {$wizard['title']}
+    description = {$wizard['description']}
+    icon = {$wizard['icon']}
+    tt_content_defValues {
+		CType = {$plugin}
+	}
+}
+mod.wizards.newContentElement.wizardItems.{$header}.show := addToList({$plugin})\n";
+            }
+        }
+
+        ExtensionManagementUtility::addPageTSConfig($tsConfig);
     }
 }
