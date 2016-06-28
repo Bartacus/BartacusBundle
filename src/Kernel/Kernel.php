@@ -42,12 +42,12 @@ use TYPO3\CMS\Frontend\Utility\EidUtility;
  */
 abstract class Kernel extends BaseKernel
 {
-    const VERSION = '0.3.9-DEV';
+    const VERSION = '0.3.9';
     const VERSION_ID = '00309';
     const MAJOR_VERSION = '0';
     const MINOR_VERSION = '3';
     const RELEASE_VERSION = '';
-    const EXTRA_VERSION = 'DEV';
+    const EXTRA_VERSION = '';
 
     /**
      * {@inheritdoc}

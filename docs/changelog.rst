@@ -2,6 +2,12 @@
 Changelog
 =========
 
+0.3.9
+=====
+
+* Add configuration of new content element wizard to plugins.yml style
+  configuration.
+
 0.3.8
 =====
 
