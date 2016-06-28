@@ -123,8 +123,12 @@ class BartacusBundle extends Bundle
 
             $pluginSignature = strtolower($extensionName . '_' . $pluginName);
 
-            if ($route->hasDefault('_wizard')) {
-                $wizard = $route->getDefault('_wizard');
+            if (
+                ($wizard = $route->getDefault('_wizard'))
+                && !empty($wizard['title'])
+                && !empty($wizard['description'])
+                && !empty($wizard['icon'])
+            ) {
                 $header = 'common';
 
                 if (!empty($wizard['header'])) {
@@ -135,10 +139,14 @@ class BartacusBundle extends Bundle
                     $newWizardHeaders[$header] = $wizard['header'];
                 }
 
+                $iconExtension = $route->hasDefault('_wizard_icon_extension')
+                    ? $route->getDefault('_wizard_icon_extension')
+                    : $extensionName;
+
                 $wizards[$header][$pluginSignature] = [
                     'title' => $wizard['title'],
                     'description' => $wizard['description'],
-                    'icon' => '../typo3conf/ext/'.$extensionName.'/Resources/icons/wizard/'.$wizard['icon'],
+                    'icon' => '../typo3conf/ext/'.$iconExtension.'/Resources/icons/wizard/'.$wizard['icon'],
                     'rootline' => !empty($wizard['rootline']) ? $wizard['rootline'] : null,
                 ];
             }
@@ -177,10 +185,11 @@ tt_content.'.$pluginSignature.' {
      */
     private function registerWizards(array $wizards, array $newWizardHeaders)
     {
-        $tsConfig = '';
+        $tsConfig = "mod.wizards.newContentElement.wizardItems.common.show = *\n";
 
         foreach ($newWizardHeaders as $header => $name) {
             $tsConfig .= "mod.wizards.newContentElement.wizardItems.{$header}.header = {$name}\n";
+            $tsConfig .= "mod.wizards.newContentElement.wizardItems.{$header}.show = *\n";
         }
 
         foreach ($wizards as $header => $newWizards) {
@@ -192,8 +201,7 @@ tt_content.'.$pluginSignature.' {
     tt_content_defValues {
 		CType = {$plugin}
 	}
-}
-mod.wizards.newContentElement.wizardItems.{$header}.show := addToList({$plugin})\n";
+}\n";
 
                 if (null !== $wizard['rootline']) {
                     $wizardTs = "[PIDinRootline = {$wizard['rootline']}]\n{$wizardTs}[end]\n";
