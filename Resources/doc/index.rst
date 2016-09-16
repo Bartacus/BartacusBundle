@@ -17,3 +17,7 @@ Contents
 
     copyright
 
+.. toctree::
+    :maxdepth: 2
+
+    getting-started/index
