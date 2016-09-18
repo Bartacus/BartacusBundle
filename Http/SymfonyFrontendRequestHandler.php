@@ -25,6 +25,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use TYPO3\CMS\Backend\FrontendBackendUserAuthentication;
 use TYPO3\CMS\Core\Core\Bootstrap;
@@ -404,7 +406,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
      *
      * @return ResponseInterface
      */
-    protected function handleSymfonyRequest(ServerRequestInterface $request):ResponseInterface
+    protected function handleSymfonyRequest(ServerRequestInterface $request)
     {
         $this->timeTracker->push('Symfony request handling', '');
 
@@ -419,16 +421,26 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         // initialized from the Bootstrap with no control of the constructor..
         /** @var KernelInterface $kernel */
         global $kernel;
-        $symfonyResponse = $kernel->handle($symfonyRequest);
-        if (!$symfonyResponse instanceof BinaryFileResponse
-            && !$symfonyResponse instanceof StreamedResponse
-            && 0 === stripos($symfonyResponse->headers->get('Content-Type'), 'text/html')
-        ) {
-            $this->controller->content = $symfonyResponse->getContent();
-        }
 
-        $psr7Factory = new Typo3PsrMessageFactory();
-        $response = $psr7Factory->createResponse($symfonyResponse);
+        $response = null;
+        try {
+            $symfonyResponse = $kernel->handle($symfonyRequest, HttpKernelInterface::MASTER_REQUEST, false);
+
+            if (!$symfonyResponse instanceof BinaryFileResponse
+                && !$symfonyResponse instanceof StreamedResponse
+                && 0 === stripos($symfonyResponse->headers->get('Content-Type'), 'text/html')
+            ) {
+                $this->controller->content = $symfonyResponse->getContent();
+            }
+
+            $psr7Factory = new Typo3PsrMessageFactory();
+            $response = $psr7Factory->createResponse($symfonyResponse);
+        } catch (NotFoundHttpException $e) {
+            // We only want to match if the route was not found. Other errors should output. Ugly hack.
+            if (0 !== strpos($e->getMessage(), 'No route found for')) {
+                throw $e;
+            }
+        }
 
         $this->timeTracker->pull();
 
