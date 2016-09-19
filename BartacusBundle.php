@@ -19,8 +19,25 @@
 
 namespace Bartacus\Bundle\BartacusBundle;
 
+use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\TypoScriptUserFuncPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class BartacusBundle extends Bundle
 {
+    /**
+     * @inheritDoc
+     */
+    public function boot()
+    {
+        $this->container->get('bartacus.typoscript.user_func_collector')->loadUserFuncs();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new TypoScriptUserFuncPass());
+    }
 }
