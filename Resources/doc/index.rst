@@ -21,3 +21,4 @@ Contents
     :maxdepth: 2
 
     getting-started/index
+    services_typoscript
