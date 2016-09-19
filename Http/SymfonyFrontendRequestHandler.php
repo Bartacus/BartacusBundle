@@ -24,10 +24,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 use TYPO3\CMS\Backend\FrontendBackendUserAuthentication;
 use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\FrontendEditing\FrontendEditingController;
@@ -419,7 +419,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
 
         // yes, we must use the global declared kernel here, because the request handler is
         // initialized from the Bootstrap with no control of the constructor..
-        /** @var KernelInterface $kernel */
+        /** @var HttpKernelInterface $kernel */
         global $kernel;
 
         $response = null;
@@ -440,8 +440,12 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
             if (0 !== strpos($e->getMessage(), 'No route found for')) {
                 throw $e;
             }
+
+            // Aaaaaaaaaand another ugly hack for the kernel termination :/
+            $symfonyResponse = new SymfonyResponse($e->getMessage(), 404);
         }
 
+        FrontendApplication::setRequestResponseForTermination($symfonyRequest, $symfonyResponse);
         $this->timeTracker->pull();
 
         return $response;

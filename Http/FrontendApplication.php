@@ -20,6 +20,9 @@
 namespace Bartacus\Bundle\BartacusBundle\Http;
 
 use Composer\Autoload\ClassLoader;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\TerminableInterface;
 use TYPO3\CMS\Core\Core\ApplicationInterface;
 use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\Http\ServerRequestFactory;
@@ -54,12 +57,29 @@ class FrontendApplication implements ApplicationInterface
     ];
 
     /**
+     * @var TerminableInterface
+     */
+    protected $kernel;
+
+    /**
+     * @var Request
+     */
+    protected static $request;
+
+    /**
+     * @var Response
+     */
+    protected static $response;
+
+    /**
      * Constructor setting up legacy constant and register available Request Handlers
      *
-     * @param ClassLoader $classLoader an instance of the class loader
+     * @param ClassLoader         $classLoader an instance of the class loader
+     * @param TerminableInterface $kernel      The terminable Symfony http kernel
      */
-    public function __construct(ClassLoader $classLoader)
+    public function __construct(ClassLoader $classLoader, TerminableInterface $kernel)
     {
+        $this->kernel = $kernel;
         $this->defineLegacyConstants();
 
         $this->bootstrap = Bootstrap::getInstance()
@@ -94,6 +114,27 @@ class FrontendApplication implements ApplicationInterface
         }
 
         $this->bootstrap->shutdown();
+
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        } elseif ('cli' !== PHP_SAPI) {
+            Response::closeOutputBuffers(0, true);
+        }
+
+        $this->kernel->terminate(self::$request, self::$response);
+    }
+
+    /**
+     * Saves the request and response for termination later, this is necessary
+     * because of this horrible TYPO3 structure.
+     *
+     * @param Request  $request
+     * @param Response $response
+     */
+    public static function setRequestResponseForTermination(Request $request, Response $response)
+    {
+        self::$request = $request;
+        self::$response = $response;
     }
 
     /**
