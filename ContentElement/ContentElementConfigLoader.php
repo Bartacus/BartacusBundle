@@ -24,12 +24,13 @@ use Symfony\Component\Config\ConfigCacheFactory;
 use Symfony\Component\Config\ConfigCacheFactoryInterface;
 use Symfony\Component\Config\ConfigCacheInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /**
  * @DI\Service("bartacus.content_element.config_loader", public=false)
  */
-class ContentElementConfigLoader
+class ContentElementConfigLoader implements WarmableInterface
 {
     /**
      * @var RenderDefinitionCollection|null
@@ -116,27 +117,90 @@ class ContentElementConfigLoader
         }
     }
 
+    /**
+     * Sets an option.
+     *
+     * @param string $key   The key
+     * @param mixed  $value The value
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function setOption($key, $value)
+    {
+        if (!array_key_exists($key, $this->options)) {
+            throw new \InvalidArgumentException(sprintf('The Router does not support the "%s" option.', $key));
+        }
+
+        $this->options[$key] = $value;
+    }
+
+    /**
+     * Gets an option value.
+     *
+     * @param string $key The key
+     *
+     * @return mixed The value
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function getOption($key)
+    {
+        if (!array_key_exists($key, $this->options)) {
+            throw new \InvalidArgumentException(sprintf('The Router does not support the "%s" option.', $key));
+        }
+
+        return $this->options[$key];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function warmUp($cacheDir)
+    {
+        $currentDir = $this->getOption('cache_dir');
+
+        // force cache generation
+        $this->setOption('cache_dir', $cacheDir);
+        $this->loadTypoScript();
+
+        $this->setOption('cache_dir', $currentDir);
+    }
+
     public function load()
     {
         if (true === $this->typoScriptLoaded) {
             return;
         }
 
+        ExtensionManagementUtility::addTypoScript(
+            'Bartacus',
+            'setup',
+            $this->loadTypoScript(),
+            'defaultContentRendering'
+        );
+
+        $this->typoScriptLoaded = true;
+    }
+
+    /**
+     * Load the TypoScript code for the content element render definitions
+     * itself without adding them to the template.
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    protected function loadTypoScript(): string
+    {
         if (null === $this->options['cache_dir']) {
             $renderDefinitions = $this->getRenderDefinitionCollection();
 
+            $typoScripts = [];
             foreach ($renderDefinitions as $renderDefinition) {
-                ExtensionManagementUtility::addTypoScript(
-                    'Bartacus',
-                    'setup',
-                    $this->renderPluginContent($renderDefinition),
-                    'defaultContentRendering'
-                );
+                $typoScripts[] = $this->renderPluginContent($renderDefinition);
             }
 
-            $this->typoScriptLoaded = true;
-
-            return;
+            return implode("\n\n", $typoScripts);
         }
 
         $cache = $this->getConfigCacheFactory()
@@ -155,12 +219,7 @@ class ContentElementConfigLoader
             )
         ;
 
-        ExtensionManagementUtility::addTypoScript(
-            'Bartacus',
-            'setup',
-            file_get_contents($cache->getPath()),
-            'defaultContentRendering'
-        );
+        return file_get_contents($cache->getPath());
     }
 
     /**
