@@ -14,18 +14,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with the BartacusBundle.  If not, see <http://www.gnu.org/licenses/>.
+ * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Bundle\BartacusBundle\Annotation;
+namespace Bartacus\Bundle\BartacusBundle\ContentElement;
 
 /**
- * Define a Symfony controller actions as TYPO3 content element handler.
- *
- * @Annotation
- * @Target({"METHOD"})
+ * @author Patrik Karisch <p.karisch@pixelart.at>
  */
-final class ContentElement
+class RenderDefinition
 {
     /**
      * @var string
@@ -35,26 +32,29 @@ final class ContentElement
     /**
      * @var bool
      */
-    private $cached = true;
+    private $cached;
 
     /**
-     * @param array $options
+     * @var string
      */
-    public function __construct(array $options = [])
-    {
-        if (isset($options['value'])) {
-            $this->name = (string) $options['value'];
-        }
+    private $controller;
 
-        if (isset($options['cached'])) {
-            $this->cached = filter_var($options['cached'], FILTER_VALIDATE_BOOLEAN);
-        }
+    /**
+     * @param string $name
+     * @param bool   $cached
+     * @param string $controller
+     */
+    public function __construct($name, $cached, $controller)
+    {
+        $this->name = $name;
+        $this->cached = $cached;
+        $this->controller = $controller;
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -65,5 +65,13 @@ final class ContentElement
     public function isCached(): bool
     {
         return $this->cached;
+    }
+
+    /**
+     * @return string
+     */
+    public function getController(): string
+    {
+        return $this->controller;
     }
 }
