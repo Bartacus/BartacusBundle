@@ -16,9 +16,10 @@
     ],
     "require": {
         "php": "7.0.*",
+        "typo3/cms": "8.3.*",
         "symfony/symfony": "^3.0",
         "symfony/psr-http-message-bridge": "^1.0",
-        "typo3/cms": "8.3.*",
+        "jms/di-extra-bundle": "^1.8",
         "roave/security-advisories": "dev-master"
     },
     "autoload": {
