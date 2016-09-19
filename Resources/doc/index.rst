@@ -22,3 +22,4 @@ Contents
 
     getting-started/index
     services_typoscript
+    content_elements
