@@ -199,10 +199,10 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
 
         $response = $this->handleSymfonyRequest($request);
 
-        $addOtherStuffToContent = true;
+        $modifyContent = true;
         if ($response) {
             $sendTSFEContent = true;
-            $addOtherStuffToContent = !empty($this->controller->content);
+            $modifyContent = false;
         } else {
             // Convert POST data to utf-8 for internal processing if metaCharset is different
             $this->controller->convPOSTCharset();
@@ -268,12 +268,12 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         } else {
             $debugParseTime = !empty($GLOBALS['TYPO3_CONF_VARS']['FE']['debug']);
         }
-        if ($addOtherStuffToContent && $this->controller->isOutputting() && $debugParseTime) {
+        if ($modifyContent && $this->controller->isOutputting() && $debugParseTime) {
             $this->controller->content .= LF.'<!-- Parsetime: '.$this->controller->scriptParseTime.'ms -->';
         }
         $this->controller->redirectToExternalUrl();
         // Preview info
-        if ($addOtherStuffToContent) {
+        if ($modifyContent) {
             $this->controller->previewInfo();
         }
         // Hook for end-of-frontend
@@ -283,12 +283,12 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         // Check memory usage
         MonitorUtility::peakMemoryUsage();
         // beLoginLinkIPList
-        if ($addOtherStuffToContent) {
+        if ($modifyContent) {
             echo $this->controller->beLoginLinkIPList();
         }
 
         // Admin panel
-        if ($addOtherStuffToContent && $this->controller->isBackendUserLoggedIn() && $GLOBALS['BE_USER'] instanceof FrontendBackendUserAuthentication) {
+        if ($modifyContent && $this->controller->isBackendUserLoggedIn() && $GLOBALS['BE_USER'] instanceof FrontendBackendUserAuthentication) {
             if ($GLOBALS['BE_USER']->isAdminPanelVisible()) {
                 $this->controller->content = str_ireplace('</body>', $GLOBALS['BE_USER']->displayAdminPanel().'</body>',
                     $this->controller->content);
@@ -300,7 +300,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
                 /** @var Response $response */
                 $response = GeneralUtility::makeInstance(Response::class);
                 $response->getBody()->write($this->controller->content);
-            } elseif ($addOtherStuffToContent) {
+            } elseif ($modifyContent) {
                 $response->getBody()->close();
 
                 $body = new Stream('php://temp', 'rw');
