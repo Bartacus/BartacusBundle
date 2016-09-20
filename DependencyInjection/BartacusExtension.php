@@ -20,9 +20,12 @@
 namespace Bartacus\Bundle\BartacusBundle\DependencyInjection;
 
 use Bartacus\Bundle\BartacusBundle\Exception\DependencyUnsatisfiedException;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
  * Handle registration with JMSDiExtraBundle and other stuff.
@@ -31,7 +34,13 @@ class BartacusExtension extends Extension implements PrependExtensionInterface
 {
     public function load(array $configs, ContainerBuilder $container)
     {
-        // TODO: Nothing to load atm.
+        $loader = new XmlFileLoader(
+            $container,
+            new FileLocator(__DIR__.'/../Resources/config')
+        );
+
+        $loader->load('typo3.xml');
+        $loader->load('overrides.xml');
     }
 
     public function prepend(ContainerBuilder $container)
