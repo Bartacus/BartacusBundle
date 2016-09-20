@@ -31,6 +31,7 @@ use Symfony\Component\HttpKernel\EventListener\RouterListener;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernel;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
  * Dispatch a content element to controller action.
@@ -61,6 +62,11 @@ class Renderer
     private $resolver;
 
     /**
+     * @var TypoScriptFrontendController
+     */
+    private $frontendController;
+
+    /**
      * Inject by the user function call from TYPO3 :/
      *
      * @var ContentObjectRenderer
@@ -73,14 +79,16 @@ class Renderer
      *      "kernel" = @DI\Inject("http_kernel"),
      *      "routerListener" = @DI\Inject("router_listener"),
      *      "resolver" = @DI\Inject("controller_resolver"),
+     *      "frontendController" = @DI\Inject("typo3.frontend_controller"),
      * })
      */
-    public function __construct(RequestStack $requestStack, HttpKernel $kernel, RouterListener $routerListener, ControllerResolverInterface $resolver)
+    public function __construct(RequestStack $requestStack, HttpKernel $kernel, RouterListener $routerListener, ControllerResolverInterface $resolver, TypoScriptFrontendController $frontendController)
     {
         $this->requestStack = $requestStack;
         $this->kernel = $kernel;
         $this->routerListener = $routerListener;
         $this->resolver = $resolver;
+        $this->frontendController = $frontendController;
     }
 
     /**
@@ -120,8 +128,12 @@ class Renderer
         // controller arguments
         $arguments = $this->resolver->getArguments($request, $controller);
 
-        // call controller
-        $response = call_user_func_array($controller, $arguments);
+        try {
+            // call controller
+            $response = call_user_func_array($controller, $arguments);
+        } catch (NotFoundHttpException $e) {
+            $this->frontendController->pageNotFoundAndExit($e->getMessage());
+        }
 
         // view
         if (!$response instanceof Response) {
