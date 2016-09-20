@@ -8,8 +8,8 @@ With Bartacus you are able to dispatch content elements to Symfony controller
 actions. This creates a harmony with the ability to dispatch routes directly to
 Symfony and not to TYPO3.
 
-Configuration
-=============
+Usage
+=====
 
 To dispatch content elements to Symfony, you have to define a ``@ContentElement``
 annotation on your action method. Same like a Symfony ``@Route`` annotation.
@@ -58,6 +58,13 @@ available fields MUST be done in ``Configuration/TCA`` and
     have access to the ``Request`` instance as a sub request as seen above and
     must return a ``Response`` instance, but none of the usual kernel events are
     dispatched.
+
+Redirect responses
+------------------
+
+You are able to use redirect responses in a content element action too.
+Bartacus detects the ``RedirectResponse`` instance and sends the redirect
+headers, terminates the kernel and exits. No further TYPO3 code is executed.
 
 Reusable bundles
 ================
