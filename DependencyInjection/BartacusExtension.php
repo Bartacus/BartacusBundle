@@ -40,6 +40,7 @@ class BartacusExtension extends Extension implements PrependExtensionInterface
         );
 
         $loader->load('typo3.xml');
+        $loader->load('overrides.xml');
     }
 
     public function prepend(ContainerBuilder $container)
