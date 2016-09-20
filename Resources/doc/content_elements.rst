@@ -44,7 +44,7 @@ plugin is now injected into the ``$data`` parameter of the method if it exists.
         }
     }
 
-To have the plugin not cached, add the ``cached=false attribute into the
+To have the plugin not cached, add the ``cached=false`` attribute into the
 annotation, e.g: ``@ContentElement("form_contact", cached=false)``
 
 Configuration of the TCA for inserting the content element in the backend and
