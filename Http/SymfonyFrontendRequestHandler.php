@@ -23,11 +23,16 @@ use Bartacus\Bundle\BartacusBundle\Http\Factory\Typo3PsrMessageFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\HttpKernel\KernelInterface;
 use TYPO3\CMS\Backend\FrontendBackendUserAuthentication;
 use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\FrontendEditing\FrontendEditingController;
@@ -405,6 +410,8 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
      * @param ServerRequestInterface $request
      *
      * @return ResponseInterface
+     *
+     * @throws \Exception
      */
     protected function handleSymfonyRequest(ServerRequestInterface $request)
     {
@@ -417,9 +424,12 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         $httpFoundationFactory = new HttpFoundationFactory();
         $symfonyRequest = $httpFoundationFactory->createRequest($request);
 
+        // set the locale from TypoScript, effectively killing _locale from router :/
+        $symfonyRequest->attributes->set('_locale', $this->controller->sys_language_isocode);
+
         // yes, we must use the global declared kernel here, because the request handler is
         // initialized from the Bootstrap with no control of the constructor..
-        /** @var HttpKernelInterface $kernel */
+        /** @var KernelInterface $kernel */
         global $kernel;
 
         $response = null;
@@ -440,6 +450,25 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
             if (0 !== strpos($e->getMessage(), 'No route found for')) {
                 throw $e;
             }
+
+            /** @var EventDispatcherInterface $eventDispatcher */
+            $eventDispatcher = $kernel->getContainer()->get('event_dispatcher');
+
+            /** @var RequestStack $requestStack */
+            $requestStack = $kernel->getContainer()->get('request_stack');
+
+            /** @var HttpKernelInterface $httpKernel */
+            $httpKernel = $kernel->getContainer()->get('http_kernel');
+
+            // no route found, but to initialize locale and translator correctly
+            // dispatch request event again, but skip router.
+            $symfonyRequest->attributes->set('_controller', 'typo3');
+
+            // add back to request stack, because the finishRequest after exception popped.
+            $requestStack->push($symfonyRequest);
+
+            $event = new GetResponseEvent($httpKernel, $symfonyRequest, HttpKernelInterface::MASTER_REQUEST);
+            $eventDispatcher->dispatch(KernelEvents::REQUEST, $event);
 
             // Aaaaaaaaaand another ugly hack for the kernel termination :/
             $symfonyResponse = new SymfonyResponse($e->getMessage(), 404);
