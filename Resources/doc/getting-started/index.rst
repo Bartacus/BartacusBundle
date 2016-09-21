@@ -7,3 +7,4 @@ Getting started
     :maxdepth: 2
 
     installation
+    locale
