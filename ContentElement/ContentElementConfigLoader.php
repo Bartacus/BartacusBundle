@@ -175,8 +175,7 @@ class ContentElementConfigLoader implements WarmableInterface
         ExtensionManagementUtility::addTypoScript(
             'Bartacus',
             'setup',
-            $this->loadTypoScript(),
-            'defaultContentRendering'
+            $this->loadTypoScript()
         );
 
         $this->typoScriptLoaded = true;
@@ -192,6 +191,25 @@ class ContentElementConfigLoader implements WarmableInterface
      */
     protected function loadTypoScript(): string
     {
+        $startingConfig = /** @lang TYPO3_TypoScript */ '
+# Clear out any constants in this reserved room!
+bartacus.content >
+
+# Get content
+bartacus.content.get = CONTENT
+bartacus.content.get {
+    table = tt_content
+    select.orderBy = sorting
+    select.where = colPos=0
+}
+
+# tt_content is started
+tt_content >
+tt_content = CASE
+tt_content.key.field = CType
+
+';
+
         if (null === $this->options['cache_dir']) {
             $renderDefinitions = $this->getRenderDefinitionCollection();
 
@@ -200,12 +218,12 @@ class ContentElementConfigLoader implements WarmableInterface
                 $typoScripts[] = $this->renderPluginContent($renderDefinition);
             }
 
-            return implode("\n\n", $typoScripts);
+            return $startingConfig.implode("\n\n", $typoScripts);
         }
 
         $cache = $this->getConfigCacheFactory()
             ->cache($this->options['cache_dir'].'/content_elements.ts',
-                function (ConfigCacheInterface $cache) {
+                function (ConfigCacheInterface $cache) use($startingConfig) {
                     $renderDefinitions = $this->getRenderDefinitionCollection();
 
                     $typoScripts = [];
@@ -213,7 +231,7 @@ class ContentElementConfigLoader implements WarmableInterface
                         $typoScripts[] = $this->renderPluginContent($renderDefinition);
                     }
 
-                    $output = implode("\n\n", $typoScripts);
+                    $output = $startingConfig.implode("\n\n", $typoScripts);
                     $cache->write($output, $renderDefinitions->getResources());
                 }
             )
@@ -251,7 +269,7 @@ class ContentElementConfigLoader implements WarmableInterface
         $controller = $renderDefinition->getController();
 
         $pluginContent = trim('
-# Setting '.$pluginSignature.' content element TypoScript
+# Setting '.$pluginSignature.' content element
 tt_content.'.$pluginSignature.' = USER'.($cached ? '' : '_INT').'
 tt_content.'.$pluginSignature.' {
     userFunc = '.Renderer::class.'->handle
