@@ -498,6 +498,14 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
             $refQueryParams->setValue($request, []);
         }
 
+        $refCookieParams = $refObj->getProperty('cookieParams');
+        $refCookieParams->setAccessible(true);
+
+        $cookies = $refCookieParams->getValue($request);
+        if (null === $cookies) {
+            $refCookieParams->setValue($request, []);
+        }
+
         $refAttributes = $refObj->getProperty('attributes');
         $refAttributes->setAccessible(true);
 
