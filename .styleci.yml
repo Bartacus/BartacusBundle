@@ -1,0 +1,14 @@
+preset: symfony
+
+enabled:
+    - combine_consecutive_unsets
+    - no_useless_else
+    - no_useless_return
+    - ordered_use
+    - php_unit_construct
+    - php_unit_dedicate_assert
+    - php_unit_strict
+    - phpdoc_order
+    - short_array_syntax
+    - strict
+    - strict_param
