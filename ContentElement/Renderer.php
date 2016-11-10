@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of the BartacusBundle.
@@ -17,11 +17,12 @@
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Bartacus\Bundle\BartacusBundle\ContentElement;
 
 use JMS\DiExtraBundle\Annotation as DI;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
@@ -67,7 +68,7 @@ class Renderer
     private $frontendController;
 
     /**
-     * Inject by the user function call from TYPO3 :/
+     * Inject by the user function call from TYPO3 :/.
      *
      * @var ContentObjectRenderer
      */
@@ -92,8 +93,8 @@ class Renderer
     }
 
     /**
-     * @param string                $content       The content. Not used
-     * @param array                 $configuration The TS configuration array
+     * @param string $content       The content. Not used
+     * @param array  $configuration The TS configuration array
      *
      * @return string $content The processed content
      */

@@ -17,7 +17,7 @@
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\EventListener;
 

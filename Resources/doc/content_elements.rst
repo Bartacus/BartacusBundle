@@ -19,8 +19,10 @@ plugin is now injected into the ``$data`` parameter of the method if it exists.
 
 .. code-block:: php
 
-    <?php declare(strict_types=1);
+    <?php
     // src/AppBundle/Controller/ContentController.php
+
+    declare(strict_types=1);
 
     namespace AppBundle\Controller;
 
@@ -85,7 +87,9 @@ jms_di_extra config in your prepend extension:
 
 .. code-block:: php
 
-    <?php declare(strict_types=1);
+    <?php
+
+    declare(strict_types=1);
 
     namespace Acme\Bundle\MyBundle\DependencyInjection;
 

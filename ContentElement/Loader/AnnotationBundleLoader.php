@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of the BartacusBundle.
@@ -16,6 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
+
+declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\ContentElement\Loader;
 
@@ -58,9 +60,9 @@ class AnnotationBundleLoader extends FileLoader
      * @param array       $bundles A array of bundles
      * @param string|null $type    The resource type
      *
-     * @return RenderDefinitionCollection
-     *
      * @throws \Exception
+     *
+     * @return RenderDefinitionCollection
      */
     public function load($bundles, $type = null): RenderDefinitionCollection
     {
@@ -148,7 +150,7 @@ class AnnotationBundleLoader extends FileLoader
 
             if (true === $namespace && T_STRING === $token[0]) {
                 $namespace = $token[1];
-                while (isset($tokens[++$i][1]) && in_array($tokens[$i][0], [T_NS_SEPARATOR, T_STRING])) {
+                while (isset($tokens[++$i][1]) && in_array($tokens[$i][0], [T_NS_SEPARATOR, T_STRING], true)) {
                     $namespace .= $tokens[$i][1];
                 }
                 $token = $tokens[$i];
@@ -165,7 +167,7 @@ class AnnotationBundleLoader extends FileLoader
                     if (T_DOUBLE_COLON === $tokens[$j][0]) {
                         $isClassConstant = true;
                         break;
-                    } elseif (!in_array($tokens[$j][0], [T_WHITESPACE, T_DOC_COMMENT, T_COMMENT])) {
+                    } elseif (!in_array($tokens[$j][0], [T_WHITESPACE, T_DOC_COMMENT, T_COMMENT], true)) {
                         break;
                     }
                 }

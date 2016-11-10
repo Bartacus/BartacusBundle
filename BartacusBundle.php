@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of the BartacusBundle.
@@ -17,6 +17,8 @@
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Bartacus\Bundle\BartacusBundle;
 
 use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\TypoScriptUserFuncPass;
@@ -26,7 +28,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 class BartacusBundle extends Bundle
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function boot()
     {
@@ -34,7 +36,7 @@ class BartacusBundle extends Bundle
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function build(ContainerBuilder $container)
     {

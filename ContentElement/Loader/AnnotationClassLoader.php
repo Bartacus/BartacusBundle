@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of the BartacusBundle.
@@ -16,6 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
+
+declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\ContentElement\Loader;
 
@@ -59,9 +61,9 @@ class AnnotationClassLoader implements LoaderInterface
      * @param string      $class A class name
      * @param string|null $type  The resource type
      *
-     * @return RenderDefinitionCollection
-     *
      * @throws \InvalidArgumentException When render defintion can't be parsed
+     *
+     * @return RenderDefinitionCollection
      */
     public function load($class, $type = null): RenderDefinitionCollection
     {

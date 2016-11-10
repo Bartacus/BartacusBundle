@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of the BartacusBundle.
@@ -14,8 +14,10 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with the BartacusBundle.  If not, see <http://www.gnu.org/licenses/>.
+ * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
+
+declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Annotation;
 
@@ -60,7 +62,7 @@ final class ContentElement
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isCached(): bool
     {

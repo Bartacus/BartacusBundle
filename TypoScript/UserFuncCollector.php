@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of the BartacusBundle.
@@ -17,6 +17,8 @@
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Bartacus\Bundle\BartacusBundle\TypoScript;
 
 use JMS\DiExtraBundle\Annotation as DI;
@@ -30,7 +32,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class UserFuncCollector
 {
     /**
-     * The tagged services for userFunc calls
+     * The tagged services for userFunc calls.
      *
      * [class name => instance]
      *
