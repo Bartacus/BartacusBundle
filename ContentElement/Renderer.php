@@ -99,13 +99,12 @@ class Renderer
      */
     public function handle(string $content, array $configuration): string
     {
-        $request = Request::createFromGlobals();
+        $request = $this->requestStack->getCurrentRequest();
 
         $request->attributes->set('data', $this->cObj->data);
         $request->attributes->set('_controller', $configuration['controller']);
 
         $request->headers->set('X-Php-Ob-Level', ob_get_level());
-        $this->requestStack->push($request);
 
         $event = new GetResponseEvent(
             $this->kernel,
@@ -156,7 +155,9 @@ class Renderer
                 HttpKernel::SUB_REQUEST
             )
         );
-        $this->requestStack->pop();
+
+        $request->attributes->remove('data');
+        $request->attributes->remove('_controller');
 
         if ($response instanceof RedirectResponse) {
             $response->send();
