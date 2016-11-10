@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of the BartacusBundle.
@@ -16,6 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
+
+declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\ContentElement;
 
@@ -139,9 +141,9 @@ class ContentElementConfigLoader implements WarmableInterface
      *
      * @param string $key The key
      *
-     * @return mixed The value
-     *
      * @throws \InvalidArgumentException
+     *
+     * @return mixed The value
      */
     public function getOption($key)
     {
@@ -185,13 +187,13 @@ class ContentElementConfigLoader implements WarmableInterface
      * Load the TypoScript code for the content element render definitions
      * itself without adding them to the template.
      *
-     * @return string
-     *
      * @throws \Exception
+     *
+     * @return string
      */
     protected function loadTypoScript(): string
     {
-        $startingConfig = /** @lang TYPO3_TypoScript */ '
+        $startingConfig = /* @lang TYPO3_TypoScript */ '
 # Clear out any constants in this reserved room!
 bartacus.content >
 
@@ -223,7 +225,7 @@ tt_content.key.field = CType
 
         $cache = $this->getConfigCacheFactory()
             ->cache($this->options['cache_dir'].'/content_elements.ts',
-                function (ConfigCacheInterface $cache) use($startingConfig) {
+                function (ConfigCacheInterface $cache) use ($startingConfig) {
                     $renderDefinitions = $this->getRenderDefinitionCollection();
 
                     $typoScripts = [];
@@ -241,9 +243,9 @@ tt_content.key.field = CType
     }
 
     /**
-     * @return RenderDefinitionCollection
-     *
      * @throws \Exception
+     *
+     * @return RenderDefinitionCollection
      */
     private function getRenderDefinitionCollection(): RenderDefinitionCollection
     {

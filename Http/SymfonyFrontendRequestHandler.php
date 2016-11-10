@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of the BartacusBundle.
@@ -14,8 +14,10 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with the BartacusBundle.  If not, see <http://www.gnu.org/licenses/>.
+ * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
+
+declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Http;
 
@@ -50,7 +52,7 @@ use TYPO3\CMS\Frontend\Utility\CompressionUtility;
 use TYPO3\CMS\Frontend\View\AdminPanelView;
 
 /**
- * This is the main entry point of the TypoScript and Symfony combined driven standard front-end
+ * This is the main entry point of the TypoScript and Symfony combined driven standard front-end.
  *
  * Basically put, this is the script which all requests for TYPO3 delivered pages goes to in the
  * frontend (the website). The script instantiates a $TSFE object, includes libraries and does a little logic here
@@ -89,7 +91,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
     }
 
     /**
-     * Handles a frontend request
+     * Handles a frontend request.
      *
      * @param ServerRequestInterface $request
      *
@@ -134,7 +136,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         $this->timeTracker->pull();
 
         // Initializing a possible logged-in Backend User
-        /** @var $GLOBALS ['BE_USER'] \TYPO3\CMS\Backend\FrontendBackendUserAuthentication */
+        /* @var $GLOBALS ['BE_USER'] \TYPO3\CMS\Backend\FrontendBackendUserAuthentication */
         $GLOBALS['BE_USER'] = $this->controller->initializeBackendUser();
 
         // Process the ID, type and other parameters.
@@ -344,7 +346,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
      * Returns the priority - how eager the handler is to actually handle the
      * request.
      *
-     * @return int The priority of the request handler.
+     * @return int The priority of the request handler
      */
     public function getPriority():int
     {
@@ -353,7 +355,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
 
     /**
      * Initializes output compression when enabled, could be split up and put into Bootstrap
-     * at a later point
+     * at a later point.
      */
     protected function initializeOutputCompression()
     {
@@ -366,24 +368,20 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
     }
 
     /**
-     * Timetracking started depending if a Backend User is logged in
-     *
-     * @return void
+     * Timetracking started depending if a Backend User is logged in.
      */
     protected function initializeTimeTracker()
     {
         $configuredCookieName = trim($GLOBALS['TYPO3_CONF_VARS']['BE']['cookieName']) ?: 'be_typo_user';
 
-        /** @var TimeTracker timeTracker */
+        /* @var TimeTracker timeTracker */
         $this->timeTracker = GeneralUtility::makeInstance(TimeTracker::class,
             ($this->request->getCookieParams()[$configuredCookieName] ? true : false));
         $this->timeTracker->start();
     }
 
     /**
-     * Creates an instance of TSFE and sets it as a global variable
-     *
-     * @return void
+     * Creates an instance of TSFE and sets it as a global variable.
      */
     protected function initializeController()
     {
@@ -409,9 +407,9 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
     /**
      * @param ServerRequestInterface $request
      *
-     * @return ResponseInterface
-     *
      * @throws \Exception
+     *
+     * @return ResponseInterface
      */
     protected function handleSymfonyRequest(ServerRequestInterface $request)
     {
@@ -429,7 +427,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
 
         // yes, we must use the global declared kernel here, because the request handler is
         // initialized from the Bootstrap with no control of the constructor..
-        /** @var KernelInterface $kernel */
+        /* @var KernelInterface $kernel */
         global $kernel;
 
         $response = null;
@@ -482,6 +480,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
 
     /**
      * Fixes the request object, because its properties are not properly initialized as arrays.
+     *
      * @deprecated and should be removed when https://forge.typo3.org/issues/77989 is fixed
      *
      * @param ServerRequest $request

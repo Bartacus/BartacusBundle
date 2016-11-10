@@ -19,6 +19,9 @@ information about the service container see the
 
 
 .. code-block:: php
+    <?php
+
+    declare(strict_types=1);
 
     namespace AppBundle\TypoScript;
 

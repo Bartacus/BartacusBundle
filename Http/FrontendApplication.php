@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of the BartacusBundle.
@@ -14,8 +14,10 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with the BartacusBundle.  If not, see <http://www.gnu.org/licenses/>.
+ * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
+
+declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Http;
 
@@ -29,7 +31,7 @@ use TYPO3\CMS\Core\Http\ServerRequestFactory;
 use TYPO3\CMS\Frontend\Http\EidRequestHandler;
 
 /**
- * Entry point for the TYPO3 Frontend
+ * Entry point for the TYPO3 Frontend.
  */
 class FrontendApplication implements ApplicationInterface
 {
@@ -40,14 +42,14 @@ class FrontendApplication implements ApplicationInterface
 
     /**
      * Number of subdirectories where the entry script is located, relative to PATH_site
-     * Usually this is equal to PATH_site = 0
+     * Usually this is equal to PATH_site = 0.
      *
      * @var int
      */
     protected $entryPointLevel = 0;
 
     /**
-     * All available request handlers that can deal with a Frontend Request
+     * All available request handlers that can deal with a Frontend Request.
      *
      * @var array
      */
@@ -72,7 +74,7 @@ class FrontendApplication implements ApplicationInterface
     protected static $response;
 
     /**
-     * Constructor setting up legacy constant and register available Request Handlers
+     * Constructor setting up legacy constant and register available Request Handlers.
      *
      * @param ClassLoader         $classLoader an instance of the class loader
      * @param TerminableInterface $kernel      The terminable Symfony http kernel
@@ -101,7 +103,7 @@ class FrontendApplication implements ApplicationInterface
     }
 
     /**
-     * Starting point
+     * Starting point.
      *
      * @param callable $execute
      */
@@ -138,7 +140,7 @@ class FrontendApplication implements ApplicationInterface
     }
 
     /**
-     * Define constants and variables
+     * Define constants and variables.
      */
     protected function defineLegacyConstants()
     {
