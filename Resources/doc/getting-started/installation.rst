@@ -7,7 +7,7 @@ Requirements
 
 * PHP 7
 * Symfony 3
-* TYPO3 8.3 in `Composer mode`_
+* TYPO3 8.4 in `Composer mode`_
 
 New TYPO3 project
 =================

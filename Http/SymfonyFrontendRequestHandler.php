@@ -40,7 +40,6 @@ use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\FrontendEditing\FrontendEditingController;
 use TYPO3\CMS\Core\Http\RequestHandlerInterface;
 use TYPO3\CMS\Core\Http\Response;
-use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Stream;
 use TYPO3\CMS\Core\TimeTracker\TimeTracker;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -63,26 +62,36 @@ use TYPO3\CMS\Frontend\View\AdminPanelView;
 class SymfonyFrontendRequestHandler implements RequestHandlerInterface
 {
     /**
+     * Instance of the current TYPO3 bootstrap.
+     *
      * @var Bootstrap
      */
     protected $bootstrap;
 
     /**
+     * Instance of the timetracker.
+     *
      * @var TimeTracker
      */
     protected $timeTracker;
 
     /**
+     * Instance of the TSFE object.
+     *
      * @var TypoScriptFrontendController
      */
     protected $controller;
 
     /**
+     * The request handed over.
+     *
      * @var ServerRequestInterface
      */
     protected $request;
 
     /**
+     * Constructor handing over the bootstrap and the original request.
+     *
      * @param Bootstrap $bootstrap
      */
     public function __construct(Bootstrap $bootstrap)
@@ -337,7 +346,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
      *
      * @return bool If the request is not an eID request, TRUE otherwise FALSE
      */
-    public function canHandleRequest(ServerRequestInterface $request):bool
+    public function canHandleRequest(ServerRequestInterface $request): bool
     {
         return $request->getQueryParams()['eID'] || $request->getParsedBody()['eID'] ? false : true;
     }
@@ -348,7 +357,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
      *
      * @return int The priority of the request handler
      */
-    public function getPriority():int
+    public function getPriority(): int
     {
         return 50;
     }
@@ -415,10 +424,6 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
     {
         $this->timeTracker->push('Symfony request handling', '');
 
-        if ($request instanceof ServerRequest) {
-            $this->fixRequest($request);
-        }
-
         $httpFoundationFactory = new HttpFoundationFactory();
         $symfonyRequest = $httpFoundationFactory->createRequest($request);
 
@@ -476,41 +481,5 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         $this->timeTracker->pull();
 
         return $response;
-    }
-
-    /**
-     * Fixes the request object, because its properties are not properly initialized as arrays.
-     *
-     * @deprecated and should be removed when https://forge.typo3.org/issues/77989 is fixed
-     *
-     * @param ServerRequest $request
-     */
-    private function fixRequest(ServerRequest $request)
-    {
-        $refObj = new \ReflectionObject($request);
-
-        $refQueryParams = $refObj->getProperty('queryParams');
-        $refQueryParams->setAccessible(true);
-
-        $queryParams = $refQueryParams->getValue($request);
-        if (null === $queryParams) {
-            $refQueryParams->setValue($request, []);
-        }
-
-        $refCookieParams = $refObj->getProperty('cookieParams');
-        $refCookieParams->setAccessible(true);
-
-        $cookies = $refCookieParams->getValue($request);
-        if (null === $cookies) {
-            $refCookieParams->setValue($request, []);
-        }
-
-        $refAttributes = $refObj->getProperty('attributes');
-        $refAttributes->setAccessible(true);
-
-        $attributes = $refAttributes->getValue($request);
-        if (null === $attributes) {
-            $refAttributes->setValue($request, []);
-        }
     }
 }

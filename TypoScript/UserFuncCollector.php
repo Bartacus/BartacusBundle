@@ -43,7 +43,6 @@ class UserFuncCollector
     /**
      * @param string $className
      * @param object $instance
-     * @param array  $methods
      */
     public function addUserFunc(string $className, $instance)
     {

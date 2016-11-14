@@ -16,7 +16,7 @@
     ],
     "require": {
         "php": "7.0.*",
-        "typo3/cms": "8.3.*",
+        "typo3/cms": "8.4.*",
         "symfony/symfony": "^3.0",
         "symfony/psr-http-message-bridge": "^1.0",
         "jms/di-extra-bundle": "^1.8",
