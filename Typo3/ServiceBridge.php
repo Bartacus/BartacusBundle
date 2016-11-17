@@ -23,6 +23,7 @@ namespace Bartacus\Bundle\BartacusBundle\Typo3;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
@@ -61,7 +62,10 @@ class ServiceBridge
      */
     public function getContentObjectRenderer(): ContentObjectRenderer
     {
-        return $this->getGlobal('TSFE')->cObj;
+        /** @var TypoScriptFrontendController $frontendController */
+        $frontendController = $this->getGlobal('TSFE');
+
+        return $frontendController->cObj;
     }
 
     /**
@@ -69,6 +73,9 @@ class ServiceBridge
      */
     public function getPageRepository(): PageRepository
     {
-        return $this->getGlobal('TSFE')->sys_page;
+        /** @var TypoScriptFrontendController $frontendController */
+        $frontendController = $this->getGlobal('TSFE');
+
+        return $frontendController->sys_page;
     }
 }
