@@ -46,7 +46,6 @@ class BartacusExtension extends Extension implements PrependExtensionInterface
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('bartacus.paths.vendor_dir', $config['paths']['vendor_dir']);
         $container->setParameter('bartacus.paths.web_dir', $config['paths']['web_dir']);
     }
 
