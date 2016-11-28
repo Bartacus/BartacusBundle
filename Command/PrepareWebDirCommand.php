@@ -25,7 +25,6 @@ use JMS\DiExtraBundle\Annotation as DI;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -34,11 +33,6 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class PrepareWebDirCommand extends Command
 {
-    /**
-     * @var string
-     */
-    private $vendorDir;
-
     /**
      * @var string
      */
@@ -51,14 +45,12 @@ class PrepareWebDirCommand extends Command
 
     /**
      * @DI\InjectParams(params={
-     *      "vendorDir" = @DI\Inject("%bartacus.paths.vendor_dir%"),
      *      "webDir" = @DI\Inject("%bartacus.paths.web_dir%"),
      *      "filesystem" = @DI\Inject("filesystem"),
      * })
      */
-    public function __construct(string $vendorDir, string $webDir, Filesystem $filesystem)
+    public function __construct(string $webDir, Filesystem $filesystem)
     {
-        $this->vendorDir = rtrim(realpath($vendorDir), DIRECTORY_SEPARATOR);
         $this->webDir = rtrim(realpath($webDir), DIRECTORY_SEPARATOR);
         $this->filesystem = $filesystem;
 
@@ -75,20 +67,22 @@ class PrepareWebDirCommand extends Command
 
     public function run(InputInterface $input, OutputInterface $output)
     {
-        $target = $this->webDir.'/typo3/sysext';
-        $source = $this->filesystem->makePathRelative(
-            $this->vendorDir.'/typo3/cms/typo3/sysext',
-            $this->webDir.'/typo3/'
+        $this->filesystem->copy(
+            __DIR__.'/../Resources/scripts/index.php',
+            $this->webDir.'/index.php',
+            true
         );
 
-        try {
-            $this->filesystem->symlink($source, $target);
+        $this->filesystem->copy(
+            __DIR__.'/../Resources/scripts/cli.php',
+            $this->webDir.'/typo3/sysext/backend/Resources/Private/Php/cli.php',
+            true
+        );
 
-            return;
-        } catch (IOException $e) {
-            // on error we give it a second try with copy on windows below
-        }
-
-        $this->filesystem->symlink($source, $target, true);
+        $this->filesystem->copy(
+            __DIR__.'/../Resources/scripts/backend.php',
+            $this->webDir.'/typo3/sysext/backend/Resources/Private/Php/backend.php',
+            true
+        );
     }
 }

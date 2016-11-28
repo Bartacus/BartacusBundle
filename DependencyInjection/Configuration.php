@@ -36,7 +36,6 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('paths')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('vendor_dir')->defaultValue('%kernel.root_dir%/../vendor')->end()
                         ->scalarNode('web_dir')->defaultValue('%kernel.root_dir%/../web')->end()
                     ->end()
                 ->end() // paths
