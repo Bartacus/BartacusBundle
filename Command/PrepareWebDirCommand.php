@@ -84,5 +84,11 @@ class PrepareWebDirCommand extends Command
             $this->webDir.'/typo3/sysext/backend/Resources/Private/Php/backend.php',
             true
         );
+
+        $this->filesystem->copy(
+            __DIR__.'/../Resources/scripts/Install.php',
+            $this->webDir.'/typo3/sysext/install/Start/Install.php',
+            true
+        );
     }
 }
