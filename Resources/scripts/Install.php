@@ -17,7 +17,7 @@
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use TYPO3\CMS\Install\Http\Application;
 
@@ -27,4 +27,3 @@ list($loader, $kernel) = require $bartacusScripts.'/kernel.php';
 $application = new Application($loader);
 require $bartacusScripts.'/package.php';
 $application->run();
-
