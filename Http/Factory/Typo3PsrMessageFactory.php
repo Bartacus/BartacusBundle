@@ -48,7 +48,7 @@ class Typo3PsrMessageFactory implements HttpMessageFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createResponse(Response $symfonyResponse):ResponseInterface
+    public function createResponse(Response $symfonyResponse): ResponseInterface
     {
         if ($symfonyResponse instanceof BinaryFileResponse) {
             $stream = new Typo3Stream($symfonyResponse->getFile()->getPathname(), 'r');
