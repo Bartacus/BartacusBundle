@@ -27,6 +27,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -35,6 +36,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use TYPO3\CMS\Backend\FrontendBackendUserAuthentication;
 use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\FrontendEditing\FrontendEditingController;
@@ -90,6 +92,11 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
     protected $request;
 
     /**
+     * @var KernelInterface
+     */
+    private $kernel;
+
+    /**
      * Constructor handing over the bootstrap and the original request.
      *
      * @param Bootstrap $bootstrap
@@ -110,6 +117,13 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
     {
         $response = null;
         $this->request = $request;
+
+        // yes, we must use the global declared kernel here, because the request handler is
+        // initialized from the Bootstrap with no control of the constructor..
+        /* @var KernelInterface $kernel */
+        global $kernel;
+        $this->kernel = $kernel;
+
         $this->initializeTimeTracker();
 
         // Hook to preprocess the current request:
@@ -162,7 +176,22 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         } else {
             $this->bootstrap->loadCachedTca();
         }
-        $this->controller->checkAlternativeIdMethods();
+
+        $httpFoundationFactory = new HttpFoundationFactory();
+        $symfonyRequest = $httpFoundationFactory->createRequest($request);
+
+        try {
+            $handleWithRealUrl = false;
+
+            $router = $this->kernel->getContainer()->get('router');
+            $router->matchRequest($symfonyRequest);
+        } catch (ResourceNotFoundException $e) {
+            $handleWithRealUrl = true;
+        }
+
+        if ($handleWithRealUrl) {
+            $this->controller->checkAlternativeIdMethods();
+        }
         $this->controller->clear_preview();
         $this->controller->determineId();
 
@@ -177,7 +206,9 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
             unset($GLOBALS['BE_USER']);
             $this->controller->beUserLogin = false;
             // Re-evaluate the page-id.
-            $this->controller->checkAlternativeIdMethods();
+            if ($handleWithRealUrl) {
+                $this->controller->checkAlternativeIdMethods();
+            }
             $this->controller->clear_preview();
             $this->controller->determineId();
         }
@@ -213,7 +244,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         $this->controller->settingLocale();
         $this->timeTracker->pull();
 
-        $response = $this->handleSymfonyRequest($request);
+        $response = $this->handleSymfonyRequest($symfonyRequest);
 
         $modifyContent = true;
         if ($response) {
@@ -414,18 +445,15 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
+     * @param Request $request
      *
      * @throws \Exception
      *
      * @return ResponseInterface
      */
-    protected function handleSymfonyRequest(ServerRequestInterface $request)
+    protected function handleSymfonyRequest(Request $symfonyRequest)
     {
         $this->timeTracker->push('Symfony request handling', '');
-
-        $httpFoundationFactory = new HttpFoundationFactory();
-        $symfonyRequest = $httpFoundationFactory->createRequest($request);
 
         // set the locale from TypoScript, effectively killing _locale from router :/
         $symfonyRequest->attributes->set('_locale', $this->controller->sys_language_isocode);
