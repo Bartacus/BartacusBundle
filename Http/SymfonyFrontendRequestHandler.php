@@ -25,6 +25,7 @@ use Bartacus\Bundle\BartacusBundle\Http\Factory\Typo3PsrMessageFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,6 +38,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\RequestContext;
 use TYPO3\CMS\Backend\FrontendBackendUserAuthentication;
 use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\FrontendEditing\FrontendEditingController;
@@ -183,6 +185,11 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         try {
             $handleWithRealUrl = false;
 
+            /** @var RequestContext $routerRequestContext */
+            $routerRequestContext = $this->kernel->getContainer()->get('router.request_context');
+            $routerRequestContext->fromRequest($symfonyRequest);
+
+            /** @var Router $router */
             $router = $this->kernel->getContainer()->get('router');
             $router->matchRequest($symfonyRequest);
         } catch (ResourceNotFoundException $e) {
