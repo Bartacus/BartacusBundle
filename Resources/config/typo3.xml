@@ -29,7 +29,7 @@
             <argument>BE_USER</argument>
         </service>
 
-        <service id="typo3.frontend_user" class="TYPO3\CMS\Core\Authentication\FrontendUserAuthentication">
+        <service id="typo3.frontend_user" class="TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication">
             <factory service="typo3" method="getGlobal" />
             <argument>FE_USER</argument>
         </service>
