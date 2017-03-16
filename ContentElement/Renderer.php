@@ -25,6 +25,7 @@ use JMS\DiExtraBundle\Annotation as DI;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -75,21 +76,28 @@ class Renderer
     public $cObj;
 
     /**
+     * @var ArgumentResolverInterface
+     */
+    private $argumentResolver;
+
+    /**
      * @DI\InjectParams(params={
      *      "requestStack" = @DI\Inject("request_stack"),
      *      "kernel" = @DI\Inject("http_kernel"),
      *      "routerListener" = @DI\Inject("router_listener"),
      *      "resolver" = @DI\Inject("controller_resolver"),
      *      "frontendController" = @DI\Inject("typo3.frontend_controller"),
+     *      "argumentResolver" = @DI\Inject("argument_resolver"),
      * })
      */
-    public function __construct(RequestStack $requestStack, HttpKernel $kernel, RouterListener $routerListener, ControllerResolverInterface $resolver, TypoScriptFrontendController $frontendController)
+    public function __construct(RequestStack $requestStack, HttpKernel $kernel, RouterListener $routerListener, ControllerResolverInterface $resolver, TypoScriptFrontendController $frontendController, ArgumentResolverInterface $argumentResolver)
     {
         $this->requestStack = $requestStack;
         $this->kernel = $kernel;
         $this->routerListener = $routerListener;
         $this->resolver = $resolver;
         $this->frontendController = $frontendController;
+        $this->argumentResolver = $argumentResolver;
     }
 
     /**
@@ -126,8 +134,9 @@ class Renderer
         }
 
         // controller arguments
-        $arguments = $this->resolver->getArguments($request, $controller);
+        $arguments = $this->argumentResolver->getArguments($request, $controller);
 
+        $response = null;
         try {
             // call controller
             $response = call_user_func_array($controller, $arguments);
