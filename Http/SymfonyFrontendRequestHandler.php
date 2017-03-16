@@ -17,7 +17,7 @@
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Bartacus\Bundle\BartacusBundle\Http;
 
@@ -116,7 +116,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
      *
      * @return null|ResponseInterface
      */
-    public function handleRequest(ServerRequestInterface $request): ?ResponseInterface
+    public function handleRequest(ServerRequestInterface $request): ? ResponseInterface
     {
         $response = null;
         $this->request = $request;
@@ -156,6 +156,8 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         $this->bootstrap->endOutputBufferingAndCleanPreviousOutput();
         $this->initializeOutputCompression();
 
+        $this->bootstrap->loadBaseTca();
+
         // Initializing the Frontend User
         $this->timeTracker->push('Front End user initialized', '');
         $this->controller->initFEuser();
@@ -174,10 +176,8 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
             $GLOBALS['BE_USER']->initializeAdminPanel();
             $this->bootstrap
                 ->initializeBackendRouter()
-                ->loadExtensionTables()
+                ->loadExtTables()
             ;
-        } else {
-            $this->bootstrap->loadCachedTca();
         }
 
         $httpFoundationFactory = new HttpFoundationFactory();
@@ -267,6 +267,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
             $this->controller->initializeRedirectUrlHandlers();
 
             $this->controller->handleDataSubmission();
+
             // Check for shortcut page and redirect
             $this->controller->checkPageForShortcutRedirect();
             $this->controller->checkPageForMountpointRedirect();
@@ -424,9 +425,11 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
     {
         $configuredCookieName = trim($GLOBALS['TYPO3_CONF_VARS']['BE']['cookieName']) ?: 'be_typo_user';
 
-        /* @var TimeTracker timeTracker */
-        $this->timeTracker = GeneralUtility::makeInstance(TimeTracker::class,
-            ($this->request->getCookieParams()[$configuredCookieName] ? true : false));
+        /** @var TimeTracker timeTracker */
+        $this->timeTracker = GeneralUtility::makeInstance(
+            TimeTracker::class,
+            ($this->request->getCookieParams()[$configuredCookieName] ? true : false)
+        );
         $this->timeTracker->start();
     }
 
@@ -457,7 +460,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
     /**
      * @throws \Exception
      */
-    protected function handleSymfonyRequest(Request $symfonyRequest): ?ResponseInterface
+    protected function handleSymfonyRequest(Request $symfonyRequest): ? ResponseInterface
     {
         $this->timeTracker->push('Symfony request handling', '');
 
