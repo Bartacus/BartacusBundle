@@ -27,7 +27,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class TypoScriptUserFuncPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (!$container->has('bartacus.typoscript.user_func_collector')) {
             return;

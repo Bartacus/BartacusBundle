@@ -107,7 +107,7 @@ class FrontendApplication implements ApplicationInterface
      *
      * @param callable $execute
      */
-    public function run(callable $execute = null)
+    public function run(callable $execute = null): void
     {
         $this->bootstrap->handleRequest(ServerRequestFactory::fromGlobals());
 
@@ -133,7 +133,7 @@ class FrontendApplication implements ApplicationInterface
      * @param Request  $request
      * @param Response $response
      */
-    public static function setRequestResponseForTermination(Request $request, Response $response)
+    public static function setRequestResponseForTermination(Request $request, Response $response): void
     {
         self::$request = $request;
         self::$response = $response;

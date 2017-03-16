@@ -51,7 +51,7 @@ class ContentObjectListener
     /**
      * @DI\Observe(KernelEvents::REQUEST, priority=8)
      */
-    public function onKernelRequest()
+    public function onKernelRequest(): void
     {
         if (!$this->frontendController->cObj instanceof ContentObjectRenderer) {
             $this->frontendController->newCObj();

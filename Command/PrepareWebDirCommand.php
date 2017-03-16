@@ -57,7 +57,7 @@ class PrepareWebDirCommand extends Command
         parent::__construct();
     }
 
-    public function configure()
+    public function configure(): void
     {
         $this
             ->setName('bartacus:web-dir:prepare')
@@ -65,7 +65,7 @@ class PrepareWebDirCommand extends Command
         ;
     }
 
-    public function run(InputInterface $input, OutputInterface $output)
+    public function run(InputInterface $input, OutputInterface $output): void
     {
         $this->filesystem->copy(
             __DIR__.'/../Resources/scripts/index.php',

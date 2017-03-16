@@ -44,7 +44,7 @@ class UserFuncCollector
      * @param string $className
      * @param object $instance
      */
-    public function addUserFunc(string $className, $instance)
+    public function addUserFunc(string $className, $instance): void
     {
         $this->userFuncs[$className] = $instance;
     }
@@ -52,7 +52,7 @@ class UserFuncCollector
     /**
      * Loads all registered instances into the {@see GeneralUtility::makeInstance()} singleton cache.
      */
-    public function loadUserFuncs()
+    public function loadUserFuncs(): void
     {
         $refl = new \ReflectionClass(GeneralUtility::class);
         $reflProp = $refl->getProperty('singletonInstances');

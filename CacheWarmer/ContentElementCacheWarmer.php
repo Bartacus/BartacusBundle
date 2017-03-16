@@ -49,7 +49,7 @@ class ContentElementCacheWarmer implements CacheWarmerInterface
      *
      * @param string $cacheDir The cache directory
      */
-    public function warmUp($cacheDir)
+    public function warmUp($cacheDir): void
     {
         if ($this->configLoader instanceof WarmableInterface) {
             $this->configLoader->warmUp($cacheDir);
@@ -61,7 +61,7 @@ class ContentElementCacheWarmer implements CacheWarmerInterface
      *
      * @return bool always true
      */
-    public function isOptional()
+    public function isOptional(): bool
     {
         return true;
     }

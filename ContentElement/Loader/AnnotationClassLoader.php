@@ -115,7 +115,7 @@ class AnnotationClassLoader implements LoaderInterface
     {
     }
 
-    protected function addRenderDefinition(RenderDefinitionCollection $collection, ContentElement $annot, \ReflectionClass $class, \ReflectionMethod $method)
+    protected function addRenderDefinition(RenderDefinitionCollection $collection, ContentElement $annot, \ReflectionClass $class, \ReflectionMethod $method): void
     {
         $name = $annot->getName();
         if (null === $name) {

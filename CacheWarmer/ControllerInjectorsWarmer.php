@@ -42,7 +42,7 @@ class ControllerInjectorsWarmer implements CacheWarmerInterface
         $this->blackListedControllerFiles = $blackListedControllerFiles;
     }
 
-    public function warmUp($cacheDir)
+    public function warmUp($cacheDir): void
     {
         // This avoids class-being-declared twice errors when the cache:clear
         // command is called. The controllers are not pre-generated in that case.
@@ -60,12 +60,12 @@ class ControllerInjectorsWarmer implements CacheWarmerInterface
         }
     }
 
-    public function isOptional()
+    public function isOptional(): bool
     {
         return false;
     }
 
-    private function findControllerClasses()
+    private function findControllerClasses(): array
     {
         $dirs = [];
         foreach ($this->kernel->getBundles() as $bundle) {
@@ -86,7 +86,7 @@ class ControllerInjectorsWarmer implements CacheWarmerInterface
         // It is not so important if these controllers never can be reached with
         // the current configuration nor whether they are actually controllers.
         // Important is only that we do not miss any classes.
-        return array_filter(get_declared_classes(), function ($name) {
+        return array_filter(get_declared_classes(), function (string $name) {
             return preg_match('/(?<!TYPO3\\\CMS\\\Frontend\\\)Controller\\\(.+)Controller$/', $name) > 0;
         });
     }

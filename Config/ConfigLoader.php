@@ -49,7 +49,7 @@ class ConfigLoader
         $this->contentElement = $contentElement;
     }
 
-    public function loadFromAdditionalConfiguration()
+    public function loadFromAdditionalConfiguration(): void
     {
         $this->contentElement->load();
     }

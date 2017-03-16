@@ -39,9 +39,6 @@ final class ContentElement
      */
     private $cached = true;
 
-    /**
-     * @param array $options
-     */
     public function __construct(array $options = [])
     {
         if (isset($options['value'])) {
@@ -53,17 +50,11 @@ final class ContentElement
         }
     }
 
-    /**
-     * @return string|null
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @return bool
-     */
     public function isCached(): bool
     {
         return $this->cached;

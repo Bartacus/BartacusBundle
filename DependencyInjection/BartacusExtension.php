@@ -33,7 +33,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class BartacusExtension extends Extension implements PrependExtensionInterface
 {
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new XmlFileLoader(
             $container,
@@ -49,7 +49,7 @@ class BartacusExtension extends Extension implements PrependExtensionInterface
         $container->setParameter('bartacus.paths.web_dir', $config['paths']['web_dir']);
     }
 
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         $bundles = $container->getParameter('kernel.bundles');
         if (!isset($bundles['JMSDiExtraBundle'])) {
