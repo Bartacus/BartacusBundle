@@ -198,6 +198,8 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
 
         if ($handleWithRealUrl) {
             $this->controller->checkAlternativeIdMethods();
+            $request = ServerRequestFactory::fromGlobals();
+            $symfonyRequest = $httpFoundationFactory->createRequest($request);
         }
         $this->controller->clear_preview();
         $this->controller->determineId();
