@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- * This file is part of the BartacusBundle.
+ * This file is part of the Bartacus project, which integrates Symfony into TYPO3.
+ *
+ * Copyright (c) 2016-2017 Patrik Karisch
  *
  * The BartacusBundle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +20,6 @@
  * You should have received a copy of the GNU General Public License
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
-
-declare(strict_types=1);
 
 use Symfony\Component\Debug\Debug;
 

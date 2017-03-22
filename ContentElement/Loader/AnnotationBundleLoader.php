@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- * This file is part of the BartacusBundle.
+ * This file is part of the Bartacus project, which integrates Symfony into TYPO3.
+ *
+ * Copyright (c) 2016-2017 Patrik Karisch
  *
  * The BartacusBundle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +21,6 @@
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-declare(strict_types=1);
-
 namespace Bartacus\Bundle\BartacusBundle\ContentElement\Loader;
 
 use Bartacus\Bundle\BartacusBundle\ContentElement\RenderDefinitionCollection;
@@ -26,7 +28,6 @@ use JMS\DiExtraBundle\Annotation as DI;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\Config\Loader\FileLoader;
 use Symfony\Component\Config\Resource\DirectoryResource;
-use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * @DI\Service("bartacus.content_element.loader")
