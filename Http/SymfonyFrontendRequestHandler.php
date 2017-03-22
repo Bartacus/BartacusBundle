@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- * This file is part of the BartacusBundle.
+ * This file is part of the Bartacus project, which integrates Symfony into TYPO3.
+ *
+ * Copyright (c) 2016-2017 Patrik Karisch
  *
  * The BartacusBundle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +20,6 @@
  * You should have received a copy of the GNU General Public License
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
-
-declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Http;
 
@@ -116,7 +118,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
      *
      * @return null|ResponseInterface
      */
-    public function handleRequest(ServerRequestInterface $request)
+    public function handleRequest(ServerRequestInterface $request): ? ResponseInterface
     {
         $response = null;
         $this->request = $request;
@@ -156,6 +158,8 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         $this->bootstrap->endOutputBufferingAndCleanPreviousOutput();
         $this->initializeOutputCompression();
 
+        $this->bootstrap->loadBaseTca();
+
         // Initializing the Frontend User
         $this->timeTracker->push('Front End user initialized', '');
         $this->controller->initFEuser();
@@ -174,10 +178,8 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
             $GLOBALS['BE_USER']->initializeAdminPanel();
             $this->bootstrap
                 ->initializeBackendRouter()
-                ->loadExtensionTables()
+                ->loadExtTables()
             ;
-        } else {
-            $this->bootstrap->loadCachedTca();
         }
 
         $httpFoundationFactory = new HttpFoundationFactory();
@@ -267,6 +269,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
             $this->controller->initializeRedirectUrlHandlers();
 
             $this->controller->handleDataSubmission();
+
             // Check for shortcut page and redirect
             $this->controller->checkPageForShortcutRedirect();
             $this->controller->checkPageForMountpointRedirect();
@@ -407,7 +410,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
      * Initializes output compression when enabled, could be split up and put into Bootstrap
      * at a later point.
      */
-    protected function initializeOutputCompression()
+    protected function initializeOutputCompression(): void
     {
         if ($GLOBALS['TYPO3_CONF_VARS']['FE']['compressionLevel'] && extension_loaded('zlib')) {
             if (MathUtility::canBeInterpretedAsInteger($GLOBALS['TYPO3_CONF_VARS']['FE']['compressionLevel'])) {
@@ -420,20 +423,22 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
     /**
      * Timetracking started depending if a Backend User is logged in.
      */
-    protected function initializeTimeTracker()
+    protected function initializeTimeTracker(): void
     {
         $configuredCookieName = trim($GLOBALS['TYPO3_CONF_VARS']['BE']['cookieName']) ?: 'be_typo_user';
 
         /* @var TimeTracker timeTracker */
-        $this->timeTracker = GeneralUtility::makeInstance(TimeTracker::class,
-            ($this->request->getCookieParams()[$configuredCookieName] ? true : false));
+        $this->timeTracker = GeneralUtility::makeInstance(
+            TimeTracker::class,
+            ($this->request->getCookieParams()[$configuredCookieName] ? true : false)
+        );
         $this->timeTracker->start();
     }
 
     /**
      * Creates an instance of TSFE and sets it as a global variable.
      */
-    protected function initializeController()
+    protected function initializeController(): void
     {
         $this->controller = GeneralUtility::makeInstance(
             TypoScriptFrontendController::class,
@@ -455,13 +460,9 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
     }
 
     /**
-     * @param Request $request
-     *
      * @throws \Exception
-     *
-     * @return ResponseInterface
      */
-    protected function handleSymfonyRequest(Request $symfonyRequest)
+    protected function handleSymfonyRequest(Request $symfonyRequest): ? ResponseInterface
     {
         $this->timeTracker->push('Symfony request handling', '');
 

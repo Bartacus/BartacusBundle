@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- * This file is part of the BartacusBundle.
+ * This file is part of the Bartacus project, which integrates Symfony into TYPO3.
+ *
+ * Copyright (c) 2016-2017 Patrik Karisch
  *
  * The BartacusBundle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +20,6 @@
  * You should have received a copy of the GNU General Public License
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
-
-declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\CacheWarmer;
 
@@ -42,7 +44,7 @@ class ControllerInjectorsWarmer implements CacheWarmerInterface
         $this->blackListedControllerFiles = $blackListedControllerFiles;
     }
 
-    public function warmUp($cacheDir)
+    public function warmUp($cacheDir): void
     {
         // This avoids class-being-declared twice errors when the cache:clear
         // command is called. The controllers are not pre-generated in that case.
@@ -60,12 +62,12 @@ class ControllerInjectorsWarmer implements CacheWarmerInterface
         }
     }
 
-    public function isOptional()
+    public function isOptional(): bool
     {
         return false;
     }
 
-    private function findControllerClasses()
+    private function findControllerClasses(): array
     {
         $dirs = [];
         foreach ($this->kernel->getBundles() as $bundle) {
@@ -86,7 +88,7 @@ class ControllerInjectorsWarmer implements CacheWarmerInterface
         // It is not so important if these controllers never can be reached with
         // the current configuration nor whether they are actually controllers.
         // Important is only that we do not miss any classes.
-        return array_filter(get_declared_classes(), function ($name) {
+        return array_filter(get_declared_classes(), function (string $name) {
             return preg_match('/(?<!TYPO3\\\CMS\\\Frontend\\\)Controller\\\(.+)Controller$/', $name) > 0;
         });
     }

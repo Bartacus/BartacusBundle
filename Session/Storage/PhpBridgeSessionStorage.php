@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- * This file is part of the BartacusBundle.
+ * This file is part of the Bartacus project, which integrates Symfony into TYPO3.
+ *
+ * Copyright (c) 2016-2017 Patrik Karisch
  *
  * The BartacusBundle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +21,6 @@
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-declare(strict_types=1);
-
 namespace Bartacus\Bundle\BartacusBundle\Session\Storage;
 
 use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
@@ -31,7 +33,7 @@ class PhpBridgeSessionStorage extends NativeSessionStorage
     /**
      * {@inheritdoc}
      */
-    public function start()
+    public function start(): bool
     {
         if ($this->started) {
             return true;
@@ -59,7 +61,7 @@ class PhpBridgeSessionStorage extends NativeSessionStorage
     /**
      * {@inheritdoc}
      */
-    public function clear()
+    public function clear(): void
     {
         // clear out the bags and nothing else that may be set
         // since the purpose of this driver is to share a handler

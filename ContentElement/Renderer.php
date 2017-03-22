@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- * This file is part of the BartacusBundle.
+ * This file is part of the Bartacus project, which integrates Symfony into TYPO3.
+ *
+ * Copyright (c) 2016-2017 Patrik Karisch
  *
  * The BartacusBundle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,14 +21,13 @@
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-declare(strict_types=1);
-
 namespace Bartacus\Bundle\BartacusBundle\ContentElement;
 
 use JMS\DiExtraBundle\Annotation as DI;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -75,21 +78,28 @@ class Renderer
     public $cObj;
 
     /**
+     * @var ArgumentResolverInterface
+     */
+    private $argumentResolver;
+
+    /**
      * @DI\InjectParams(params={
      *      "requestStack" = @DI\Inject("request_stack"),
      *      "kernel" = @DI\Inject("http_kernel"),
      *      "routerListener" = @DI\Inject("router_listener"),
      *      "resolver" = @DI\Inject("controller_resolver"),
      *      "frontendController" = @DI\Inject("typo3.frontend_controller"),
+     *      "argumentResolver" = @DI\Inject("argument_resolver"),
      * })
      */
-    public function __construct(RequestStack $requestStack, HttpKernel $kernel, RouterListener $routerListener, ControllerResolverInterface $resolver, TypoScriptFrontendController $frontendController)
+    public function __construct(RequestStack $requestStack, HttpKernel $kernel, RouterListener $routerListener, ControllerResolverInterface $resolver, TypoScriptFrontendController $frontendController, ArgumentResolverInterface $argumentResolver)
     {
         $this->requestStack = $requestStack;
         $this->kernel = $kernel;
         $this->routerListener = $routerListener;
         $this->resolver = $resolver;
         $this->frontendController = $frontendController;
+        $this->argumentResolver = $argumentResolver;
     }
 
     /**
@@ -126,8 +136,9 @@ class Renderer
         }
 
         // controller arguments
-        $arguments = $this->resolver->getArguments($request, $controller);
+        $arguments = $this->argumentResolver->getArguments($request, $controller);
 
+        $response = null;
         try {
             // call controller
             $response = call_user_func_array($controller, $arguments);

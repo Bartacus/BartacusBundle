@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- * This file is part of the BartacusBundle.
+ * This file is part of the Bartacus project, which integrates Symfony into TYPO3.
+ *
+ * Copyright (c) 2016-2017 Patrik Karisch
  *
  * The BartacusBundle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +20,6 @@
  * You should have received a copy of the GNU General Public License
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
-
-declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\ContentElement\Loader;
 
@@ -93,7 +95,7 @@ class AnnotationBundleLoader extends FileLoader
                     continue;
                 }
 
-                $class = $this->findClass($file);
+                $class = $this->findClass((string) $file);
                 if ($class) {
                     $refl = new \ReflectionClass($class);
                     if ($refl->isAbstract()) {
@@ -132,11 +134,11 @@ class AnnotationBundleLoader extends FileLoader
      *
      * @return string|false Full class name if found, false otherwise
      */
-    protected function findClass($file)
+    protected function findClass(string $file)
     {
         $class = false;
         $namespace = false;
-        $tokens = token_get_all(file_get_contents((string) $file));
+        $tokens = token_get_all(file_get_contents($file));
         for ($i = 0; isset($tokens[$i]); ++$i) {
             $token = $tokens[$i];
 

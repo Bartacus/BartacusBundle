@@ -2,13 +2,17 @@ preset: symfony
 
 enabled:
     - combine_consecutive_unsets
+    - declare_strict_types
+    - dir_constant
+    - linebreak_after_opening_tag
+    - no_unreachable_default_argument_value
     - no_useless_else
     - no_useless_return
-    - ordered_use
+    - ordered_imports
     - php_unit_construct
     - php_unit_dedicate_assert
     - php_unit_strict
     - phpdoc_order
     - short_array_syntax
-    - strict
+    - strict_comparison
     - strict_param
