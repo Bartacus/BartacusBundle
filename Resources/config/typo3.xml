@@ -84,5 +84,10 @@
         <service id="typo3.page_repository" class="TYPO3\CMS\Frontend\Page\PageRepository">
             <factory service="typo3" method="getPageRepository" />
         </service>
+
+        <service id="typo3.registry" class="TYPO3\CMS\Core\Registry">
+            <factory service="typo3" method="makeInstance" />
+            <argument>TYPO3\CMS\Core\Registry</argument>
+        </service>
     </services>
 </container>

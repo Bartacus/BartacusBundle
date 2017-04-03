@@ -27,6 +27,8 @@ The ``TYPO3\CMS\Core\Resource\FileRepository`` for the FAL is available as
 The ``TYPO3\CMS\Frontend\Page\CacheHashCalculator`` is available as
 ``typo3.cache_hash_calculator`` service.
 
+The ``TYPO3\CMS\Core\Registry`` is available as ``typo3.registry`` service.
+
 Globals and ``makeInstace``
 ===========================
 
