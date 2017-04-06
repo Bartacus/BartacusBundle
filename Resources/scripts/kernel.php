@@ -23,10 +23,10 @@ declare(strict_types=1);
 
 use Symfony\Component\Debug\Debug;
 
-defined('SYMFONY_ENV') || define('SYMFONY_ENV', getenv('SYMFONY_ENV') ?: 'prod');
-defined('SYMFONY_DEBUG') || define(
+\defined('SYMFONY_ENV') || \define('SYMFONY_ENV', \getenv('SYMFONY_ENV') ?: 'prod');
+\defined('SYMFONY_DEBUG') || \define(
     'SYMFONY_DEBUG',
-    filter_var(getenv('SYMFONY_DEBUG') ?: SYMFONY_ENV === 'dev', FILTER_VALIDATE_BOOLEAN)
+    \filter_var(\getenv('SYMFONY_DEBUG') ?: SYMFONY_ENV === 'dev', FILTER_VALIDATE_BOOLEAN)
 );
 
 /** @var \Composer\Autoload\ClassLoader $loader */

@@ -68,7 +68,7 @@ class ContentElementConfigLoader implements WarmableInterface
 
     /**
      * @DI\InjectParams(params={
-     *      "container" = @DI\Inject("service_container"),
+     *     "container" = @DI\Inject("service_container"),
      *      "bundles" = @DI\Inject("%jms_di_extra.bundles%"),
      *      "cacheDir" = @DI\Inject("%kernel.cache_dir%"),
      *      "debug" = @DI\Inject("%kernel.debug%")
@@ -106,7 +106,7 @@ class ContentElementConfigLoader implements WarmableInterface
         // check option names and live merge, if errors are encountered Exception will be thrown
         $invalid = [];
         foreach ($options as $key => $value) {
-            if (array_key_exists($key, $this->options)) {
+            if (\array_key_exists($key, $this->options)) {
                 $this->options[$key] = $value;
             } else {
                 $invalid[] = $key;
@@ -114,9 +114,9 @@ class ContentElementConfigLoader implements WarmableInterface
         }
 
         if ($invalid) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new \InvalidArgumentException(\sprintf(
                 'The Content Element loader does not support the following options: "%s".',
-                implode('", "', $invalid)
+                \implode('", "', $invalid)
             ));
         }
     }
@@ -131,8 +131,8 @@ class ContentElementConfigLoader implements WarmableInterface
      */
     public function setOption($key, $value)
     {
-        if (!array_key_exists($key, $this->options)) {
-            throw new \InvalidArgumentException(sprintf('The Router does not support the "%s" option.', $key));
+        if (!\array_key_exists($key, $this->options)) {
+            throw new \InvalidArgumentException(\sprintf('The Router does not support the "%s" option.', $key));
         }
 
         $this->options[$key] = $value;
@@ -149,8 +149,8 @@ class ContentElementConfigLoader implements WarmableInterface
      */
     public function getOption($key)
     {
-        if (!array_key_exists($key, $this->options)) {
-            throw new \InvalidArgumentException(sprintf('The Router does not support the "%s" option.', $key));
+        if (!\array_key_exists($key, $this->options)) {
+            throw new \InvalidArgumentException(\sprintf('The Router does not support the "%s" option.', $key));
         }
 
         return $this->options[$key];
@@ -222,7 +222,7 @@ tt_content.key.field = CType
                 $typoScripts[] = $this->renderPluginContent($renderDefinition);
             }
 
-            return $startingConfig.implode("\n\n", $typoScripts);
+            return $startingConfig.\implode("\n\n", $typoScripts);
         }
 
         $cache = $this->getConfigCacheFactory()
@@ -235,13 +235,13 @@ tt_content.key.field = CType
                         $typoScripts[] = $this->renderPluginContent($renderDefinition);
                     }
 
-                    $output = $startingConfig.implode("\n\n", $typoScripts);
+                    $output = $startingConfig.\implode("\n\n", $typoScripts);
                     $cache->write($output, $renderDefinitions->getResources());
                 }
             )
         ;
 
-        return file_get_contents($cache->getPath());
+        return \file_get_contents($cache->getPath());
     }
 
     /**
@@ -272,7 +272,7 @@ tt_content.key.field = CType
         $cached = $renderDefinition->isCached();
         $controller = $renderDefinition->getController();
 
-        $pluginContent = trim('
+        $pluginContent = \trim('
 # Setting '.$pluginSignature.' content element
 tt_content.'.$pluginSignature.' = USER'.($cached ? '' : '_INT').'
 tt_content.'.$pluginSignature.' {

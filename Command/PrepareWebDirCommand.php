@@ -30,7 +30,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
- * @DI\Service()
+ * @DI\Service
  * @DI\Tag("console.command")
  */
 class PrepareWebDirCommand extends Command
@@ -47,13 +47,13 @@ class PrepareWebDirCommand extends Command
 
     /**
      * @DI\InjectParams(params={
-     *      "webDir" = @DI\Inject("%bartacus.paths.web_dir%"),
+     *     "webDir" = @DI\Inject("%bartacus.paths.web_dir%"),
      *      "filesystem" = @DI\Inject("filesystem"),
      * })
      */
     public function __construct(string $webDir, Filesystem $filesystem)
     {
-        $this->webDir = rtrim(realpath($webDir), DIRECTORY_SEPARATOR);
+        $this->webDir = \rtrim(\realpath($webDir), DIRECTORY_SEPARATOR);
         $this->filesystem = $filesystem;
 
         parent::__construct();

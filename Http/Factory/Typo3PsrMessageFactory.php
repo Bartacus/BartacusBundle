@@ -57,14 +57,14 @@ class Typo3PsrMessageFactory implements HttpMessageFactoryInterface
         } else {
             $stream = new Typo3Stream('php://temp', 'rw');
             if ($symfonyResponse instanceof StreamedResponse) {
-                ob_start(function ($buffer) use ($stream) {
+                \ob_start(function ($buffer) use ($stream) {
                     $stream->write($buffer);
 
                     return false;
                 });
 
                 $symfonyResponse->sendContent();
-                ob_end_clean();
+                \ob_end_clean();
             } else {
                 $stream->write($symfonyResponse->getContent());
             }

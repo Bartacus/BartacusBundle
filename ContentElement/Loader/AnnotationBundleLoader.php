@@ -41,13 +41,13 @@ class AnnotationBundleLoader extends FileLoader
 
     /**
      * @DI\InjectParams(params={
-     *      "locator" = @DI\Inject("file_locator"),
-     *      "loader" = @DI\Inject("bartacus.content_element.class_loader")
+     *     "locator" = @DI\Inject("file_locator"),
+     *     "loader" = @DI\Inject("bartacus.content_element.class_loader")
      * })
      */
     public function __construct(FileLocatorInterface $locator, AnnotationClassLoader $loader)
     {
-        if (!function_exists('token_get_all')) {
+        if (!\function_exists('token_get_all')) {
             throw new \RuntimeException('The Tokenizer extension is required for the routing annotation loaders.');
         }
 
@@ -78,20 +78,20 @@ class AnnotationBundleLoader extends FileLoader
             }
 
             $collection->addResource(new DirectoryResource($dir, '/\.php$/'));
-            $files = iterator_to_array(
+            $files = \iterator_to_array(
                 new \RecursiveIteratorIterator(
                     new \RecursiveDirectoryIterator($dir),
                     \RecursiveIteratorIterator::LEAVES_ONLY
                 )
             );
 
-            usort($files, function (\SplFileInfo $a, \SplFileInfo $b) {
+            \usort($files, function (\SplFileInfo $a, \SplFileInfo $b) {
                 return (string) $a > (string) $b ? 1 : -1;
             });
 
             /** @var \SplFileInfo $file */
             foreach ($files as $file) {
-                if (!$file->isFile() || '.php' !== substr($file->getFilename(), -4)) {
+                if (!$file->isFile() || '.php' !== \mb_substr($file->getFilename(), -4)) {
                     continue;
                 }
 
@@ -107,7 +107,7 @@ class AnnotationBundleLoader extends FileLoader
 
                 if (PHP_VERSION_ID >= 70000) {
                     // PHP 7 memory manager will not release after token_get_all(), see https://bugs.php.net/70098
-                    gc_mem_caches();
+                    \gc_mem_caches();
                 }
             }
         }
@@ -120,7 +120,7 @@ class AnnotationBundleLoader extends FileLoader
      */
     public function supports($bundles, $type = null): bool
     {
-        if (!is_array($bundles)) {
+        if (!\is_array($bundles)) {
             return false;
         }
 
@@ -138,7 +138,7 @@ class AnnotationBundleLoader extends FileLoader
     {
         $class = false;
         $namespace = false;
-        $tokens = token_get_all(file_get_contents($file));
+        $tokens = \token_get_all(\file_get_contents($file));
         for ($i = 0; isset($tokens[$i]); ++$i) {
             $token = $tokens[$i];
 
@@ -152,7 +152,7 @@ class AnnotationBundleLoader extends FileLoader
 
             if (true === $namespace && T_STRING === $token[0]) {
                 $namespace = $token[1];
-                while (isset($tokens[++$i][1]) && in_array($tokens[$i][0], [T_NS_SEPARATOR, T_STRING], true)) {
+                while (isset($tokens[++$i][1]) && \in_array($tokens[$i][0], [T_NS_SEPARATOR, T_STRING], true)) {
                     $namespace .= $tokens[$i][1];
                 }
                 $token = $tokens[$i];
@@ -169,7 +169,7 @@ class AnnotationBundleLoader extends FileLoader
                     if (T_DOUBLE_COLON === $tokens[$j][0]) {
                         $isClassConstant = true;
                         break;
-                    } elseif (!in_array($tokens[$j][0], [T_WHITESPACE, T_DOC_COMMENT, T_COMMENT], true)) {
+                    } elseif (!\in_array($tokens[$j][0], [T_WHITESPACE, T_DOC_COMMENT, T_COMMENT], true)) {
                         break;
                     }
                 }

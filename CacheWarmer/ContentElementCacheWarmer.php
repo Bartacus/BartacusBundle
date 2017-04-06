@@ -38,7 +38,7 @@ class ContentElementCacheWarmer implements CacheWarmerInterface
 
     /**
      * @DI\InjectParams(params={
-     *      "configLoader" = @DI\Inject("bartacus.content_element.config_loader")
+     *     "configLoader" = @DI\Inject("bartacus.content_element.config_loader")
      * })
      */
     public function __construct(ContentElementConfigLoader $configLoader)

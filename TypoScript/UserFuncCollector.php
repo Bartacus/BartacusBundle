@@ -61,7 +61,7 @@ class UserFuncCollector
         $reflProp->setAccessible(true);
 
         $instances = $reflProp->getValue();
-        $instances = array_merge($instances, $this->userFuncs);
+        $instances = \array_merge($instances, $this->userFuncs);
 
         $reflProp->setValue(null, $instances);
     }

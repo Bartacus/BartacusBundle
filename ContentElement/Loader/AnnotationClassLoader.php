@@ -49,7 +49,7 @@ class AnnotationClassLoader implements LoaderInterface
 
     /**
      * @DI\InjectParams(params={
-     *      "reader" = @DI\Inject("annotation_reader")
+     *     "reader" = @DI\Inject("annotation_reader")
      * })
      */
     public function __construct(Reader $reader)
@@ -69,13 +69,13 @@ class AnnotationClassLoader implements LoaderInterface
      */
     public function load($class, $type = null): RenderDefinitionCollection
     {
-        if (!class_exists($class)) {
-            throw new \InvalidArgumentException(sprintf('Class "%s" does not exist.', $class));
+        if (!\class_exists($class)) {
+            throw new \InvalidArgumentException(\sprintf('Class "%s" does not exist.', $class));
         }
 
         $class = new \ReflectionClass($class);
         if ($class->isAbstract()) {
-            throw new \InvalidArgumentException(sprintf('Annotations from class "%s" cannot be read as it is abstract.',
+            throw new \InvalidArgumentException(\sprintf('Annotations from class "%s" cannot be read as it is abstract.',
                 $class->getName()));
         }
 
@@ -99,7 +99,7 @@ class AnnotationClassLoader implements LoaderInterface
      */
     public function supports($class, $type = null): bool
     {
-        return is_string($class) && preg_match('/^(?:\\\\?[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)+$/', $class)
+        return \is_string($class) && \preg_match('/^(?:\\\\?[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)+$/', $class)
         && (!$type || 'annotation' === $type);
     }
 
@@ -131,13 +131,13 @@ class AnnotationClassLoader implements LoaderInterface
 
     protected function getDefaultName(\ReflectionClass $class, \ReflectionMethod $method): string
     {
-        $name = strtolower(str_replace('\\', '_', $class->name).'_'.$method->name);
+        $name = \mb_strtolower(\str_replace('\\', '_', $class->name).'_'.$method->name);
         if ($this->defaultRenderDefinitionIndex > 0) {
             $name .= '_'.$this->defaultRenderDefinitionIndex;
         }
         ++$this->defaultRenderDefinitionIndex;
 
-        return preg_replace([
+        return \preg_replace([
             '/(bundle|controller)_/',
             '/action(_\d+)?$/',
             '/__/',

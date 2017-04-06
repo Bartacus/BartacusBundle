@@ -46,6 +46,12 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 class Renderer
 {
     /**
+     * Inject by the user function call from TYPO3 :/.
+     *
+     * @var ContentObjectRenderer
+     */
+    public $cObj;
+    /**
      * @var RequestStack
      */
     private $requestStack;
@@ -71,25 +77,18 @@ class Renderer
     private $frontendController;
 
     /**
-     * Inject by the user function call from TYPO3 :/.
-     *
-     * @var ContentObjectRenderer
-     */
-    public $cObj;
-
-    /**
      * @var ArgumentResolverInterface
      */
     private $argumentResolver;
 
     /**
      * @DI\InjectParams(params={
-     *      "requestStack" = @DI\Inject("request_stack"),
-     *      "kernel" = @DI\Inject("http_kernel"),
-     *      "routerListener" = @DI\Inject("router_listener"),
-     *      "resolver" = @DI\Inject("controller_resolver"),
-     *      "frontendController" = @DI\Inject("typo3.frontend_controller"),
-     *      "argumentResolver" = @DI\Inject("argument_resolver"),
+     *     "requestStack" = @DI\Inject("request_stack"),
+     *     "kernel" = @DI\Inject("http_kernel"),
+     *     "routerListener" = @DI\Inject("router_listener"),
+     *     "resolver" = @DI\Inject("controller_resolver"),
+     *     "frontendController" = @DI\Inject("typo3.frontend_controller"),
+     *     "argumentResolver" = @DI\Inject("argument_resolver"),
      * })
      */
     public function __construct(RequestStack $requestStack, HttpKernel $kernel, RouterListener $routerListener, ControllerResolverInterface $resolver, TypoScriptFrontendController $frontendController, ArgumentResolverInterface $argumentResolver)
@@ -115,7 +114,7 @@ class Renderer
         $request->attributes->set('data', $this->cObj->data);
         $request->attributes->set('_controller', $configuration['controller']);
 
-        $request->headers->set('X-Php-Ob-Level', ob_get_level());
+        $request->headers->set('X-Php-Ob-Level', \ob_get_level());
 
         $event = new GetResponseEvent(
             $this->kernel,
@@ -128,7 +127,7 @@ class Renderer
         $controller = $this->resolver->getController($request);
         if (false === $controller) {
             throw new NotFoundHttpException(
-                sprintf(
+                \sprintf(
                     'Unable to find the controller "%s". The content element is wrongly configured.',
                     $request->attributes->get('_controller', $configuration['controller'])
                 )
@@ -141,14 +140,14 @@ class Renderer
         $response = null;
         try {
             // call controller
-            $response = call_user_func_array($controller, $arguments);
+            $response = \call_user_func_array($controller, $arguments);
         } catch (NotFoundHttpException $e) {
             $this->frontendController->pageNotFoundAndExit($e->getMessage());
         }
 
         // view
         if (!$response instanceof Response) {
-            $msg = sprintf(
+            $msg = \sprintf(
                 'The controller must return a response (%s given).',
                 $this->varToString($response)
             );
@@ -177,7 +176,7 @@ class Renderer
             exit();
         }
 
-        if (count($response->headers) || $response->getStatusCode() !== 200) {
+        if (\count($response->headers) || $response->getStatusCode() !== 200) {
             $response->sendHeaders();
         }
 
@@ -191,21 +190,21 @@ class Renderer
      */
     private function varToString($var): string
     {
-        if (is_object($var)) {
-            return sprintf('Object(%s)', get_class($var));
+        if (\is_object($var)) {
+            return \sprintf('Object(%s)', \get_class($var));
         }
 
-        if (is_array($var)) {
+        if (\is_array($var)) {
             $a = [];
             foreach ($var as $k => $v) {
-                $a[] = sprintf('%s => %s', $k, $this->varToString($v));
+                $a[] = \sprintf('%s => %s', $k, $this->varToString($v));
             }
 
-            return sprintf('Array(%s)', implode(', ', $a));
+            return \sprintf('Array(%s)', \implode(', ', $a));
         }
 
-        if (is_resource($var)) {
-            return sprintf('Resource(%s)', get_resource_type($var));
+        if (\is_resource($var)) {
+            return \sprintf('Resource(%s)', \get_resource_type($var));
         }
 
         if (null === $var) {

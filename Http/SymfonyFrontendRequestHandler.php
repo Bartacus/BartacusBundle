@@ -131,7 +131,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         $this->initializeTimeTracker();
 
         // Hook to preprocess the current request:
-        if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/index_ts.php']['preprocessRequest'])) {
+        if (\is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/index_ts.php']['preprocessRequest'])) {
             foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/index_ts.php']['preprocessRequest'] as $hookFunction) {
                 $hookParameters = [];
                 GeneralUtility::callUserFunction($hookFunction, $hookParameters, $hookParameters);
@@ -317,7 +317,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         // Store session data for fe_users
         $this->controller->storeSessionData();
         // Statistics
-        $GLOBALS['TYPO3_MISC']['microtime_end'] = microtime(true);
+        $GLOBALS['TYPO3_MISC']['microtime_end'] = \microtime(true);
         if ($modifyContent && $this->controller->isOutputting()) {
             if (isset($this->controller->config['config']['debug'])) {
                 $debugParseTime = (bool) $this->controller->config['config']['debug'];
@@ -344,7 +344,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
             && $GLOBALS['BE_USER'] instanceof FrontendBackendUserAuthentication
         ) {
             if ($GLOBALS['BE_USER']->isAdminPanelVisible()) {
-                $this->controller->content = str_ireplace('</body>', $GLOBALS['BE_USER']->displayAdminPanel().'</body>',
+                $this->controller->content = \str_ireplace('</body>', $GLOBALS['BE_USER']->displayAdminPanel().'</body>',
                     $this->controller->content);
             }
         }
@@ -363,8 +363,8 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
             }
         }
         // Debugging Output
-        if (isset($GLOBALS['error']) && is_object($GLOBALS['error'])
-            && @is_callable([
+        if (isset($GLOBALS['error']) && \is_object($GLOBALS['error'])
+            && @\is_callable([
                 $GLOBALS['error'],
                 'debugOutput',
             ])
@@ -407,11 +407,11 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
      */
     protected function initializeOutputCompression(): void
     {
-        if ($GLOBALS['TYPO3_CONF_VARS']['FE']['compressionLevel'] && extension_loaded('zlib')) {
+        if ($GLOBALS['TYPO3_CONF_VARS']['FE']['compressionLevel'] && \extension_loaded('zlib')) {
             if (MathUtility::canBeInterpretedAsInteger($GLOBALS['TYPO3_CONF_VARS']['FE']['compressionLevel'])) {
-                @ini_set('zlib.output_compression_level', $GLOBALS['TYPO3_CONF_VARS']['FE']['compressionLevel']);
+                @\ini_set('zlib.output_compression_level', $GLOBALS['TYPO3_CONF_VARS']['FE']['compressionLevel']);
             }
-            ob_start([GeneralUtility::makeInstance(CompressionUtility::class), 'compressionOutputHandler']);
+            \ob_start([GeneralUtility::makeInstance(CompressionUtility::class), 'compressionOutputHandler']);
         }
     }
 
@@ -420,7 +420,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
      */
     protected function initializeTimeTracker(): void
     {
-        $configuredCookieName = trim($GLOBALS['TYPO3_CONF_VARS']['BE']['cookieName']) ?: 'be_typo_user';
+        $configuredCookieName = \trim($GLOBALS['TYPO3_CONF_VARS']['BE']['cookieName']) ?: 'be_typo_user';
 
         /* @var TimeTracker timeTracker */
         $this->timeTracker = GeneralUtility::makeInstance(
@@ -495,7 +495,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
 
             if (!$symfonyResponse instanceof BinaryFileResponse
                 && !$symfonyResponse instanceof StreamedResponse
-                && 0 === stripos($symfonyResponse->headers->get('Content-Type'), 'text/html')
+                && 0 === \mb_stripos($symfonyResponse->headers->get('Content-Type'), 'text/html')
             ) {
                 $this->controller->content = $symfonyResponse->getContent();
             }
@@ -504,7 +504,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
             $response = $psr7Factory->createResponse($symfonyResponse);
         } catch (NotFoundHttpException $e) {
             // We only want to match if the route was not found. Other errors should output. Ugly hack.
-            if (0 !== strpos($e->getMessage(), 'No route found for')) {
+            if (0 !== \mb_strpos($e->getMessage(), 'No route found for')) {
                 throw $e;
             }
 

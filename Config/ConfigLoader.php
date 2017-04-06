@@ -41,7 +41,7 @@ class ConfigLoader
 
     /**
      * @DI\InjectParams(params={
-     *      "contentElement" = @DI\Inject("bartacus.content_element.config_loader")
+     *     "contentElement" = @DI\Inject("bartacus.content_element.config_loader")
      * })
      *
      * @param ContentElementConfigLoader $contentElement

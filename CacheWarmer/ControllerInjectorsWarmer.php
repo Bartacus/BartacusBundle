@@ -48,11 +48,11 @@ class ControllerInjectorsWarmer implements CacheWarmerInterface
     {
         // This avoids class-being-declared twice errors when the cache:clear
         // command is called. The controllers are not pre-generated in that case.
-        $suffix = defined('Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerAggregate::NEW_CACHE_FOLDER_SUFFIX')
+        $suffix = \defined('Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerAggregate::NEW_CACHE_FOLDER_SUFFIX')
             ? CacheWarmerAggregate::NEW_CACHE_FOLDER_SUFFIX
             : '_new';
 
-        if (basename($cacheDir) === $this->kernel->getEnvironment().$suffix) {
+        if (\basename($cacheDir) === $this->kernel->getEnvironment().$suffix) {
             return;
         }
 
@@ -71,7 +71,7 @@ class ControllerInjectorsWarmer implements CacheWarmerInterface
     {
         $dirs = [];
         foreach ($this->kernel->getBundles() as $bundle) {
-            if (!is_dir($controllerDir = $bundle->getPath().'/Controller')) {
+            if (!\is_dir($controllerDir = $bundle->getPath().'/Controller')) {
                 continue;
             }
 
@@ -80,7 +80,7 @@ class ControllerInjectorsWarmer implements CacheWarmerInterface
 
         foreach (Finder::create()->name('*Controller.php')->in($dirs)->files() as $file) {
             $filename = $file->getRealPath();
-            if (!in_array($filename, $this->blackListedControllerFiles, true)) {
+            if (!\in_array($filename, $this->blackListedControllerFiles, true)) {
                 require_once $filename;
             }
         }
@@ -88,8 +88,8 @@ class ControllerInjectorsWarmer implements CacheWarmerInterface
         // It is not so important if these controllers never can be reached with
         // the current configuration nor whether they are actually controllers.
         // Important is only that we do not miss any classes.
-        return array_filter(get_declared_classes(), function (string $name) {
-            return preg_match('/(?<!TYPO3\\\CMS\\\Frontend\\\)Controller\\\(.+)Controller$/', $name) > 0;
+        return \array_filter(\get_declared_classes(), function (string $name) {
+            return \preg_match('/(?<!TYPO3\\\CMS\\\Frontend\\\)Controller\\\(.+)Controller$/', $name) > 0;
         });
     }
 }

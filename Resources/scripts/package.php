@@ -28,7 +28,7 @@ use TYPO3\CMS\Core\Package\PackageManager;
 
 /** @var PackageManager $packageManager */
 $packageManager = Bootstrap::getInstance()->getEarlyInstance(PackageManager::class);
-$package = new Package($packageManager, 'app', rtrim(realpath(__DIR__.'/../../../../../app/'), '\\/').'/');
+$package = new Package($packageManager, 'app', \rtrim(\realpath(__DIR__.'/../../../../../app/'), '\\/').'/');
 $packageManager->registerPackage($package);
 
 Closure::bind(function (PackageManager $instance) use ($package) {

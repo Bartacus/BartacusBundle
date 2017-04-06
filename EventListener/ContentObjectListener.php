@@ -31,7 +31,7 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 /**
  * Initializes the cObj on the TSFE, when not done yet.
  *
- * @DI\Service()
+ * @DI\Service
  */
 class ContentObjectListener
 {
@@ -42,7 +42,7 @@ class ContentObjectListener
 
     /**
      * @DI\InjectParams(params={
-     *      "frontendController" = @DI\Inject("typo3.frontend_controller")
+     *     "frontendController" = @DI\Inject("typo3.frontend_controller")
      * })
      */
     public function __construct(TypoScriptFrontendController $frontendController)

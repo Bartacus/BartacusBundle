@@ -119,7 +119,7 @@ class FrontendApplication implements ApplicationInterface
 
         $this->bootstrap->shutdown();
 
-        if (function_exists('fastcgi_finish_request')) {
+        if (\function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
         } elseif ('cli' !== PHP_SAPI) {
             Response::closeOutputBuffers(0, true);
@@ -146,6 +146,6 @@ class FrontendApplication implements ApplicationInterface
      */
     protected function defineLegacyConstants()
     {
-        define('TYPO3_MODE', 'FE');
+        \define('TYPO3_MODE', 'FE');
     }
 }

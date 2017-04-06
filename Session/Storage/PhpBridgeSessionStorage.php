@@ -40,16 +40,16 @@ class PhpBridgeSessionStorage extends NativeSessionStorage
         }
 
         $shouldStart = true;
-        if (\PHP_SESSION_ACTIVE === session_status()) {
+        if (\PHP_SESSION_ACTIVE === \session_status()) {
             $shouldStart = false;
         }
 
-        if (ini_get('session.use_cookies') && headers_sent($file, $line)) {
-            throw new \RuntimeException(sprintf('Failed to start the session because headers have already been sent by "%s" at line %d.', $file, $line));
+        if (\ini_get('session.use_cookies') && \headers_sent($file, $line)) {
+            throw new \RuntimeException(\sprintf('Failed to start the session because headers have already been sent by "%s" at line %d.', $file, $line));
         }
 
         // ok to try and start the session
-        if ($shouldStart && !session_start()) {
+        if ($shouldStart && !\session_start()) {
             throw new \RuntimeException('Failed to start the session');
         }
 
