@@ -5,14 +5,26 @@ enabled:
     - declare_strict_types
     - dir_constant
     - linebreak_after_opening_tag
+    - mb_str_functions
+    - native_function_invocation
+    - heredoc_to_nowdoc
+    - linebreak_after_opening_tag
+    - mb_str_functions
+    - native_function_invocation
+    - no_php4_constructor
     - no_unreachable_default_argument_value
     - no_useless_else
     - no_useless_return
+    - ordered_class_elements
     - ordered_imports
     - php_unit_construct
     - php_unit_dedicate_assert
     - php_unit_strict
+    - phpdoc_add_missing_param_annotation
     - phpdoc_order
     - short_array_syntax
+    - semicolon_after_instruction
+    - simplified_null_return
     - strict_comparison
     - strict_param
+    - ternary_to_null_coalescing

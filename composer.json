@@ -23,7 +23,7 @@
         "ocramius/proxy-manager": "^2.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.1"
+        "friendsofphp/php-cs-fixer": "^2.2"
     },
     "autoload": {
         "psr-4": {
