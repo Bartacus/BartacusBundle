@@ -51,7 +51,6 @@ use TYPO3\CMS\Core\Http\Stream;
 use TYPO3\CMS\Core\TimeTracker\TimeTracker;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
-use TYPO3\CMS\Core\Utility\MonitorUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Page\PageGenerator;
 use TYPO3\CMS\Frontend\Utility\CompressionUtility;
@@ -212,7 +211,8 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         // \TYPO3\CMS\Version\Hook\PreviewHook might need to know if a backend user is logged in.
         if (
             $this->controller->isBackendUserLoggedIn()
-            && (!$GLOBALS['BE_USER']->extPageReadAccess($this->controller->page) || GeneralUtility::_GP('ADMCMD_noBeUser'))
+            && (!$GLOBALS['BE_USER']->extPageReadAccess($this->controller->page)
+                || GeneralUtility::_GP('ADMCMD_noBeUser'))
         ) {
             // Remove user
             unset($GLOBALS['BE_USER']);
@@ -283,9 +283,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
                 if ($temp_theScript) {
                     include $temp_theScript;
                 } else {
-                    PageGenerator::pagegenInit();
-                    // Global content object
-                    $this->controller->newCObj();
+                    $this->controller->preparePageContentGeneration();
                     // Content generation
                     if (!$this->controller->isINTincScript()) {
                         PageGenerator::renderContent();
@@ -294,9 +292,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
                 }
                 $this->controller->generatePage_postProcessing();
             } elseif ($this->controller->isINTincScript()) {
-                PageGenerator::pagegenInit();
-                // Global content object
-                $this->controller->newCObj();
+                $this->controller->preparePageContentGeneration();
             }
             $this->controller->releaseLocks();
             $this->timeTracker->pull();
@@ -322,14 +318,15 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         $this->controller->storeSessionData();
         // Statistics
         $GLOBALS['TYPO3_MISC']['microtime_end'] = microtime(true);
-        $this->controller->setParseTime();
-        if (isset($this->controller->config['config']['debug'])) {
-            $debugParseTime = (bool) $this->controller->config['config']['debug'];
-        } else {
-            $debugParseTime = !empty($GLOBALS['TYPO3_CONF_VARS']['FE']['debug']);
-        }
-        if ($modifyContent && $this->controller->isOutputting() && $debugParseTime) {
-            $this->controller->content .= LF.'<!-- Parsetime: '.$this->controller->scriptParseTime.'ms -->';
+        if ($modifyContent && $this->controller->isOutputting()) {
+            if (isset($this->controller->config['config']['debug'])) {
+                $debugParseTime = (bool) $this->controller->config['config']['debug'];
+            } else {
+                $debugParseTime = !empty($GLOBALS['TYPO3_CONF_VARS']['FE']['debug']);
+            }
+            if ($debugParseTime) {
+                $this->controller->content .= LF.'<!-- Parsetime: '.$this->getParseTime().'ms -->';
+            }
         }
         $this->controller->redirectToExternalUrl();
         // Preview info
@@ -340,15 +337,12 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         $this->controller->hook_eofe();
         // Finish timetracking
         $this->timeTracker->pull();
-        // Check memory usage
-        MonitorUtility::peakMemoryUsage();
-        // beLoginLinkIPList
-        if ($modifyContent) {
-            echo $this->controller->beLoginLinkIPList();
-        }
 
         // Admin panel
-        if ($modifyContent && $this->controller->isBackendUserLoggedIn() && $GLOBALS['BE_USER'] instanceof FrontendBackendUserAuthentication) {
+        if ($modifyContent
+            && $this->controller->isBackendUserLoggedIn()
+            && $GLOBALS['BE_USER'] instanceof FrontendBackendUserAuthentication
+        ) {
             if ($GLOBALS['BE_USER']->isAdminPanelVisible()) {
                 $this->controller->content = str_ireplace('</body>', $GLOBALS['BE_USER']->displayAdminPanel().'</body>',
                     $this->controller->content);
@@ -369,7 +363,8 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
             }
         }
         // Debugging Output
-        if (isset($GLOBALS['error']) && is_object($GLOBALS['error']) && @is_callable([
+        if (isset($GLOBALS['error']) && is_object($GLOBALS['error'])
+            && @is_callable([
                 $GLOBALS['error'],
                 'debugOutput',
             ])
@@ -457,6 +452,26 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         // that the $controller member always works on the same object as the global variable.
         // This is a dirty workaround and bypasses the protected access modifier of the controller member.
         $GLOBALS['TSFE'] = &$this->controller;
+    }
+
+    /**
+     * Calculates the parsetime of the page and returns it.
+     *
+     * @return int The parse time of the page
+     */
+    protected function getParseTime(): int
+    {
+        // Compensates for the time consumed with Back end user initialization.
+        $processStart = $GLOBALS['TYPO3_MISC']['microtime_start']
+            ?? null;
+        $processEnd = $GLOBALS['TYPO3_MISC']['microtime_end'] ?? null;
+        $beUserInitializationStart = $GLOBALS['TYPO3_MISC']['microtime_BE_USER_start'] ?? null;
+        $beUserInitializationEnd = $GLOBALS['TYPO3_MISC']['microtime_BE_USER_end'] ?? null;
+
+        return $this->timeTracker->getMilliseconds($processStart)
+            - $this->timeTracker->getMilliseconds($processEnd)
+            - ($this->timeTracker->getMilliseconds($beUserInitializationStart)
+                - $this->timeTracker->getMilliseconds($beUserInitializationEnd));
     }
 
     /**
