@@ -23,10 +23,10 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Http;
 
+use Bartacus\Bundle\BartacusBundle\Http\Factory\Typo3HttpFoundationFactory;
 use Bartacus\Bundle\BartacusBundle\Http\Factory\Typo3PsrMessageFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -181,7 +181,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
             ;
         }
 
-        $httpFoundationFactory = new HttpFoundationFactory();
+        $httpFoundationFactory = new Typo3HttpFoundationFactory();
         $symfonyRequest = $httpFoundationFactory->createRequest($request);
 
         try {
