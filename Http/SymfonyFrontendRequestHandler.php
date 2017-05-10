@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Http;
 
-use Bartacus\Bundle\BartacusBundle\Http\Factory\Typo3HttpFoundationFactory;
 use Bartacus\Bundle\BartacusBundle\Http\Factory\Typo3PsrMessageFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -46,7 +45,6 @@ use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\FrontendEditing\FrontendEditingController;
 use TYPO3\CMS\Core\Http\RequestHandlerInterface;
 use TYPO3\CMS\Core\Http\Response;
-use TYPO3\CMS\Core\Http\ServerRequestFactory;
 use TYPO3\CMS\Core\Http\Stream;
 use TYPO3\CMS\Core\TimeTracker\TimeTracker;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -181,8 +179,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
             ;
         }
 
-        $httpFoundationFactory = new Typo3HttpFoundationFactory();
-        $symfonyRequest = $httpFoundationFactory->createRequest($request);
+        $symfonyRequest = Request::createFromGlobals();
 
         try {
             $handleWithRealUrl = false;
@@ -200,8 +197,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
 
         if ($handleWithRealUrl) {
             $this->controller->checkAlternativeIdMethods();
-            $request = ServerRequestFactory::fromGlobals();
-            $symfonyRequest = $httpFoundationFactory->createRequest($request);
+            $symfonyRequest = Request::createFromGlobals();
         }
         $this->controller->clear_preview();
         $this->controller->determineId();
