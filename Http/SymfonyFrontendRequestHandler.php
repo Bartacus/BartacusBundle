@@ -455,7 +455,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
      *
      * @return int The parse time of the page
      */
-    protected function getParseTime(): int
+    protected function getParseTime()
     {
         // Compensates for the time consumed with Back end user initialization.
         $processStart = $GLOBALS['TYPO3_MISC']['microtime_start']
