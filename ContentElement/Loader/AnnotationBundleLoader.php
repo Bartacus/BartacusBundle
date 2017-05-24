@@ -70,44 +70,58 @@ class AnnotationBundleLoader extends FileLoader
     {
         $collection = new RenderDefinitionCollection();
         foreach ($bundles as $bundle) {
+            $dirs = [];
+
             try {
-                $dir = $this->locator->locate('@'.$bundle.'/Controller/');
+                $found = true;
+                $dirs[] = $this->locator->locate('@'.$bundle.'/Action/');
             } catch (\Exception $e) {
-                // No controllers in that bundle..
-                continue;
+                // No actions in that bundle..
+                $found = false;
             }
 
-            $collection->addResource(new DirectoryResource($dir, '/\.php$/'));
-            $files = \iterator_to_array(
-                new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator($dir),
-                    \RecursiveIteratorIterator::LEAVES_ONLY
-                )
-            );
-
-            \usort($files, function (\SplFileInfo $a, \SplFileInfo $b) {
-                return (string) $a > (string) $b ? 1 : -1;
-            });
-
-            /** @var \SplFileInfo $file */
-            foreach ($files as $file) {
-                if (!$file->isFile() || '.php' !== \mb_substr($file->getFilename(), -4)) {
+            try {
+                $dirs[] = $this->locator->locate('@'.$bundle.'/Controller/');
+            } catch (\Exception $e) {
+                if (!$found) {
+                    // No actions nor controllers in that bundle..
                     continue;
                 }
+            }
 
-                $class = $this->findClass((string) $file);
-                if ($class) {
-                    $refl = new \ReflectionClass($class);
-                    if ($refl->isAbstract()) {
+            foreach ($dirs as $dir) {
+                $collection->addResource(new DirectoryResource($dir, '/\.php$/'));
+                $files = \iterator_to_array(
+                    new \RecursiveIteratorIterator(
+                        new \RecursiveDirectoryIterator($dir),
+                        \RecursiveIteratorIterator::LEAVES_ONLY
+                    )
+                );
+
+                \usort($files, function (\SplFileInfo $a, \SplFileInfo $b) {
+                    return (string) $a > (string) $b ? 1 : -1;
+                });
+
+                /** @var \SplFileInfo $file */
+                foreach ($files as $file) {
+                    if (!$file->isFile() || '.php' !== \mb_substr($file->getFilename(), -4)) {
                         continue;
                     }
 
-                    $collection->addCollection($this->loader->load($class, $type));
-                }
+                    $class = $this->findClass((string) $file);
+                    if ($class) {
+                        $refl = new \ReflectionClass($class);
+                        if ($refl->isAbstract()) {
+                            continue;
+                        }
 
-                if (PHP_VERSION_ID >= 70000) {
-                    // PHP 7 memory manager will not release after token_get_all(), see https://bugs.php.net/70098
-                    \gc_mem_caches();
+                        $collection->addCollection($this->loader->load($class, $type));
+                    }
+
+                    if (PHP_VERSION_ID >= 70000) {
+                        // PHP 7 memory manager will not release after token_get_all(), see https://bugs.php.net/70098
+                        \gc_mem_caches();
+                    }
                 }
             }
         }
