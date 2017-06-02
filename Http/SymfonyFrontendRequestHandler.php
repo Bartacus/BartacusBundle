@@ -41,17 +41,12 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\RequestContext;
 use TYPO3\CMS\Backend\FrontendBackendUserAuthentication;
-use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\FrontendEditing\FrontendEditingController;
-use TYPO3\CMS\Core\Http\RequestHandlerInterface;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Http\Stream;
-use TYPO3\CMS\Core\TimeTracker\TimeTracker;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\MathUtility;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+use TYPO3\CMS\Frontend\Http\RequestHandler;
 use TYPO3\CMS\Frontend\Page\PageGenerator;
-use TYPO3\CMS\Frontend\Utility\CompressionUtility;
 use TYPO3\CMS\Frontend\View\AdminPanelView;
 
 /**
@@ -63,50 +58,12 @@ use TYPO3\CMS\Frontend\View\AdminPanelView;
  *
  * In between it calls Symfony routes and either executes and returns them, or calls the the real TYPO3 page.
  */
-class SymfonyFrontendRequestHandler implements RequestHandlerInterface
+class SymfonyFrontendRequestHandler extends RequestHandler
 {
-    /**
-     * Instance of the current TYPO3 bootstrap.
-     *
-     * @var Bootstrap
-     */
-    protected $bootstrap;
-
-    /**
-     * Instance of the timetracker.
-     *
-     * @var TimeTracker
-     */
-    protected $timeTracker;
-
-    /**
-     * Instance of the TSFE object.
-     *
-     * @var TypoScriptFrontendController
-     */
-    protected $controller;
-
-    /**
-     * The request handed over.
-     *
-     * @var ServerRequestInterface
-     */
-    protected $request;
-
     /**
      * @var KernelInterface
      */
     private $kernel;
-
-    /**
-     * Constructor handing over the bootstrap and the original request.
-     *
-     * @param Bootstrap $bootstrap
-     */
-    public function __construct(Bootstrap $bootstrap)
-    {
-        $this->bootstrap = $bootstrap;
-    }
 
     /**
      * Handles a frontend request.
@@ -115,7 +72,7 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
      *
      * @return null|ResponseInterface
      */
-    public function handleRequest(ServerRequestInterface $request): ? ResponseInterface
+    public function handleRequest(ServerRequestInterface $request): ?ResponseInterface
     {
         $response = null;
         $this->request = $request;
@@ -372,102 +329,6 @@ class SymfonyFrontendRequestHandler implements RequestHandlerInterface
         }
 
         return $response;
-    }
-
-    /**
-     * This request handler can handle any frontend request.
-     *
-     * @param ServerRequestInterface $request
-     *
-     * @return bool If the request is not an eID request, TRUE otherwise FALSE
-     */
-    public function canHandleRequest(ServerRequestInterface $request): bool
-    {
-        return $request->getQueryParams()['eID'] || $request->getParsedBody()['eID'] ? false : true;
-    }
-
-    /**
-     * Returns the priority - how eager the handler is to actually handle the
-     * request.
-     *
-     * @return int The priority of the request handler
-     */
-    public function getPriority(): int
-    {
-        return 50;
-    }
-
-    /**
-     * Initializes output compression when enabled, could be split up and put into Bootstrap
-     * at a later point.
-     */
-    protected function initializeOutputCompression(): void
-    {
-        if ($GLOBALS['TYPO3_CONF_VARS']['FE']['compressionLevel'] && \extension_loaded('zlib')) {
-            if (MathUtility::canBeInterpretedAsInteger($GLOBALS['TYPO3_CONF_VARS']['FE']['compressionLevel'])) {
-                @\ini_set('zlib.output_compression_level', $GLOBALS['TYPO3_CONF_VARS']['FE']['compressionLevel']);
-            }
-            \ob_start([GeneralUtility::makeInstance(CompressionUtility::class), 'compressionOutputHandler']);
-        }
-    }
-
-    /**
-     * Timetracking started depending if a Backend User is logged in.
-     */
-    protected function initializeTimeTracker(): void
-    {
-        $configuredCookieName = \trim($GLOBALS['TYPO3_CONF_VARS']['BE']['cookieName']) ?: 'be_typo_user';
-
-        /* @var TimeTracker timeTracker */
-        $this->timeTracker = GeneralUtility::makeInstance(
-            TimeTracker::class,
-            ($this->request->getCookieParams()[$configuredCookieName] ? true : false)
-        );
-        $this->timeTracker->start();
-    }
-
-    /**
-     * Creates an instance of TSFE and sets it as a global variable.
-     */
-    protected function initializeController(): void
-    {
-        $this->controller = GeneralUtility::makeInstance(
-            TypoScriptFrontendController::class,
-            null,
-            GeneralUtility::_GP('id'),
-            GeneralUtility::_GP('type'),
-            GeneralUtility::_GP('no_cache'),
-            GeneralUtility::_GP('cHash'),
-            null,
-            GeneralUtility::_GP('MP'),
-            GeneralUtility::_GP('RDCT')
-        );
-        // setting the global variable for the controller
-        // We have to define this as reference here, because there is code around
-        // which exchanges the TSFE object in the global variable. The reference ensures
-        // that the $controller member always works on the same object as the global variable.
-        // This is a dirty workaround and bypasses the protected access modifier of the controller member.
-        $GLOBALS['TSFE'] = &$this->controller;
-    }
-
-    /**
-     * Calculates the parsetime of the page and returns it.
-     *
-     * @return int The parse time of the page
-     */
-    protected function getParseTime()
-    {
-        // Compensates for the time consumed with Back end user initialization.
-        $processStart = $GLOBALS['TYPO3_MISC']['microtime_start']
-            ?? null;
-        $processEnd = $GLOBALS['TYPO3_MISC']['microtime_end'] ?? null;
-        $beUserInitializationStart = $GLOBALS['TYPO3_MISC']['microtime_BE_USER_start'] ?? null;
-        $beUserInitializationEnd = $GLOBALS['TYPO3_MISC']['microtime_BE_USER_end'] ?? null;
-
-        return $this->timeTracker->getMilliseconds($processStart)
-            - $this->timeTracker->getMilliseconds($processEnd)
-            - ($this->timeTracker->getMilliseconds($beUserInitializationStart)
-                - $this->timeTracker->getMilliseconds($beUserInitializationEnd));
     }
 
     /**
