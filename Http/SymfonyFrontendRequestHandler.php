@@ -339,7 +339,8 @@ class SymfonyFrontendRequestHandler extends RequestHandler
         $this->timeTracker->push('Symfony request handling', '');
 
         // set the locale from TypoScript, effectively killing _locale from router :/
-        $symfonyRequest->attributes->set('_locale', $this->controller->sys_language_isocode);
+        [$locale] = \explode('.', $this->controller->config['config']['locale_all']);
+        $symfonyRequest->attributes->set('_locale', $locale);
 
         // yes, we must use the global declared kernel here, because the request handler is
         // initialized from the Bootstrap with no control of the constructor..
