@@ -226,7 +226,7 @@ tt_content.key.field = CType
         }
 
         $cache = $this->getConfigCacheFactory()
-            ->cache($this->options['cache_dir'].'/content_elements.ts',
+            ->cache($this->options['cache_dir'].'/content_elements.typoscript',
                 function (ConfigCacheInterface $cache) use ($startingConfig) {
                     $renderDefinitions = $this->getRenderDefinitionCollection();
 
