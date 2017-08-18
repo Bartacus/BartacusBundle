@@ -71,7 +71,6 @@ return PhpCsFixer\Config::create()
         'phpdoc_add_missing_param_annotation' => true,
         'phpdoc_order' => true,
         'semicolon_after_instruction' => true,
-        'simplified_null_return' => true,
         'strict_comparison' => true,
         'strict_param' => true,
     ])

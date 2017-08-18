@@ -69,9 +69,9 @@ class ContentElementConfigLoader implements WarmableInterface
     /**
      * @DI\InjectParams(params={
      *     "container" = @DI\Inject("service_container"),
-     *      "bundles" = @DI\Inject("%jms_di_extra.bundles%"),
-     *      "cacheDir" = @DI\Inject("%kernel.cache_dir%"),
-     *      "debug" = @DI\Inject("%kernel.debug%")
+     *     "bundles" = @DI\Inject("%jms_di_extra.bundles%"),
+     *     "cacheDir" = @DI\Inject("%kernel.cache_dir%"),
+     *     "debug" = @DI\Inject("%kernel.debug%")
      * })
      */
     public function __construct(ContainerInterface $container, array $bundles = [], string $cacheDir = null, bool $debug = false)

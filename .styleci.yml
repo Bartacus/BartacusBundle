@@ -20,7 +20,6 @@ enabled:
     - phpdoc_order
     - short_array_syntax
     - semicolon_after_instruction
-    - simplified_null_return
     - strict_comparison
     - strict_param
     - ternary_to_null_coalescing
