@@ -24,13 +24,10 @@ declare(strict_types=1);
 namespace Bartacus\Bundle\BartacusBundle\Config;
 
 use Bartacus\Bundle\BartacusBundle\ContentElement\ContentElementConfigLoader;
-use JMS\DiExtraBundle\Annotation as DI;
 
 /**
  * Delegating central config loader called on various places within TYPO3
  * to load and configure specific parts of the system.
- *
- * @DI\Service("bartacus.config_loader")
  */
 class ConfigLoader
 {
@@ -39,13 +36,6 @@ class ConfigLoader
      */
     protected $contentElement;
 
-    /**
-     * @DI\InjectParams(params={
-     *     "contentElement" = @DI\Inject("bartacus.content_element.config_loader")
-     * })
-     *
-     * @param ContentElementConfigLoader $contentElement
-     */
     public function __construct(ContentElementConfigLoader $contentElement)
     {
         $this->contentElement = $contentElement;

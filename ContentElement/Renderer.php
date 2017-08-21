@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\ContentElement;
 
-use JMS\DiExtraBundle\Annotation as DI;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,9 +38,6 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
  * Dispatch a content element to controller action.
- *
- * @DI\Service("bartacus.content_element.renderer")
- * @DI\Tag("bartacus.typoscript")
  */
 class Renderer
 {
@@ -81,16 +77,6 @@ class Renderer
      */
     private $argumentResolver;
 
-    /**
-     * @DI\InjectParams(params={
-     *     "requestStack" = @DI\Inject("request_stack"),
-     *     "kernel" = @DI\Inject("http_kernel"),
-     *     "routerListener" = @DI\Inject("router_listener"),
-     *     "resolver" = @DI\Inject("controller_resolver"),
-     *     "frontendController" = @DI\Inject("typo3.frontend_controller"),
-     *     "argumentResolver" = @DI\Inject("argument_resolver"),
-     * })
-     */
     public function __construct(RequestStack $requestStack, HttpKernel $kernel, RouterListener $routerListener, ControllerResolverInterface $resolver, TypoScriptFrontendController $frontendController, ArgumentResolverInterface $argumentResolver)
     {
         $this->requestStack = $requestStack;

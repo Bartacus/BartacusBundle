@@ -24,14 +24,10 @@ declare(strict_types=1);
 namespace Bartacus\Bundle\BartacusBundle\ContentElement\Loader;
 
 use Bartacus\Bundle\BartacusBundle\ContentElement\RenderDefinitionCollection;
-use JMS\DiExtraBundle\Annotation as DI;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\Config\Loader\FileLoader;
 use Symfony\Component\Config\Resource\DirectoryResource;
 
-/**
- * @DI\Service("bartacus.content_element.loader")
- */
 class AnnotationBundleLoader extends FileLoader
 {
     /**
@@ -39,12 +35,6 @@ class AnnotationBundleLoader extends FileLoader
      */
     private $loader;
 
-    /**
-     * @DI\InjectParams(params={
-     *     "locator" = @DI\Inject("file_locator"),
-     *     "loader" = @DI\Inject("bartacus.content_element.class_loader")
-     * })
-     */
     public function __construct(FileLocatorInterface $locator, AnnotationClassLoader $loader)
     {
         if (!\function_exists('token_get_all')) {

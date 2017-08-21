@@ -23,16 +23,11 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Command;
 
-use JMS\DiExtraBundle\Annotation as DI;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
-/**
- * @DI\Service
- * @DI\Tag("console.command")
- */
 class PrepareWebDirCommand extends Command
 {
     /**
@@ -45,12 +40,6 @@ class PrepareWebDirCommand extends Command
      */
     private $filesystem;
 
-    /**
-     * @DI\InjectParams(params={
-     *     "webDir" = @DI\Inject("%bartacus.paths.web_dir%"),
-     *     "filesystem" = @DI\Inject("filesystem"),
-     * })
-     */
     public function __construct(string $webDir, Filesystem $filesystem)
     {
         $this->webDir = \rtrim(\realpath($webDir), \DIRECTORY_SEPARATOR);

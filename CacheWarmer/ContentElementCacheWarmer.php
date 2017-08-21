@@ -24,23 +24,13 @@ declare(strict_types=1);
 namespace Bartacus\Bundle\BartacusBundle\CacheWarmer;
 
 use Bartacus\Bundle\BartacusBundle\ContentElement\ContentElementConfigLoader;
-use JMS\DiExtraBundle\Annotation as DI;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 
-/**
- * @DI\Service("bartacus.content_element.cache_warmer")
- * @DI\Tag("kernel.cache_warmer")
- */
 class ContentElementCacheWarmer implements CacheWarmerInterface
 {
     protected $configLoader;
 
-    /**
-     * @DI\InjectParams(params={
-     *     "configLoader" = @DI\Inject("bartacus.content_element.config_loader")
-     * })
-     */
     public function __construct(ContentElementConfigLoader $configLoader)
     {
         $this->configLoader = $configLoader;

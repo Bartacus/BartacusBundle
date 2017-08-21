@@ -25,10 +25,10 @@
 
     <services>
         <service id="jms_di_extra.controller_injectors_warmer" class="Bartacus\Bundle\BartacusBundle\CacheWarmer\ControllerInjectorsWarmer" public="false">
-            <tag name="kernel.cache_warmer" />
             <argument type="service" id="kernel" />
             <argument type="service" id="jms_di_extra.controller_resolver" />
             <argument>%jms_di_extra.cache_warmer.controller_file_blacklist%</argument>
+            <tag name="kernel.cache_warmer" />
         </service>
 
         <service id="session.storage.php_bridge" class="Bartacus\Bundle\BartacusBundle\Session\Storage\PhpBridgeSessionStorage">

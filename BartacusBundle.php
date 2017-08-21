@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace Bartacus\Bundle\BartacusBundle;
 
 use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\TypoScriptUserFuncPass;
+use Bartacus\Bundle\BartacusBundle\TypoScript\UserFuncCollector;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -34,7 +35,7 @@ class BartacusBundle extends Bundle
      */
     public function boot()
     {
-        $this->container->get('bartacus.typoscript.user_func_collector')->loadUserFuncs();
+        $this->container->get(UserFuncCollector::class)->loadUserFuncs();
     }
 
     /**
