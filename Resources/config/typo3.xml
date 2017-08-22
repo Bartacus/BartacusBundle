@@ -24,69 +24,82 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="typo3" class="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" />
+        <defaults public="false" />
 
-        <service id="typo3.backend_user" class="TYPO3\CMS\Core\Authentication\BackendUserAuthentication">
-            <factory service="typo3" method="getGlobal" />
+        <service alias="typo3" id="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" />
+        <service id="typo3" class="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" public="true" />
+
+        <service alias="typo3.backend_user" id="TYPO3\CMS\Core\Authentication\BackendUserAuthentication" />
+        <service id="typo3.backend_user" class="TYPO3\CMS\Core\Authentication\BackendUserAuthentication" shared="false" public="true">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="getGlobal" />
             <argument>BE_USER</argument>
         </service>
 
-        <service id="typo3.frontend_user" class="TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication">
-            <factory service="typo3" method="getGlobal" />
+        <service alias="typo3.frontend_user" id="TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication" />
+        <service id="typo3.frontend_user" class="TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication" shared="false" public="true">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="getGlobal" />
             <argument>FE_USER</argument>
         </service>
 
-        <service id="typo3.cache.cache_manager" class="TYPO3\CMS\Core\Cache\CacheManager" shared="false">
-            <factory service="typo3" method="makeInstance" />
+        <service alias="typo3.cache.cache_manager" id="TYPO3\CMS\Core\Cache\CacheManager" />
+        <service id="typo3.cache.cache_manager" class="TYPO3\CMS\Core\Cache\CacheManager" shared="false" public="true">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
             <argument>TYPO3\CMS\Core\Cache\CacheManager</argument>
         </service>
-        <service id="typo3.cache.cache_hash" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface">
+        <service id="typo3.cache.cache_hash" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface" public="true">
             <factory service="typo3.cache.cache_manager" method="getCache" />
             <argument>cache_hash</argument>
         </service>
-        <service id="typo3.cache.cache_pages" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface">
+        <service id="typo3.cache.cache_pages" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface" public="true">
             <factory service="typo3.cache.cache_manager" method="getCache" />
             <argument>cache_pages</argument>
         </service>
-        <service id="typo3.cache.cache_pagesection" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface">
+        <service id="typo3.cache.cache_pagesection" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface" public="true">
             <factory service="typo3.cache.cache_manager" method="getCache" />
             <argument>cache_pagesection</argument>
         </service>
-        <service id="typo3.cache.cache_rootline" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface">
+        <service id="typo3.cache.cache_rootline" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface" public="true">
             <factory service="typo3.cache.cache_manager" method="getCache" />
             <argument>cache_rootline</argument>
         </service>
 
-        <service id="typo3.cache_hash_calculator" class="TYPO3\CMS\Frontend\Page\CacheHashCalculator" shared="false">
-            <factory service="typo3" method="makeInstance" />
+        <service alias="typo3.cache_hash_calculator" id="TYPO3\CMS\Frontend\Page\CacheHashCalculator" />
+        <service id="typo3.cache_hash_calculator" class="TYPO3\CMS\Frontend\Page\CacheHashCalculator" shared="false" public="true">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
             <argument>TYPO3\CMS\Frontend\Page\CacheHashCalculator</argument>
         </service>
 
-        <service id="typo3.content_object_renderer" class="TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer">
-            <factory service="typo3" method="getContentObjectRenderer" />
+        <service alias="typo3.content_object_renderer" id="TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer" />
+        <service id="typo3.content_object_renderer" class="TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer" shared="false" public="true">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="getContentObjectRenderer" />
         </service>
 
-        <service id="typo3.db" class="TYPO3\CMS\Core\Database\DatabaseConnection" lazy="true">
-            <factory service="typo3" method="getGlobal" />
+        <service alias="typo3.db" id="TYPO3\CMS\Core\Database\DatabaseConnection" />
+        <service id="typo3.db" class="TYPO3\CMS\Core\Database\DatabaseConnection" lazy="true" public="true">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="getGlobal" />
             <argument>TYPO3_DB</argument>
         </service>
 
-        <service id="typo3.file_repository" class="TYPO3\CMS\Core\Resource\FileRepository" shared="false">
-            <factory service="typo3" method="makeInstance" />
+        <service alias="typo3.file_repository" id="TYPO3\CMS\Core\Resource\FileRepository" />
+        <service id="typo3.file_repository" class="TYPO3\CMS\Core\Resource\FileRepository" shared="false" public="true">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
             <argument>TYPO3\CMS\Core\Resource\FileRepository</argument>
         </service>
 
-        <service id="typo3.frontend_controller" class="TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController">
-            <factory service="typo3" method="getGlobal" />
+        <service alias="typo3.frontend_controller" id="TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController" />
+        <service id="typo3.frontend_controller" class="TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController" shared="false" public="true">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="getGlobal" />
             <argument>TSFE</argument>
         </service>
 
-        <service id="typo3.page_repository" class="TYPO3\CMS\Frontend\Page\PageRepository">
-            <factory service="typo3" method="getPageRepository" />
+        <service alias="typo3.page_repository" id="TYPO3\CMS\Frontend\Page\PageRepository" />
+        <service id="typo3.page_repository" class="TYPO3\CMS\Frontend\Page\PageRepository" shared="false" public="true">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="getPageRepository" />
         </service>
 
-        <service id="typo3.registry" class="TYPO3\CMS\Core\Registry">
-            <factory service="typo3" method="makeInstance" />
+        <service alias="typo3.registry" id="TYPO3\CMS\Core\Registry"/>
+        <service id="typo3.registry" class="TYPO3\CMS\Core\Registry" shared="false" public="true">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance"/>
             <argument>TYPO3\CMS\Core\Registry</argument>
         </service>
     </services>
