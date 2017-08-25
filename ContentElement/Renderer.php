@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\ContentElement;
 
-use JMS\DiExtraBundle\Annotation as DI;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,9 +38,6 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
  * Dispatch a content element to controller action.
- *
- * @DI\Service("bartacus.content_element.renderer")
- * @DI\Tag("bartacus.typoscript")
  */
 class Renderer
 {
@@ -51,6 +47,7 @@ class Renderer
      * @var ContentObjectRenderer
      */
     public $cObj;
+
     /**
      * @var RequestStack
      */
@@ -81,16 +78,6 @@ class Renderer
      */
     private $argumentResolver;
 
-    /**
-     * @DI\InjectParams(params={
-     *     "requestStack" = @DI\Inject("request_stack"),
-     *     "kernel" = @DI\Inject("http_kernel"),
-     *     "routerListener" = @DI\Inject("router_listener"),
-     *     "resolver" = @DI\Inject("controller_resolver"),
-     *     "frontendController" = @DI\Inject("typo3.frontend_controller"),
-     *     "argumentResolver" = @DI\Inject("argument_resolver"),
-     * })
-     */
     public function __construct(RequestStack $requestStack, HttpKernel $kernel, RouterListener $routerListener, ControllerResolverInterface $resolver, TypoScriptFrontendController $frontendController, ArgumentResolverInterface $argumentResolver)
     {
         $this->requestStack = $requestStack;
@@ -116,11 +103,8 @@ class Renderer
 
         $request->headers->set('X-Php-Ob-Level', \ob_get_level());
 
-        $event = new GetResponseEvent(
-            $this->kernel,
-            $request,
-            HttpKernel::SUB_REQUEST
-        );
+        // request
+        $event = new GetResponseEvent($this->kernel, $request, HttpKernel::SUB_REQUEST);
         $this->routerListener->onKernelRequest($event);
 
         // load controller
@@ -138,6 +122,7 @@ class Renderer
         $arguments = $this->argumentResolver->getArguments($request, $controller);
 
         $response = null;
+
         try {
             // call controller
             $response = \call_user_func_array($controller, $arguments);
@@ -156,15 +141,12 @@ class Renderer
             if (null === $response) {
                 $msg .= ' Did you forget to add a return statement somewhere in your controller?';
             }
+
             throw new \LogicException($msg);
         }
 
         $this->routerListener->onKernelFinishRequest(
-            new FinishRequestEvent(
-                $this->kernel,
-                $request,
-                HttpKernel::SUB_REQUEST
-            )
+            new FinishRequestEvent($this->kernel, $request, HttpKernel::SUB_REQUEST)
         );
 
         $request->attributes->remove('data');
@@ -173,6 +155,7 @@ class Renderer
         if ($response instanceof RedirectResponse) {
             $response->send();
             $this->kernel->terminate($request, $response);
+
             exit();
         }
 

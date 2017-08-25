@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler;
 
+use Bartacus\Bundle\BartacusBundle\TypoScript\UserFuncCollector;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -31,13 +32,11 @@ class TypoScriptUserFuncPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->has('bartacus.typoscript.user_func_collector')) {
+        if (!$container->has(UserFuncCollector::class)) {
             return;
         }
 
-        $definition = $container->findDefinition(
-            'bartacus.typoscript.user_func_collector'
-        );
+        $definition = $container->findDefinition(UserFuncCollector::class);
 
         $taggedServices = $container->findTaggedServiceIds(
             'bartacus.typoscript'

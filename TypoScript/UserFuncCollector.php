@@ -23,13 +23,10 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\TypoScript;
 
-use JMS\DiExtraBundle\Annotation as DI;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Collects all classes which should be usable for TypoScript userFunc calls.
- *
- * @DI\Service("bartacus.typoscript.user_func_collector")
  */
 class UserFuncCollector
 {

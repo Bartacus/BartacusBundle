@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\ContentElement;
 
-use JMS\DiExtraBundle\Annotation as DI;
+use Bartacus\Bundle\BartacusBundle\ContentElement\Loader\AnnotationBundleLoader;
 use Symfony\Component\Config\ConfigCacheFactory;
 use Symfony\Component\Config\ConfigCacheFactoryInterface;
 use Symfony\Component\Config\ConfigCacheInterface;
@@ -31,9 +31,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
-/**
- * @DI\Service("bartacus.content_element.config_loader", public=false)
- */
 class ContentElementConfigLoader implements WarmableInterface
 {
     /**
@@ -66,14 +63,6 @@ class ContentElementConfigLoader implements WarmableInterface
      */
     private $configCacheFactory;
 
-    /**
-     * @DI\InjectParams(params={
-     *     "container" = @DI\Inject("service_container"),
-     *      "bundles" = @DI\Inject("%jms_di_extra.bundles%"),
-     *      "cacheDir" = @DI\Inject("%kernel.cache_dir%"),
-     *      "debug" = @DI\Inject("%kernel.debug%")
-     * })
-     */
     public function __construct(ContainerInterface $container, array $bundles = [], string $cacheDir = null, bool $debug = false)
     {
         $this->container = $container;
@@ -253,7 +242,7 @@ tt_content.key.field = CType
     {
         if (null === $this->collection) {
             $this->collection = $this->container
-                ->get('bartacus.content_element.loader')
+                ->get(AnnotationBundleLoader::class)
                 ->load($this->bundles, 'annotation')
             ;
         }

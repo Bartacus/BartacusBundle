@@ -79,7 +79,6 @@ class SymfonyFrontendRequestHandler extends RequestHandler
 
         // yes, we must use the global declared kernel here, because the request handler is
         // initialized from the Bootstrap with no control of the constructor..
-        /* @var KernelInterface $kernel */
         global $kernel;
         $this->kernel = $kernel;
 
@@ -141,12 +140,10 @@ class SymfonyFrontendRequestHandler extends RequestHandler
         try {
             $handleWithRealUrl = false;
 
-            /** @var RequestContext $routerRequestContext */
-            $routerRequestContext = $this->kernel->getContainer()->get('router.request_context');
+            $routerRequestContext = $this->kernel->getContainer()->get(RequestContext::class);
             $routerRequestContext->fromRequest($symfonyRequest);
 
-            /** @var Router $router */
-            $router = $this->kernel->getContainer()->get('router');
+            $router = $this->kernel->getContainer()->get(Router::class);
             $router->matchRequest($symfonyRequest);
         } catch (ResourceNotFoundException $e) {
             $handleWithRealUrl = true;
@@ -336,20 +333,16 @@ class SymfonyFrontendRequestHandler extends RequestHandler
      */
     protected function handleSymfonyRequest(Request $symfonyRequest): ? ResponseInterface
     {
-        $this->timeTracker->push('Symfony request handling', '');
+        $this->timeTracker->push('Symfony request handling');
 
         // set the locale from TypoScript, effectively killing _locale from router :/
         [$locale] = \explode('.', $this->controller->config['config']['locale_all']);
         $symfonyRequest->attributes->set('_locale', $locale);
 
-        // yes, we must use the global declared kernel here, because the request handler is
-        // initialized from the Bootstrap with no control of the constructor..
-        /* @var KernelInterface $kernel */
-        global $kernel;
-
         $response = null;
+
         try {
-            $symfonyResponse = $kernel->handle($symfonyRequest, HttpKernelInterface::MASTER_REQUEST, false);
+            $symfonyResponse = $this->kernel->handle($symfonyRequest, HttpKernelInterface::MASTER_REQUEST, false);
 
             if (!$symfonyResponse instanceof BinaryFileResponse
                 && !$symfonyResponse instanceof StreamedResponse
@@ -366,14 +359,9 @@ class SymfonyFrontendRequestHandler extends RequestHandler
                 throw $e;
             }
 
-            /** @var EventDispatcherInterface $eventDispatcher */
-            $eventDispatcher = $kernel->getContainer()->get('event_dispatcher');
-
-            /** @var RequestStack $requestStack */
-            $requestStack = $kernel->getContainer()->get('request_stack');
-
-            /** @var HttpKernelInterface $httpKernel */
-            $httpKernel = $kernel->getContainer()->get('http_kernel');
+            $eventDispatcher = $this->kernel->getContainer()->get(EventDispatcherInterface::class);
+            $requestStack = $this->kernel->getContainer()->get(RequestStack::class);
+            $httpKernel = $this->kernel->getContainer()->get(HttpKernelInterface::class);
 
             // no route found, but to initialize locale and translator correctly
             // dispatch request event again, but skip router.

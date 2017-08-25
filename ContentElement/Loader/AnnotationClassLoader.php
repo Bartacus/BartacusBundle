@@ -27,14 +27,10 @@ use Bartacus\Bundle\BartacusBundle\Annotation\ContentElement;
 use Bartacus\Bundle\BartacusBundle\ContentElement\RenderDefinition;
 use Bartacus\Bundle\BartacusBundle\ContentElement\RenderDefinitionCollection;
 use Doctrine\Common\Annotations\Reader;
-use JMS\DiExtraBundle\Annotation as DI;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\Config\Resource\FileResource;
 
-/**
- * @DI\Service("bartacus.content_element.class_loader", public=false)
- */
 class AnnotationClassLoader implements LoaderInterface
 {
     /**
@@ -47,11 +43,6 @@ class AnnotationClassLoader implements LoaderInterface
      */
     protected $defaultRenderDefinitionIndex = 0;
 
-    /**
-     * @DI\InjectParams(params={
-     *     "reader" = @DI\Inject("annotation_reader")
-     * })
-     */
     public function __construct(Reader $reader)
     {
         $this->reader = $reader;

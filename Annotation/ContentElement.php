@@ -48,7 +48,7 @@ final class ContentElement
         }
 
         if (isset($options['cached'])) {
-            $this->cached = \filter_var($options['cached'], FILTER_VALIDATE_BOOLEAN);
+            $this->cached = \filter_var($options['cached'], \FILTER_VALIDATE_BOOLEAN);
         }
     }
 

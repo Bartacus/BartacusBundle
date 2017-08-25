@@ -42,6 +42,7 @@ class BartacusExtension extends Extension implements PrependExtensionInterface
             new FileLocator(__DIR__.'/../Resources/config')
         );
 
+        $loader->load('services.xml');
         $loader->load('typo3.xml');
         $loader->load('overrides.xml');
 

@@ -23,15 +23,11 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\EventListener;
 
-use JMS\DiExtraBundle\Annotation as DI;
-use Symfony\Component\HttpKernel\KernelEvents;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
  * Initializes the cObj on the TSFE, when not done yet.
- *
- * @DI\Service
  */
 class ContentObjectListener
 {
@@ -40,19 +36,11 @@ class ContentObjectListener
      */
     private $frontendController;
 
-    /**
-     * @DI\InjectParams(params={
-     *     "frontendController" = @DI\Inject("typo3.frontend_controller")
-     * })
-     */
     public function __construct(TypoScriptFrontendController $frontendController)
     {
         $this->frontendController = $frontendController;
     }
 
-    /**
-     * @DI\Observe(KernelEvents::REQUEST, priority=8)
-     */
     public function onKernelRequest(): void
     {
         if (!$this->frontendController->cObj instanceof ContentObjectRenderer) {
