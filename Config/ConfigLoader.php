@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Config;
 
-use Bartacus\Bundle\BartacusBundle\ContentElement\ContentElementConfigLoader;
+use Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader;
 
 /**
  * Delegating central config loader called on various places within TYPO3

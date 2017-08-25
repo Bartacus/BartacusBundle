@@ -21,7 +21,7 @@ declare(strict_types=1);
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Bundle\BartacusBundle\ContentElement;
+namespace Bartacus\Bundle\BartacusBundle\ContentElement\Definition;
 
 /**
  * @author Patrik Karisch <p.karisch@pixelart.at>
