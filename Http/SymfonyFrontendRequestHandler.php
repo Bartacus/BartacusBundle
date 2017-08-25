@@ -140,10 +140,12 @@ class SymfonyFrontendRequestHandler extends RequestHandler
         try {
             $handleWithRealUrl = false;
 
-            $routerRequestContext = $this->kernel->getContainer()->get(RequestContext::class);
+            /** @var RequestContext $routerRequestContext */
+            $routerRequestContext = $this->kernel->getContainer()->get('router.request_context');
             $routerRequestContext->fromRequest($symfonyRequest);
 
-            $router = $this->kernel->getContainer()->get(Router::class);
+            /** @var Router $router */
+            $router = $this->kernel->getContainer()->get('router');
             $router->matchRequest($symfonyRequest);
         } catch (ResourceNotFoundException $e) {
             $handleWithRealUrl = true;
@@ -359,9 +361,14 @@ class SymfonyFrontendRequestHandler extends RequestHandler
                 throw $e;
             }
 
-            $eventDispatcher = $this->kernel->getContainer()->get(EventDispatcherInterface::class);
-            $requestStack = $this->kernel->getContainer()->get(RequestStack::class);
-            $httpKernel = $this->kernel->getContainer()->get(HttpKernelInterface::class);
+            /** @var EventDispatcherInterface $eventDispatcher */
+            $eventDispatcher = $this->kernel->getContainer()->get('event_dispatcher');
+
+            /** @var RequestStack $requestStack */
+            $requestStack = $this->kernel->getContainer()->get('request_stack');
+
+            /** @var HttpKernelInterface $httpKernel */
+            $httpKernel = $this->kernel->getContainer()->get('http_kernel');
 
             // no route found, but to initialize locale and translator correctly
             // dispatch request event again, but skip router.
