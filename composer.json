@@ -16,7 +16,6 @@
     ],
     "require": {
         "php": "^7.1",
-        "jms/di-extra-bundle": "^1.8",
         "ocramius/proxy-manager": "^2.0",
         "symfony/psr-http-message-bridge": "^1.0",
         "symfony/symfony": "^3.3",
@@ -24,6 +23,9 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.2"
+    },
+    "conflict": {
+        "jms/di-extra-bundle": "*"
     },
     "autoload": {
         "psr-4": {

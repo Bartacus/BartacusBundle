@@ -21,37 +21,28 @@ declare(strict_types=1);
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Bundle\BartacusBundle\ContentElement;
+namespace Bartacus\Bundle\BartacusBundle\ContentElement\Loader;
 
-use Bartacus\Bundle\BartacusBundle\ContentElement\Loader\AnnotationBundleLoader;
+use Bartacus\Bundle\BartacusBundle\ContentElement\Definition\RenderDefinition;
+use Bartacus\Bundle\BartacusBundle\ContentElement\Definition\RenderDefinitionCollection;
+use Bartacus\Bundle\BartacusBundle\ContentElement\Renderer;
 use Symfony\Component\Config\ConfigCacheFactory;
 use Symfony\Component\Config\ConfigCacheFactoryInterface;
 use Symfony\Component\Config\ConfigCacheInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
-class ContentElementConfigLoader implements WarmableInterface
+final class ContentElementConfigLoader implements WarmableInterface
 {
     /**
      * @var RenderDefinitionCollection|null
      */
-    protected $collection;
-
-    /**
-     * @var string[]
-     */
-    protected $bundles = [];
+    private $collection;
 
     /**
      * @var array
      */
-    protected $options = [];
-
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private $options = [];
 
     /**
      * @var bool
@@ -63,14 +54,28 @@ class ContentElementConfigLoader implements WarmableInterface
      */
     private $configCacheFactory;
 
-    public function __construct(ContainerInterface $container, array $bundles = [], string $cacheDir = null, bool $debug = false)
+    /**
+     * @var AnnotationContentElementLoader
+     */
+    private $loader;
+
+    public function __construct(AnnotationContentElementLoader $loader, string $cacheDir = null, bool $debug = false)
     {
-        $this->container = $container;
-        $this->bundles = $bundles;
+        $this->loader = $loader;
         $this->setOptions([
             'cache_dir' => $cacheDir,
             'debug' => $debug,
         ]);
+    }
+
+    /**
+     * Sets the ConfigCache factory to use.
+     *
+     * @param ConfigCacheFactoryInterface $configCacheFactory The factory to use
+     */
+    public function setConfigCacheFactory(ConfigCacheFactoryInterface $configCacheFactory)
+    {
+        $this->configCacheFactory = $configCacheFactory;
     }
 
     /**
@@ -85,7 +90,7 @@ class ContentElementConfigLoader implements WarmableInterface
      *
      * @throws \InvalidArgumentException When unsupported option is provided
      */
-    public function setOptions(array $options)
+    public function setOptions(array $options): void
     {
         $this->options = [
             'cache_dir' => null,
@@ -118,7 +123,7 @@ class ContentElementConfigLoader implements WarmableInterface
      *
      * @throws \InvalidArgumentException
      */
-    public function setOption($key, $value)
+    public function setOption(string $key, $value): void
     {
         if (!\array_key_exists($key, $this->options)) {
             throw new \InvalidArgumentException(\sprintf('The Router does not support the "%s" option.', $key));
@@ -136,7 +141,7 @@ class ContentElementConfigLoader implements WarmableInterface
      *
      * @return mixed The value
      */
-    public function getOption($key)
+    public function getOption(string $key)
     {
         if (!\array_key_exists($key, $this->options)) {
             throw new \InvalidArgumentException(\sprintf('The Router does not support the "%s" option.', $key));
@@ -148,7 +153,7 @@ class ContentElementConfigLoader implements WarmableInterface
     /**
      * {@inheritdoc}
      */
-    public function warmUp($cacheDir)
+    public function warmUp($cacheDir): void
     {
         $currentDir = $this->getOption('cache_dir');
 
@@ -159,7 +164,7 @@ class ContentElementConfigLoader implements WarmableInterface
         $this->setOption('cache_dir', $currentDir);
     }
 
-    public function load()
+    public function load(): void
     {
         if (true === $this->typoScriptLoaded) {
             return;
@@ -182,9 +187,29 @@ class ContentElementConfigLoader implements WarmableInterface
      *
      * @return string
      */
-    protected function loadTypoScript(): string
+    private function loadTypoScript(): string
     {
-        $startingConfig = /* @lang TYPO3_TypoScript */ '
+        if (null === $this->options['cache_dir']) {
+            return $this->concatenateTypoScript();
+        }
+
+        $cache = $this->getConfigCacheFactory()
+            ->cache($this->options['cache_dir'].'/content_elements.typoscript',
+                function (ConfigCacheInterface $cache) {
+                    $cache->write(
+                        $this->concatenateTypoScript(),
+                        $this->getRenderDefinitionCollection()->getResources()
+                    );
+                }
+            )
+        ;
+
+        return \file_get_contents($cache->getPath());
+    }
+
+    private function concatenateTypoScript(): string
+    {
+        $startingConfig = /* @lang TYPO3_TypoScript */ <<<'EOTS'
 # Clear out any constants in this reserved room!
 bartacus.content >
 
@@ -201,57 +226,32 @@ tt_content >
 tt_content = CASE
 tt_content.key.field = CType
 
-';
+EOTS;
 
-        if (null === $this->options['cache_dir']) {
-            $renderDefinitions = $this->getRenderDefinitionCollection();
+        $renderDefinitions = $this->getRenderDefinitionCollection();
 
-            $typoScripts = [];
-            foreach ($renderDefinitions as $renderDefinition) {
-                $typoScripts[] = $this->renderPluginContent($renderDefinition);
-            }
-
-            return $startingConfig.\implode("\n\n", $typoScripts);
+        $typoScripts = [];
+        foreach ($renderDefinitions as $renderDefinition) {
+            $typoScripts[] = $this->renderPluginContent($renderDefinition);
         }
 
-        $cache = $this->getConfigCacheFactory()
-            ->cache($this->options['cache_dir'].'/content_elements.typoscript',
-                function (ConfigCacheInterface $cache) use ($startingConfig) {
-                    $renderDefinitions = $this->getRenderDefinitionCollection();
-
-                    $typoScripts = [];
-                    foreach ($renderDefinitions as $renderDefinition) {
-                        $typoScripts[] = $this->renderPluginContent($renderDefinition);
-                    }
-
-                    $output = $startingConfig.\implode("\n\n", $typoScripts);
-                    $cache->write($output, $renderDefinitions->getResources());
-                }
-            )
-        ;
-
-        return \file_get_contents($cache->getPath());
+        return $startingConfig.\implode("\n\n", $typoScripts);
     }
 
     /**
-     * @throws \Exception
-     *
      * @return RenderDefinitionCollection
      */
     private function getRenderDefinitionCollection(): RenderDefinitionCollection
     {
         if (null === $this->collection) {
-            $this->collection = $this->container
-                ->get(AnnotationBundleLoader::class)
-                ->load($this->bundles, 'annotation')
-            ;
+            $this->collection = $this->loader->load();
         }
 
         return $this->collection;
     }
 
     /**
-     * @param RenderDefinition $renderDefinition
+     * @param \Bartacus\Bundle\BartacusBundle\ContentElement\Definition\RenderDefinition $renderDefinition
      *
      * @return string
      */
@@ -260,16 +260,19 @@ tt_content.key.field = CType
         $pluginSignature = $renderDefinition->getName();
         $cached = $renderDefinition->isCached();
         $controller = $renderDefinition->getController();
+        $pluginType = 'USER'.($cached ? '' : '_INT');
+        $userFunc = Renderer::class.'->handle';
 
-        $pluginContent = \trim('
-# Setting '.$pluginSignature.' content element
-tt_content.'.$pluginSignature.' = USER'.($cached ? '' : '_INT').'
-tt_content.'.$pluginSignature.' {
-    userFunc = '.Renderer::class.'->handle
-    controller = '.$controller.'
-}');
+        $pluginContent = /* @lang TYPO3_TypoScript */ <<<EOTS
+# Setting {$pluginSignature} content element
+tt_content.{$pluginSignature} = {$pluginType} 
+tt_content.{$pluginSignature} {
+    userFunc = {$userFunc}
+    controller = {$controller}
+}
+EOTS;
 
-        return $pluginContent;
+        return \trim($pluginContent);
     }
 
     /**

@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\CacheWarmer;
 
-use Bartacus\Bundle\BartacusBundle\ContentElement\ContentElementConfigLoader;
+use Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 

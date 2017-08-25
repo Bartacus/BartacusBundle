@@ -23,17 +23,12 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\DependencyInjection;
 
-use Bartacus\Bundle\BartacusBundle\Exception\DependencyUnsatisfiedException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-/**
- * Handle registration with JMSDiExtraBundle and other stuff.
- */
-class BartacusExtension extends Extension implements PrependExtensionInterface
+class BartacusExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
@@ -50,21 +45,5 @@ class BartacusExtension extends Extension implements PrependExtensionInterface
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('bartacus.paths.web_dir', $config['paths']['web_dir']);
-    }
-
-    public function prepend(ContainerBuilder $container): void
-    {
-        $bundles = $container->getParameter('kernel.bundles');
-        if (!isset($bundles['JMSDiExtraBundle'])) {
-            throw new DependencyUnsatisfiedException('The JMSDiExtraBundle is not loaded!');
-        }
-
-        $container->prependExtensionConfig('jms_di_extra', [
-            'locations' => [
-                'bundles' => [
-                    'BartacusBundle',
-                ],
-            ],
-        ]);
     }
 }

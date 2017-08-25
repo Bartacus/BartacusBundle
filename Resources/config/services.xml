@@ -27,23 +27,21 @@
         <defaults public="false" />
 
         <service id="Bartacus\Bundle\BartacusBundle\CacheWarmer\ContentElementCacheWarmer">
-            <argument type="service" id="Bartacus\Bundle\BartacusBundle\ContentElement\ContentElementConfigLoader" />
+            <argument type="service" id="Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader" />
             <tag name="kernel.cache_warmer" />
         </service>
 
-        <service id="Bartacus\Bundle\BartacusBundle\ContentElement\ContentElementConfigLoader">
-            <argument type="service" id="service_container" />
-            <argument>%jms_di_extra.bundles%</argument>
+        <service id="Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader">
+            <argument type="service" id="Bartacus\Bundle\BartacusBundle\ContentElement\Loader\AnnotationContentElementLoader" />
             <argument>%kernel.cache_dir%</argument>
             <argument>%kernel.debug%</argument>
+            <call method="setConfigCacheFactory">
+                <argument type="service" id="config_cache_factory" />
+            </call>
         </service>
 
-        <service id="Bartacus\Bundle\BartacusBundle\ContentElement\Loader\AnnotationBundleLoader" public="true">
-            <argument type="service" id="file_locator" />
-            <argument type="service" id="Bartacus\Bundle\BartacusBundle\ContentElement\Loader\AnnotationClassLoader" />
-        </service>
-
-        <service id="Bartacus\Bundle\BartacusBundle\ContentElement\Loader\AnnotationClassLoader">
+        <service id="Bartacus\Bundle\BartacusBundle\ContentElement\Loader\AnnotationContentElementLoader">
+            <argument>%kernel.bundles_metadata%</argument>
             <argument type="service" id="annotation_reader" />
         </service>
 
@@ -54,7 +52,7 @@
         </service>
 
         <service id="Bartacus\Bundle\BartacusBundle\Config\ConfigLoader" public="true">
-            <argument type="service" id="Bartacus\Bundle\BartacusBundle\ContentElement\ContentElementConfigLoader" />
+            <argument type="service" id="Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader" />
         </service>
 
         <service id="Bartacus\Bundle\BartacusBundle\ContentElement\Renderer">
