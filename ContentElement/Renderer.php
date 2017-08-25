@@ -47,6 +47,7 @@ class Renderer
      * @var ContentObjectRenderer
      */
     public $cObj;
+
     /**
      * @var RequestStack
      */
@@ -102,11 +103,8 @@ class Renderer
 
         $request->headers->set('X-Php-Ob-Level', \ob_get_level());
 
-        $event = new GetResponseEvent(
-            $this->kernel,
-            $request,
-            HttpKernel::SUB_REQUEST
-        );
+        // request
+        $event = new GetResponseEvent($this->kernel, $request, HttpKernel::SUB_REQUEST);
         $this->routerListener->onKernelRequest($event);
 
         // load controller
@@ -124,6 +122,7 @@ class Renderer
         $arguments = $this->argumentResolver->getArguments($request, $controller);
 
         $response = null;
+
         try {
             // call controller
             $response = \call_user_func_array($controller, $arguments);
@@ -142,15 +141,12 @@ class Renderer
             if (null === $response) {
                 $msg .= ' Did you forget to add a return statement somewhere in your controller?';
             }
+
             throw new \LogicException($msg);
         }
 
         $this->routerListener->onKernelFinishRequest(
-            new FinishRequestEvent(
-                $this->kernel,
-                $request,
-                HttpKernel::SUB_REQUEST
-            )
+            new FinishRequestEvent($this->kernel, $request, HttpKernel::SUB_REQUEST)
         );
 
         $request->attributes->remove('data');
@@ -159,6 +155,7 @@ class Renderer
         if ($response instanceof RedirectResponse) {
             $response->send();
             $this->kernel->terminate($request, $response);
+
             exit();
         }
 

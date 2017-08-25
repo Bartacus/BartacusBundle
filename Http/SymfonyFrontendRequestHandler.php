@@ -348,6 +348,7 @@ class SymfonyFrontendRequestHandler extends RequestHandler
         global $kernel;
 
         $response = null;
+
         try {
             $symfonyResponse = $kernel->handle($symfonyRequest, HttpKernelInterface::MASTER_REQUEST, false);
 

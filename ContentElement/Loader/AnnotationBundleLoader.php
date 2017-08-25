@@ -172,6 +172,7 @@ class AnnotationBundleLoader extends FileLoader
 
                     if (T_DOUBLE_COLON === $tokens[$j][0]) {
                         $isClassConstant = true;
+
                         break;
                     } elseif (!\in_array($tokens[$j][0], [T_WHITESPACE, T_DOC_COMMENT, T_COMMENT], true)) {
                         break;
