@@ -14,6 +14,9 @@ Usage
 To dispatch content elements to Symfony, you have to define a ``@ContentElement``
 annotation on your action method. Same like a Symfony ``@Route`` annotation.
 
+Content elements can live under `Action` or `Controller` namespace within your
+bundle.
+
 The data which is usually retrieved via ``$this->cObj->data`` in old pi_base
 plugin is now injected into the ``$data`` parameter of the method if it exists.
 
@@ -78,49 +81,3 @@ take care of it with the configure page not found handler.
 Or if you want to show a special content if nothing is found, but still need a
 404 status code for SEO reasons, render your special content and return a normal
 response object with the status code set to 404.
-
-Reusable bundles
-================
-
-If you create a reusable bundle, make sure you register the bundle for the
-jms_di_extra config in your prepend extension:
-
-.. code-block:: php
-
-    <?php
-
-    declare(strict_types=1);
-
-    namespace Acme\Bundle\MyBundle\DependencyInjection;
-
-    use Bartacus\Bundle\BartacusBundle\Exception\DependencyUnsatisfiedException;
-    use Symfony\Component\DependencyInjection\ContainerBuilder;
-    use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
-    use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-
-    /**
-     * Handle registration with JMSDiExtraBundle and other stuff.
-     */
-    class BartacusExtension extends Extension implements PrependExtensionInterface
-    {
-        public function load(array $configs, ContainerBuilder $container)
-        {
-            // Nothing to load atm.
-        }
-
-        public function prepend(ContainerBuilder $container)
-        {
-            $bundles = $container->getParameter('kernel.bundles');
-            if (!isset($bundles['JMSDiExtraBundle'])) {
-                throw new DependencyUnsatisfiedException('The JMSDiExtraBundle is not loaded!');
-            }
-
-            $container->prependExtensionConfig('jms_di_extra', [
-                'locations' => [
-                    'bundles' => [
-                        'AcmeMyBundle',
-                    ],
-                ],
-            ]);
-        }
-    }
