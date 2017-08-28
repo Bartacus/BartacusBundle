@@ -21,44 +21,65 @@ declare(strict_types=1);
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Bundle\BartacusBundle\TypoScript;
+namespace Bartacus\Bundle\BartacusBundle\Typo3;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Collects all classes which should be usable for TypoScript userFunc calls.
+ * Collects all classes which should be usable for {@see GeneralUtility::makeInstance()} calls.
  */
-class UserFuncCollector
+final class SymfonyServiceForMakeInstanceLoader
 {
     /**
-     * The tagged services for userFunc calls.
+     * The tagged services for {@see GeneralUtility::makeInstance()} calls.
      *
      * [class name => instance]
      *
      * @var array
      */
-    protected $userFuncs = [];
+    private $services = [];
 
     /**
      * @param string $className
      * @param object $instance
      */
-    public function addUserFunc(string $className, $instance): void
+    public function addService(string $className, $instance): void
     {
-        $this->userFuncs[$className] = $instance;
+        $this->services[$className] = $instance;
     }
 
     /**
      * Loads all registered instances into the {@see GeneralUtility::makeInstance()} singleton cache.
      */
-    public function loadUserFuncs(): void
+    public function load(): void
     {
         $refl = new \ReflectionClass(GeneralUtility::class);
+
+        $this->loadClassNameCache($refl);
+        $this->loadInstanceCache($refl);
+    }
+
+    private function loadClassNameCache(\ReflectionClass $refl): void
+    {
+        $reflProp = $refl->getProperty('finalClassNameCache');
+        $reflProp->setAccessible(true);
+
+        $classes = \array_keys($this->services);
+        $classes = \array_combine($classes, $classes);
+
+        $classNames = $reflProp->getValue();
+        $classNames = \array_merge($classNames, $classes);
+
+        $reflProp->setValue(null, $classNames);
+    }
+
+    private function loadInstanceCache(\ReflectionClass $refl): void
+    {
         $reflProp = $refl->getProperty('singletonInstances');
         $reflProp->setAccessible(true);
 
         $instances = $reflProp->getValue();
-        $instances = \array_merge($instances, $this->userFuncs);
+        $instances = \array_merge($instances, $this->services);
 
         $reflProp->setValue(null, $instances);
     }
