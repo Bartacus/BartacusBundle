@@ -23,23 +23,26 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler;
 
-use Bartacus\Bundle\BartacusBundle\TypoScript\UserFuncCollector;
+use Bartacus\Bundle\BartacusBundle\Typo3\SymfonyServiceForMakeInstanceLoader;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class TypoScriptUserFuncPass implements CompilerPassInterface
+class SymfonyServiceForMakeInstancePass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->has(UserFuncCollector::class)) {
+        if (!$container->has(SymfonyServiceForMakeInstanceLoader::class)) {
             return;
         }
 
-        $definition = $container->findDefinition(UserFuncCollector::class);
+        $definition = $container->findDefinition(SymfonyServiceForMakeInstanceLoader::class);
 
-        $taggedServices = $container->findTaggedServiceIds(
-            'bartacus.typoscript'
+        $taggedServices = $container->findTaggedServiceIds('bartacus.typoscript');
+
+        $taggedServices = \array_merge(
+            $taggedServices,
+            $container->findTaggedServiceIds('bartacus.make_instance')
         );
 
         foreach ($taggedServices as $id => $tags) {
@@ -47,7 +50,7 @@ class TypoScriptUserFuncPass implements CompilerPassInterface
             $taggedDefinition->setLazy(true);
 
             $definition->addMethodCall(
-                'addUserFunc',
+                'addService',
                 [$taggedDefinition->getClass(), new Reference($id)]
             );
         }
