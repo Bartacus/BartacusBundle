@@ -345,10 +345,13 @@ class SymfonyFrontendRequestHandler extends RequestHandler
 
         try {
             $symfonyResponse = $this->kernel->handle($symfonyRequest, HttpKernelInterface::MASTER_REQUEST, false);
+            $symfonyResponseContentType = $symfonyResponse->headers->get('Content-Type');
 
             if (!$symfonyResponse instanceof BinaryFileResponse
                 && !$symfonyResponse instanceof StreamedResponse
-                && 0 === \mb_stripos($symfonyResponse->headers->get('Content-Type'), 'text/html')
+                && SymfonyResponse::HTTP_OK === $symfonyResponse->getStatusCode()
+                && null !== $symfonyResponseContentType
+                && 0 === \mb_stripos($symfonyResponseContentType, 'text/html')
             ) {
                 $this->controller->content = $symfonyResponse->getContent();
             }
