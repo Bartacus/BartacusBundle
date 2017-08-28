@@ -21,6 +21,6 @@ Contents
     :maxdepth: 2
 
     getting-started/index
-    services_typoscript
+    services_typo3
     content_elements
     service_bridge
