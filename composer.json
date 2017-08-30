@@ -16,10 +16,11 @@
     ],
     "require": {
         "php": "^7.1",
+        "cweagans/composer-patches": "^1.6.2",
         "ocramius/proxy-manager": "^2.0",
         "symfony/psr-http-message-bridge": "^1.0",
         "symfony/symfony": "^3.3",
-        "typo3/cms": "^8.7"
+        "typo3/cms": "8.7.4"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.2"
@@ -40,6 +41,11 @@
         },
         "branch-alias": {
             "dev-master": "1.0-dev"
+        },
+        "patches": {
+            "typo3/cms": {
+                "Patch all TYPO3 entry points for proper Symfony kernel bootstrap": "https://github.com/Bartacus/TYPO3.CMS/compare/8.7.4...patch/8.7.4/bartacus-entry-scripts.patch"
+            }
         }
     }
 }
