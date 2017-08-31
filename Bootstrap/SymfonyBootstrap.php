@@ -43,7 +43,7 @@ final class SymfonyBootstrap
     {
         /** @var PackageManager $packageManager */
         $packageManager = Bootstrap::getInstance()->getEarlyInstance(PackageManager::class);
-        $package = new Package($packageManager, 'app', \realpath(self::$kernel->getProjectDir().'/app/'));
+        $package = new Package($packageManager, 'app', \rtrim(\realpath(self::$kernel->getProjectDir().'/app/'), '\\/').'/');
         $packageManager->registerPackage($package);
 
         \Closure::bind(function (PackageManager $instance) use ($package) {
