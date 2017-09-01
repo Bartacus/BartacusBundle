@@ -9,9 +9,8 @@ Frontend
 ========
 
 The locale on the request is set from the TSFE locale context on the domain you
-are on. It uses the ``sys_language_isocode`` which is automatically derived by
-TYPO3 from your ``sys_language`` settings in the backend. Optionally you can
-override this field in your TypoScript config.
+are on. It derives from the ``locale_all`` in your TypoScript and used without
+the encoding. Optionally you can override this field in your TypoScript config.
 
 Content elements
 ----------------
