@@ -48,7 +48,7 @@ final class AnnotationContentElementLoader
      */
     private $defaultRenderDefinitionIndex = 0;
 
-    public function __construct(iterable $bundles, Reader $annotationReader)
+    public function __construct(array $bundles, Reader $annotationReader)
     {
         $this->bundles = $bundles;
         $this->annotationReader = $annotationReader;
