@@ -23,9 +23,6 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\ContentElement\Definition;
 
-/**
- * @author Patrik Karisch <p.karisch@pixelart.at>
- */
 class RenderDefinition
 {
     /**

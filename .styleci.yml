@@ -4,10 +4,18 @@ enabled:
     - combine_consecutive_unsets
     - declare_strict_types
     - dir_constant
+    - doctrine_annotation_array_assignment
+    - doctrine_annotation_braces
+    - doctrine_annotation_indentation
+    - doctrine_annotation_spaces
     - linebreak_after_opening_tag
     - mb_str_functions
     - native_function_invocation
+    - no_null_property_initialization
     - no_php4_constructor
+    - no_superfluous_elseif
+    - no_unneeded_curly_braces
+    - no_unneeded_final_method
     - no_unreachable_default_argument_value
     - no_useless_else
     - no_useless_return
@@ -19,6 +27,7 @@ enabled:
     - phpdoc_add_missing_param_annotation
     - phpdoc_order
     - short_array_syntax
+    - short_list_syntax
     - semicolon_after_instruction
     - strict_comparison
     - strict_param

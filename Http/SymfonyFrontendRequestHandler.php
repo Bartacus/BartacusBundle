@@ -70,7 +70,7 @@ class SymfonyFrontendRequestHandler extends RequestHandler
      *
      * @param ServerRequestInterface $request
      *
-     * @return null|ResponseInterface
+     * @return ResponseInterface|null
      */
     public function handleRequest(ServerRequestInterface $request): ?ResponseInterface
     {

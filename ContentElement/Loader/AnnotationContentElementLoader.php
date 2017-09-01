@@ -191,7 +191,9 @@ final class AnnotationContentElementLoader
                         $isClassConstant = true;
 
                         break;
-                    } elseif (!\in_array($tokens[$j][0], [T_WHITESPACE, T_DOC_COMMENT, T_COMMENT], true)) {
+                    }
+
+                    if (!\in_array($tokens[$j][0], [T_WHITESPACE, T_DOC_COMMENT, T_COMMENT], true)) {
                         break;
                     }
                 }

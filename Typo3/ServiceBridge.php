@@ -30,8 +30,6 @@ use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
  * Service bridge to TYPO3 instantiation and global instances.
- *
- * @author Patrik Karisch <p.karisch@pixelart.at>
  */
 class ServiceBridge
 {

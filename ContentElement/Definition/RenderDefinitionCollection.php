@@ -25,9 +25,6 @@ namespace Bartacus\Bundle\BartacusBundle\ContentElement\Definition;
 
 use Symfony\Component\Config\Resource\ResourceInterface;
 
-/**
- * @author Patrik Karisch <p.karisch@pixelart.at>
- */
 class RenderDefinitionCollection implements \IteratorAggregate, \Countable
 {
     /**

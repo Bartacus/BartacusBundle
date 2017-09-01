@@ -23,9 +23,6 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Exception;
 
-/**
- * @author Patrik Karisch <p.karisch@pixelart.at>
- */
 class DependencyUnsatisfiedException extends \Exception
 {
 }
