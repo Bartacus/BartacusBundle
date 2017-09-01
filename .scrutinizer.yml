@@ -1,0 +1,4 @@
+filter:
+    excluded_paths:
+        - .phpstorm.meta.php/*
+        - Http/SymfonyFrontendRequestHandler.php
