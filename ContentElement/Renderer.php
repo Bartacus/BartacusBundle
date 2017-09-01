@@ -121,8 +121,6 @@ class Renderer
         // controller arguments
         $arguments = $this->argumentResolver->getArguments($request, $controller);
 
-        $response = null;
-
         try {
             // call controller
             $response = \call_user_func_array($controller, $arguments);
