@@ -34,7 +34,7 @@ following command to download the latest stable version of this bundle:
 
 .. code-block:: bash
 
-    $ composer require bartacus/bartacus-bundle "^1.0@dev"
+    $ composer require bartacus/bartacus-bundle "^1.0"
 
 
 This command requires you to have Composer installed globally, as explained
