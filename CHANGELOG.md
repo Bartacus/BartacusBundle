@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Fixed
 - Compatibility with TYPO3 8.7.6
+- Add patch for new typo3/cms-cli entry point
 
 ## [1.0.0] - 2017-09-1
 ### Changed
