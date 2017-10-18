@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [1.1.0]
 ### Added
 - Register TYPO3 ConnectionPool as Symfony service
 
@@ -17,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.0.1...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.1.0...HEAD
+[1.1.0]: https://github.com/Bartacus/BartacusBundle/compare/1.0.1...1.1.0
 [1.0.1]: https://github.com/Bartacus/BartacusBundle/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/Bartacus/BartacusBundle/compare/d84fd9f...1.0.0
