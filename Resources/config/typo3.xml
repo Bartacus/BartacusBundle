@@ -102,5 +102,10 @@
             <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance"/>
             <argument>TYPO3\CMS\Core\Registry</argument>
         </service>
+
+        <service id="TYPO3\CMS\Core\Database\ConnectionPool" shared="false">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
+            <argument>TYPO3\CMS\Core\Database\ConnectionPool</argument>
+        </service>
     </services>
 </container>
