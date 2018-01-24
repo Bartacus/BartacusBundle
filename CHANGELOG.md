@@ -6,11 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## [1.1.1]
+## [1.1.1] - 2018-01-24
 ### Fixed
 - Compatibility with TYPO3 8.6.9
 
-## [1.1.0]
+## [1.1.0] - 2017-10-18
 ### Added
 - Register TYPO3 ConnectionPool as Symfony service
 
