@@ -3,7 +3,7 @@
     "type": "symfony-bundle",
     "description": "Integrates the Symfony full-stack framework into TYPO3",
     "keywords": [ "typo3", "symfony", "framework", "integration", "container", "services", "service container", "twig" ],
-    "license": "GPL-3.0+",
+    "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Patrik Karisch",
