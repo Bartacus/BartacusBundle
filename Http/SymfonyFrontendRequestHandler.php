@@ -314,18 +314,33 @@ class SymfonyFrontendRequestHandler extends RequestHandler
                 $response = $response->withBody($body);
             }
         }
+
+        // Send content-length header.
+        // Notice that all HTML content outside the length of the content-length header will be cut off!
+        // Therefore content of unknown length from included PHP-scripts and if admin users are logged
+        // in (admin panel might show...) or if debug mode is turned on, we disable it!
+        if ((
+                !isset($this->controller->config['config']['enableContentLengthHeader'])
+                || $this->controller->config['config']['enableContentLengthHeader']
+            )
+            && !$this->controller->beUserLogin
+            && !$GLOBALS['TYPO3_CONF_VARS']['FE']['debug']
+            && !$this->controller->config['config']['debug']
+            && !$this->controller->doWorkspacePreview()
+        ) {
+            $contentLength = $response->getBody()->getSize();
+            if (null !== $contentLength) {
+                $response = $response->withAddedHeader('Content-Length', $contentLength);
+            }
+        }
+
         // Debugging Output
         if (isset($GLOBALS['error']) && \is_object($GLOBALS['error'])
-            && @\is_callable([
-                $GLOBALS['error'],
-                'debugOutput',
-            ])
+            && @\is_callable([$GLOBALS['error'], 'debugOutput'])
         ) {
             $GLOBALS['error']->debugOutput();
         }
-        if (TYPO3_DLOG) {
-            GeneralUtility::devLog('END of FRONTEND session', 'cms', 0, ['_FLUSH' => true]);
-        }
+        GeneralUtility::devLog('END of FRONTEND session', 'cms', 0, ['_FLUSH' => true]);
 
         return $response;
     }
