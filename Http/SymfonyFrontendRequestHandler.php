@@ -330,7 +330,7 @@ class SymfonyFrontendRequestHandler extends RequestHandler
         ) {
             $contentLength = $response->getBody()->getSize();
             if (null !== $contentLength) {
-                $response = $response->withAddedHeader('Content-Length', $contentLength);
+                $response = $response->withAddedHeader('Content-Length', (string) $contentLength);
             }
         }
 
