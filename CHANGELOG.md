@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.4] - 2018-05-24
+### Fixed
+- Compatibility with TYPO3 8.6.15
+
 ## [1.1.3] - 2018-03-08
 ### Fixed
 - Compatibility with TYPO3 8.6.10
@@ -31,7 +35,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.1.3...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.1.4...HEAD
+[1.1.4]: https://github.com/Bartacus/BartacusBundle/compare/1.1.3...1.1.4
 [1.1.3]: https://github.com/Bartacus/BartacusBundle/compare/1.1.2...1.1.3
 [1.1.2]: https://github.com/Bartacus/BartacusBundle/compare/1.1.1...1.1.2
 [1.1.1]: https://github.com/Bartacus/BartacusBundle/compare/1.1.0...1.1.1
