@@ -20,7 +20,7 @@
         "ocramius/proxy-manager": "^2.0",
         "symfony/psr-http-message-bridge": "^1.0",
         "symfony/symfony": "^3.3",
-        "typo3/cms": "8.7.15",
+        "typo3/cms": "8.7.16",
         "typo3/cms-cli": "1.0.*"
     },
     "require-dev": {
@@ -46,7 +46,7 @@
         },
         "patches": {
             "typo3/cms": {
-                "Patch all TYPO3 entry points for proper Symfony kernel bootstrap": "https://github.com/Bartacus/TYPO3.CMS/compare/8.7.15...patch/8.7.15/bartacus-entry-scripts.patch"
+                "Patch all TYPO3 entry points for proper Symfony kernel bootstrap": "https://github.com/Bartacus/TYPO3.CMS/compare/8.7.16...patch/8.7.16/bartacus-entry-scripts.patch"
             },
             "typo3/cms-cli": {
                 "Patch entry point for proper Symfony kernel bootstrap": "https://github.com/Bartacus/cms-cli/compare/master...patch/1.0/bartacus-entry-script.patch"
