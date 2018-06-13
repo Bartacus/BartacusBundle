@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## [1.1.5] - 2018-05-13
+## [1.1.5] - 2018-06-13
 ### Fixed
 - Compatibility with TYPO3 8.7.16
 
