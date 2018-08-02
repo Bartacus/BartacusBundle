@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Http;
 
-use Bartacus\Bundle\BartacusBundle\Http\Factory\Typo3PsrMessageFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
@@ -70,9 +69,9 @@ class SymfonyFrontendRequestHandler extends RequestHandler
      *
      * @param ServerRequestInterface $request
      *
-     * @return ResponseInterface|null
+     * @return ResponseInterface|SymfonyResponse|null
      */
-    public function handleRequest(ServerRequestInterface $request): ?ResponseInterface
+    public function handleRequest(ServerRequestInterface $request)
     {
         $response = null;
         $this->request = $request;
@@ -348,7 +347,7 @@ class SymfonyFrontendRequestHandler extends RequestHandler
     /**
      * @throws \Exception
      */
-    protected function handleSymfonyRequest(Request $symfonyRequest): ? ResponseInterface
+    protected function handleSymfonyRequest(Request $symfonyRequest): ?SymfonyResponse
     {
         $this->timeTracker->push('Symfony request handling');
 
@@ -359,20 +358,20 @@ class SymfonyFrontendRequestHandler extends RequestHandler
         $response = null;
 
         try {
-            $symfonyResponse = $this->kernel->handle($symfonyRequest, HttpKernelInterface::MASTER_REQUEST, false);
-            $symfonyResponseContentType = $symfonyResponse->headers->get('Content-Type');
+            $response = $this->kernel->handle($symfonyRequest, HttpKernelInterface::MASTER_REQUEST, false);
+            $symfonyResponseContentType = $response->headers->get('Content-Type');
 
-            if (!$symfonyResponse instanceof BinaryFileResponse
-                && !$symfonyResponse instanceof StreamedResponse
-                && SymfonyResponse::HTTP_OK === $symfonyResponse->getStatusCode()
+            // write content to the TSFE if a simple response with HTTP 200 and if html
+            if (!$response instanceof BinaryFileResponse
+                && !$response instanceof StreamedResponse
+                && SymfonyResponse::HTTP_OK === $response->getStatusCode()
                 && null !== $symfonyResponseContentType
                 && 0 === \mb_stripos($symfonyResponseContentType, 'text/html')
             ) {
-                $this->controller->content = $symfonyResponse->getContent();
+                $this->controller->content = $response->getContent();
             }
 
-            $psr7Factory = new Typo3PsrMessageFactory();
-            $response = $psr7Factory->createResponse($symfonyResponse);
+            FrontendApplication::setRequestResponseForTermination($symfonyRequest, $response, true);
         } catch (NotFoundHttpException $e) {
             // We only want to match if the route was not found. Other errors should output. Ugly hack.
             if (0 !== \mb_strpos($e->getMessage(), 'No route found for')) {
@@ -400,9 +399,10 @@ class SymfonyFrontendRequestHandler extends RequestHandler
 
             // Aaaaaaaaaand another ugly hack for the kernel termination :/
             $symfonyResponse = new SymfonyResponse($e->getMessage(), 404);
+
+            FrontendApplication::setRequestResponseForTermination($symfonyRequest, $symfonyResponse, false);
         }
 
-        FrontendApplication::setRequestResponseForTermination($symfonyRequest, $symfonyResponse);
         $this->timeTracker->pull();
 
         return $response;

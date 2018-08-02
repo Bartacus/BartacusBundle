@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Fixed
+- Don't create PSR-7 response on symfony routes, send directly
 
 ## [1.1.6] - 2018-06-23
 ### Fixed
