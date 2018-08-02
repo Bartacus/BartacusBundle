@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace Bartacus\Bundle\BartacusBundle\Http;
 
 use Composer\Autoload\ClassLoader;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\TerminableInterface;
@@ -76,6 +77,11 @@ class FrontendApplication implements ApplicationInterface
     protected static $response;
 
     /**
+     * @var bool
+     */
+    protected static $sendResponse;
+
+    /**
      * Constructor setting up legacy constant and register available Request Handlers.
      *
      * @param ClassLoader         $classLoader an instance of the class loader
@@ -113,16 +119,25 @@ class FrontendApplication implements ApplicationInterface
     {
         $this->bootstrap->handleRequest(ServerRequestFactory::fromGlobals());
 
-        if ($execute !== null) {
+        if (null !== $execute) {
             $execute();
         }
 
         $this->bootstrap->shutdown();
+        if (self::$sendResponse && self::$response instanceof Response) {
+            if (self::$response instanceof BinaryFileResponse) {
+                Response::closeOutputBuffers(0, false);
+                \header_remove('Content-Encoding');
+                \header_remove('Vary');
+            }
 
-        if (\function_exists('fastcgi_finish_request')) {
-            fastcgi_finish_request();
-        } elseif ('cli' !== PHP_SAPI) {
-            Response::closeOutputBuffers(0, true);
+            self::$response->send();
+        } else {
+            if (\function_exists('fastcgi_finish_request')) {
+                fastcgi_finish_request();
+            } elseif ('cli' !== PHP_SAPI) {
+                Response::closeOutputBuffers(0, true);
+            }
         }
 
         $this->kernel->terminate(self::$request, self::$response);
@@ -134,11 +149,13 @@ class FrontendApplication implements ApplicationInterface
      *
      * @param Request  $request
      * @param Response $response
+     * @param bool     $sendResponse
      */
-    public static function setRequestResponseForTermination(Request $request, Response $response): void
+    public static function setRequestResponseForTermination(Request $request, Response $response, bool $sendResponse): void
     {
         self::$request = $request;
         self::$response = $response;
+        self::$sendResponse = $sendResponse;
     }
 
     /**
