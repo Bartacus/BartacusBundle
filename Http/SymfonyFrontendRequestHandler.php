@@ -305,7 +305,7 @@ class SymfonyFrontendRequestHandler extends RequestHandler
                 /** @var Response $response */
                 $response = GeneralUtility::makeInstance(Response::class);
                 $response->getBody()->write($this->controller->content);
-            } elseif ($modifyContent) {
+            } elseif ($modifyContent && $response instanceof ResponseInterface) {
                 $response->getBody()->close();
 
                 $body = new Stream('php://temp', 'rw');
@@ -326,6 +326,7 @@ class SymfonyFrontendRequestHandler extends RequestHandler
             && !$GLOBALS['TYPO3_CONF_VARS']['FE']['debug']
             && !$this->controller->config['config']['debug']
             && !$this->controller->doWorkspacePreview()
+            && $response instanceof ResponseInterface
         ) {
             $contentLength = $response->getBody()->getSize();
             if (null !== $contentLength) {

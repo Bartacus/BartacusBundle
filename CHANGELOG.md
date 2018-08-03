@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.8] - 2018-08-03
+### Fixed
+- Add checks to not use the symfony response in the request handler
+
 ## [1.1.7] - 2018-08-02
 ### Fixed
 - Don't create PSR-7 response on symfony routes, send directly
@@ -47,7 +51,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.1.7...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.1.8...HEAD
+[1.1.8]: https://github.com/Bartacus/BartacusBundle/compare/1.1.7...1.1.8
 [1.1.7]: https://github.com/Bartacus/BartacusBundle/compare/1.1.6...1.1.7
 [1.1.6]: https://github.com/Bartacus/BartacusBundle/compare/1.1.5...1.1.6
 [1.1.5]: https://github.com/Bartacus/BartacusBundle/compare/1.1.4...1.1.5
