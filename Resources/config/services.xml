@@ -56,6 +56,7 @@
             <argument type="service" id="controller_resolver" />
             <argument type="service" id="typo3.frontend_controller" />
             <argument type="service" id="argument_resolver" />
+            <argument type="service" id="event_dispatcher" />
             <tag name="bartacus.make_instance" />
         </service>
 

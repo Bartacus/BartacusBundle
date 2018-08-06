@@ -86,7 +86,7 @@ class Renderer
      */
     private $dispatcher;
 
-    public function __construct(RequestStack $requestStack, HttpKernel $kernel, RouterListener $routerListener, ControllerResolverInterface $resolver, TypoScriptFrontendController $frontendController, ArgumentResolverInterface $argumentResolver, EventDispatcherInterface $dispatcher)
+    public function __construct(RequestStack $requestStack, HttpKernel $kernel, RouterListener $routerListener, ControllerResolverInterface $resolver, TypoScriptFrontendController $frontendController, ArgumentResolverInterface $argumentResolver, EventDispatcherInterface $eventDispatcher)
     {
         $this->requestStack = $requestStack;
         $this->kernel = $kernel;
@@ -94,7 +94,7 @@ class Renderer
         $this->resolver = $resolver;
         $this->frontendController = $frontendController;
         $this->argumentResolver = $argumentResolver;
-        $this->dispatcher = $dispatcher;
+        $this->dispatcher = $eventDispatcher;
     }
 
     /**
