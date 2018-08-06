@@ -151,7 +151,7 @@ class FrontendApplication implements ApplicationInterface
      * @param Response $response
      * @param bool     $sendResponse
      */
-    public static function setRequestResponseForTermination(Request $request, Response $response, bool $sendResponse): void
+    public static function setRequestResponseForTermination(Request $request, Response $response, bool $sendResponse = false): void
     {
         self::$request = $request;
         self::$response = $response;
