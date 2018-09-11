@@ -1,0 +1,95 @@
+From 8722e8882d8598330a97ca82f2c207f1ede188f2 Mon Sep 17 00:00:00 2001
+From: Patrik Karisch <patrik@karisch.guru>
+Date: Thu, 31 Aug 2017 09:15:12 +0200
+Subject: [PATCH] Patch all TYPO3 entry points for proper Symfony kernel
+ bootstrap
+
+---
+ typo3/sysext/backend/Resources/Private/Php/backend.php |  6 +++++-
+ typo3/sysext/backend/Resources/Private/Php/cli.php     |  6 +++++-
+ typo3/sysext/core/bin/typo3                            |  7 ++++++-
+ .../sysext/frontend/Resources/Private/Php/frontend.php | 10 +++++++++-
+ typo3/sysext/install/Resources/Private/Php/install.php |  7 ++++++-
+ 5 files changed, 31 insertions(+), 5 deletions(-)
+
+diff --git a/typo3/sysext/backend/Resources/Private/Php/backend.php b/typo3/sysext/backend/Resources/Private/Php/backend.php
+index ca1dee27e2..33eb88127a 100644
+--- a/typo3/sysext/backend/Resources/Private/Php/backend.php
++++ b/typo3/sysext/backend/Resources/Private/Php/backend.php
+@@ -21,5 +21,9 @@
+ call_user_func(function () {
+     $classLoader = require __DIR__ . '/../../../../../../vendor/autoload.php';
+ 
+-    (new \TYPO3\CMS\Backend\Http\Application($classLoader))->run();
++    \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::initKernel();
++    $application = new \TYPO3\CMS\Backend\Http\Application($classLoader);
++
++    \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::initAppPackage();
++    $application->run();
+ });
+diff --git a/typo3/sysext/backend/Resources/Private/Php/cli.php b/typo3/sysext/backend/Resources/Private/Php/cli.php
+index 925c6c6645..a3f7d7bceb 100644
+--- a/typo3/sysext/backend/Resources/Private/Php/cli.php
++++ b/typo3/sysext/backend/Resources/Private/Php/cli.php
+@@ -32,5 +32,9 @@
+ call_user_func(function () {
+     $classLoader = require __DIR__ . '/../../../../../../vendor/autoload.php';
+ 
+-    (new \TYPO3\CMS\Backend\Console\Application($classLoader))->run();
++    \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::initKernel();
++    $application = new \TYPO3\CMS\Backend\Console\Application($classLoader);
++
++    \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::initAppPackage();
++    $application->run();
+ });
+diff --git a/typo3/sysext/core/bin/typo3 b/typo3/sysext/core/bin/typo3
+index 9b32140269..aba1fa2b81 100755
+--- a/typo3/sysext/core/bin/typo3
++++ b/typo3/sysext/core/bin/typo3
+@@ -19,5 +19,10 @@
+  */
+ call_user_func(function() {
+     $classLoader = require __DIR__ . '/../../../../vendor/autoload.php';
+-    (new \TYPO3\CMS\Core\Console\CommandApplication($classLoader))->run();
++
++    \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::initKernel();
++    $application = new \TYPO3\CMS\Core\Console\CommandApplication($classLoader);
++
++    \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::initAppPackage();
++    $application->run();
+ });
+diff --git a/typo3/sysext/frontend/Resources/Private/Php/frontend.php b/typo3/sysext/frontend/Resources/Private/Php/frontend.php
+index 00b9bcf60d..02ee874412 100644
+--- a/typo3/sysext/frontend/Resources/Private/Php/frontend.php
++++ b/typo3/sysext/frontend/Resources/Private/Php/frontend.php
+@@ -20,5 +20,13 @@
+ // Set up the application for the Frontend
+ call_user_func(function () {
+     $classLoader = require __DIR__ . '/../../../../../../vendor/autoload.php';
+-    (new \TYPO3\CMS\Frontend\Http\Application($classLoader))->run();
++
++    \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::initKernel();
++    $application = new \Bartacus\Bundle\BartacusBundle\Http\FrontendApplication(
++        $classLoader,
++        \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::getKernel()
++    );
++
++    \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::initAppPackage();
++    $application->run();
+ });
+diff --git a/typo3/sysext/install/Resources/Private/Php/install.php b/typo3/sysext/install/Resources/Private/Php/install.php
+index e175d1b2b2..b26f33b995 100644
+--- a/typo3/sysext/install/Resources/Private/Php/install.php
++++ b/typo3/sysext/install/Resources/Private/Php/install.php
+@@ -100,5 +100,10 @@
+ 
+ call_user_func(function () {
+     $classLoader = require __DIR__ . '/../../../../../../vendor/autoload.php';
+-    (new \TYPO3\CMS\Install\Http\Application($classLoader))->run();
++
++    \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::initKernel();
++    $application = new \TYPO3\CMS\Install\Http\Application($classLoader);
++
++    \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::initAppPackage();
++    $application->run();
+ });
