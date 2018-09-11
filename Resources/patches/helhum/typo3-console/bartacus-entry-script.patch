@@ -1,0 +1,28 @@
+From 4a2fe5b7e57234a6e86f680e2110fb6f3b19391b Mon Sep 17 00:00:00 2001
+From: Patrik Karisch <patrik@karisch.guru>
+Date: Thu, 31 Aug 2017 11:35:30 +0200
+Subject: [PATCH] Patch console entry script for proper Symfony kernel
+ bootstrap
+
+---
+ Scripts/typo3cms.php | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/Scripts/typo3cms.php b/Scripts/typo3cms.php
+index b9001f1e..b3f4bab8 100644
+--- a/Scripts/typo3cms.php
++++ b/Scripts/typo3cms.php
+@@ -61,6 +61,12 @@
+         // where requiring the main autoload.php is not enough to load extension classes
+         require __DIR__ . '/../Classes/Core/ConsoleBootstrap.php';
+     }
++
++    \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::initKernel();
+     $bootstrap = \Helhum\Typo3Console\Core\ConsoleBootstrap::create(getenv('TYPO3_CONTEXT') ?: 'Production');
+-    $bootstrap->run($classLoader);
++    $bootstrap->initialize($classLoader);
++
++    \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::initAppPackage();
++    $bootstrap->registerRequestHandler(new \Helhum\Typo3Console\Mvc\Cli\RequestHandler($bootstrap));
++    $bootstrap->resolveCliRequestHandler()->handleRequest();
+ });

@@ -46,13 +46,13 @@
         },
         "patches": {
             "typo3/cms": {
-                "Patch all TYPO3 entry points for proper Symfony kernel bootstrap": "https://github.com/Bartacus/TYPO3.CMS/compare/8.7.17...patch/8.7.17/bartacus-entry-scripts.patch"
+                "Patch all TYPO3 entry points for proper Symfony kernel bootstrap": "Resources/patches/typo3/cms/bartacus-entry-scripts.patch"
             },
             "typo3/cms-cli": {
-                "Patch entry point for proper Symfony kernel bootstrap": "https://github.com/Bartacus/cms-cli/compare/master...patch/1.0/bartacus-entry-script.patch"
+                "Patch entry point for proper Symfony kernel bootstrap": "Resources/patches/typo3/cms-cli/bartacus-entry-scripts.patch"
             },
             "helhum/typo3-console": {
-                "Patch console entry script for proper Symfony kernel bootstrap": "https://github.com/Bartacus/TYPO3-Console/compare/4.7.0...patch/4.7.0/bartacus-entry-script.patch"
+                "Patch console entry script for proper Symfony kernel bootstrap": "Resources/patches/helhum/typo3-console/bartacus-entry-script.patch"
             }
         }
     }

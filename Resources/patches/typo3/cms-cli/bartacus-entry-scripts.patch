@@ -1,0 +1,25 @@
+From 74118ac37058e2af2467649ee2b186cef67697fc Mon Sep 17 00:00:00 2001
+From: Patrik Karisch <p.karisch@pixelart.at>
+Date: Fri, 8 Sep 2017 09:33:18 +0200
+Subject: [PATCH] Patch entry point for proper Symfony kernel bootstrap
+
+---
+ typo3 | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/typo3 b/typo3
+index 25506c2..0fe43f8 100755
+--- a/typo3
++++ b/typo3
+@@ -19,5 +19,10 @@
+  */
+ call_user_func(function() {
+     $classLoader = require __DIR__ . '/../../autoload.php';
+-    (new \TYPO3\CMS\Cli\CommandApplication($classLoader))->run();
++
++    \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::initKernel();
++    $application = new \TYPO3\CMS\Cli\CommandApplication($classLoader);
++
++    \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::initAppPackage();
++    $application->run();
+ });
