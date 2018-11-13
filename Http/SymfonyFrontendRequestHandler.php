@@ -199,6 +199,12 @@ class SymfonyFrontendRequestHandler extends RequestHandler
         $this->timeTracker->push('Get Page from cache', '');
         $this->controller->getFromCache();
         $this->timeTracker->pull();
+
+        if (!$handleWithRealUrl) {
+            // force parsing the TemplateService model if dealing with Symfony routes
+            // otherwise the TemplateService configuration would be empty
+            $this->controller->forceTemplateParsing = true;
+        }
         // Get config if not already gotten
         // After this, we should have a valid config-array ready
         $this->controller->getConfigArray();
