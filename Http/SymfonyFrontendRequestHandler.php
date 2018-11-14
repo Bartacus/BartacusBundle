@@ -196,6 +196,7 @@ class SymfonyFrontendRequestHandler extends RequestHandler
         $this->timeTracker->pull();
         // Get from cache
         $this->timeTracker->push('Get Page from cache', '');
+        // Locks may be acquired here
         $this->controller->getFromCache();
         $this->timeTracker->pull();
         // Get config if not already gotten
@@ -227,8 +228,8 @@ class SymfonyFrontendRequestHandler extends RequestHandler
 
             // Generate page
             $this->controller->setUrlIdToken();
-            $this->timeTracker->push('Page generation', '');
             if ($this->controller->isGeneratePage()) {
+                $this->timeTracker->push('Page generation');
                 $this->controller->generatePage_preProcessing();
                 $temp_theScript = $this->controller->generatePage_whichScript();
                 if ($temp_theScript) {
@@ -236,21 +237,21 @@ class SymfonyFrontendRequestHandler extends RequestHandler
                 } else {
                     $this->controller->preparePageContentGeneration();
                     // Content generation
-                    if (!$this->controller->isINTincScript()) {
-                        PageGenerator::renderContent();
-                        $this->controller->setAbsRefPrefix();
-                    }
+                    PageGenerator::renderContent();
+                    $this->controller->setAbsRefPrefix();
                 }
                 $this->controller->generatePage_postProcessing();
-            } elseif ($this->controller->isINTincScript()) {
-                $this->controller->preparePageContentGeneration();
+                $this->timeTracker->pull();
             }
             $this->controller->releaseLocks();
-            $this->timeTracker->pull();
 
-            // Render non-cached parts
+            // Render non-cached page parts by replacing placeholders which are taken from cache or added during page generation
             if ($this->controller->isINTincScript()) {
-                $this->timeTracker->push('Non-cached objects', '');
+                if (!$this->controller->isGeneratePage()) {
+                    // When page was generated, this was already called. Avoid calling this twice.
+                    $this->controller->preparePageContentGeneration();
+                }
+                $this->timeTracker->push('Non-cached objects');
                 $this->controller->INTincScript();
                 $this->timeTracker->pull();
             }
@@ -276,7 +277,7 @@ class SymfonyFrontendRequestHandler extends RequestHandler
                 $debugParseTime = !empty($GLOBALS['TYPO3_CONF_VARS']['FE']['debug']);
             }
             if ($debugParseTime) {
-                $this->controller->content .= LF.'<!-- Parsetime: '.$this->getParseTime().'ms -->';
+                $this->controller->content .= LF.'<!-- Parsetime: '.$this->timeTracker->getParseTime().'ms -->';
             }
         }
         $this->controller->redirectToExternalUrl();
@@ -295,8 +296,11 @@ class SymfonyFrontendRequestHandler extends RequestHandler
             && $GLOBALS['BE_USER'] instanceof FrontendBackendUserAuthentication
         ) {
             if ($GLOBALS['BE_USER']->isAdminPanelVisible()) {
-                $this->controller->content = \str_ireplace('</body>', $GLOBALS['BE_USER']->displayAdminPanel().'</body>',
-                    $this->controller->content);
+                $this->controller->content = \str_ireplace(
+                    '</body>',
+                    $GLOBALS['BE_USER']->displayAdminPanel().'</body>',
+                    $this->controller->content
+                );
             }
         }
 

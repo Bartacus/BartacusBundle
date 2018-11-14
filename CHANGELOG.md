@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.10] - 2018-11-14
+### Fixed
+- Compatibility with TYPO3 8.7.20
+
 ## [1.1.9] - 2018-08-06
 ### Fixed
 - Add default value for new param on request termination call
@@ -55,7 +59,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.1.9...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.1.10...HEAD
+[1.1.10]: https://github.com/Bartacus/BartacusBundle/compare/1.1.9...1.1.10
 [1.1.9]: https://github.com/Bartacus/BartacusBundle/compare/1.1.8...1.1.9
 [1.1.8]: https://github.com/Bartacus/BartacusBundle/compare/1.1.7...1.1.8
 [1.1.7]: https://github.com/Bartacus/BartacusBundle/compare/1.1.6...1.1.7
