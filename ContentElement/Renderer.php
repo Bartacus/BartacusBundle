@@ -157,7 +157,7 @@ class Renderer
             exit();
         }
 
-        if (\count($response->headers) || $response->getStatusCode() !== 200) {
+        if (\count($response->headers) || 200 !== $response->getStatusCode()) {
             $response->sendHeaders();
         }
 
