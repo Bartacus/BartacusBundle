@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Changed
 - Adding support for Symfony 4, dropping support for Symfony 3
+- Compatibility with helhum/typo3-console 5.6.0
 
 ### Deprecated
 - The `$GLOBALS['kernel']` variable is deprecated, use `SymfonyBootstrap::getKernel()` instead
