@@ -34,6 +34,11 @@ use Symfony\Component\Finder\SplFileInfo;
 final class AnnotationContentElementLoader
 {
     /**
+     * @var string
+     */
+    private $projectDir;
+
+    /**
      * @var array [name -> bundle metadata]
      */
     private $bundles;
@@ -48,8 +53,9 @@ final class AnnotationContentElementLoader
      */
     private $defaultRenderDefinitionIndex = 0;
 
-    public function __construct(array $bundles, Reader $annotationReader)
+    public function __construct(string $projectDir, array $bundles, Reader $annotationReader)
     {
+        $this->projectDir = $projectDir;
         $this->bundles = $bundles;
         $this->annotationReader = $annotationReader;
     }
@@ -58,6 +64,14 @@ final class AnnotationContentElementLoader
     {
         $collection = new RenderDefinitionCollection();
         $dirs = [];
+
+        if (\file_exists($dir = $this->projectDir.'/src/Action')) {
+            $dirs[] = $dir;
+        }
+
+        if (\file_exists($dir = $this->projectDir.'/src/Controller')) {
+            $dirs[] = $dir;
+        }
 
         foreach ($this->bundles as $name => $bundle) {
             if (\file_exists($dir = $bundle['path'].'/Action')) {
