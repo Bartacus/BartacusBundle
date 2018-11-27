@@ -381,9 +381,9 @@ class SymfonyFrontendRequestHandler extends RequestHandler
                 throw $e;
             }
 
-            $eventDispatcher = $this->kernel->getContainer()->get(EventDispatcherInterface::class);
-            $requestStack = $this->kernel->getContainer()->get(RequestStack::class);
-            $httpKernel = $this->kernel->getContainer()->get(HttpKernelInterface::class);
+            $eventDispatcher = $this->kernel->getContainer()->get('event_dispatcher');
+            $requestStack = $this->kernel->getContainer()->get('request_stack');
+            $httpKernel = $this->kernel->getContainer()->get('http_kernel');
 
             // no route found, but to initialize locale and translator correctly
             // dispatch request event again, but skip router.
