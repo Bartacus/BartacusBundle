@@ -139,12 +139,9 @@ class SymfonyFrontendRequestHandler extends RequestHandler
         try {
             $handleWithRealUrl = false;
 
-            /** @var RequestContext $routerRequestContext */
-            $routerRequestContext = $this->kernel->getContainer()->get(RequestContext::class );
-            $routerRequestContext->fromRequest($symfonyRequest);
-
             /** @var Router $router */
             $router = $this->kernel->getContainer()->get('router');
+            $router->getContext()->fromRequest($symfonyRequest);
             $router->matchRequest($symfonyRequest);
         } catch (ResourceNotFoundException $e) {
             $handleWithRealUrl = true;
