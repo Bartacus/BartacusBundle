@@ -140,7 +140,7 @@ class SymfonyFrontendRequestHandler extends RequestHandler
             $handleWithRealUrl = false;
 
             /** @var RequestContext $routerRequestContext */
-            $routerRequestContext = $this->kernel->getContainer()->get('router.request_context');
+            $routerRequestContext = $this->kernel->getContainer()->get(RequestContext::class );
             $routerRequestContext->fromRequest($symfonyRequest);
 
             /** @var Router $router */
@@ -154,6 +154,7 @@ class SymfonyFrontendRequestHandler extends RequestHandler
             $this->controller->checkAlternativeIdMethods();
             $symfonyRequest = Request::createFromGlobals();
         }
+
         $this->controller->clear_preview();
         $this->controller->determineId();
 
@@ -383,14 +384,9 @@ class SymfonyFrontendRequestHandler extends RequestHandler
                 throw $e;
             }
 
-            /** @var EventDispatcherInterface $eventDispatcher */
-            $eventDispatcher = $this->kernel->getContainer()->get('event_dispatcher');
-
-            /** @var RequestStack $requestStack */
-            $requestStack = $this->kernel->getContainer()->get('request_stack');
-
-            /** @var HttpKernelInterface $httpKernel */
-            $httpKernel = $this->kernel->getContainer()->get('http_kernel');
+            $eventDispatcher = $this->kernel->getContainer()->get(EventDispatcherInterface::class);
+            $requestStack = $this->kernel->getContainer()->get(RequestStack::class);
+            $httpKernel = $this->kernel->getContainer()->get(HttpKernelInterface::class);
 
             // no route found, but to initialize locale and translator correctly
             // dispatch request event again, but skip router.

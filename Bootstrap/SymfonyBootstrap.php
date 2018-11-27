@@ -23,12 +23,11 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Bootstrap;
 
+use App\Kernel as AppKernel;
 use Symfony\Component\Debug\Debug;
+use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Kernel;
-use TYPO3\CMS\Core\Compatibility\LoadedExtensionArrayElement;
-use TYPO3\CMS\Core\Core\Bootstrap;
-use TYPO3\CMS\Core\Package\Package;
-use TYPO3\CMS\Core\Package\PackageManager;
 
 final class SymfonyBootstrap
 {
@@ -44,38 +43,54 @@ final class SymfonyBootstrap
 
     public static function initKernel(): void
     {
-        \defined('SYMFONY_ENV') || \define('SYMFONY_ENV', \getenv('SYMFONY_ENV') ?: 'prod');
-        \defined('SYMFONY_DEBUG') || \define('SYMFONY_DEBUG', \filter_var(\getenv('SYMFONY_DEBUG') ?: \SYMFONY_ENV === 'dev', \FILTER_VALIDATE_BOOLEAN));
+        if (isset($_SERVER['SYMFONY_ENV'])) {
+            @\trigger_error('The SYMFONY_ENV environment variable is deprecated since version 1.2 and will be removed in 2.0. Use APP_ENV instead.', E_USER_DEPRECATED);
+        }
 
-        if (\SYMFONY_DEBUG) {
+        if (isset($_SERVER['SYMFONY_DEBUG'])) {
+            @\trigger_error('The SYMFONY_DEBUG environment variable is deprecated since version 1.2 and will be removed in 2.0. Use APP_DEBUG instead.', E_USER_DEPRECATED);
+        }
+
+        // The check is to ensure we don't use .env in production
+        if (!isset($_SERVER['APP_ENV']) && !isset($_SERVER['SYMFONY_ENV'])) {
+            if (!\class_exists(Dotenv::class)) {
+                throw new \RuntimeException('APP_ENV environment variable is not defined. You need to define environment variables for configuration or add "symfony/dotenv" as a Composer dependency to load variables from a .env file.');
+            }
+            (new Dotenv())->load(__DIR__.'/../.env');
+        }
+
+        $env = $_SERVER['APP_ENV'] ?? $_SERVER['SYMFONY_ENV'] ?? 'dev';
+        $debug = $_SERVER['APP_DEBUG'] ?? $_SERVER['SYMFONY_DEBUG'] ?? ('prod' !== $env);
+
+        if ($debug) {
+            \umask(0000);
+
             Debug::enable();
         }
 
-        self::$kernel = new \AppKernel(\SYMFONY_ENV, \SYMFONY_DEBUG);
+        if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? false) {
+            Request::setTrustedProxies(
+                \explode(',', $trustedProxies),
+                Request::HEADER_X_FORWARDED_ALL ^ Request::HEADER_X_FORWARDED_HOST
+            );
+        }
+
+        if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
+            Request::setTrustedHosts(\explode(',', $trustedHosts));
+        }
+
+        self::$kernel = new AppKernel((string) $env, (bool) $debug);
         self::$kernel->boot();
 
-        // deprecated, will be removed in 2.0, use SymfonyBootstrap::getKernel() instead.
+        /* @deprecated will be removed in 2.0, use SymfonyBootstrap::getKernel() instead */
         $GLOBALS['kernel'] = self::$kernel;
     }
 
+    /**
+     * @deprecated not used anymore, deprecated in 1.2 and will be removed in 2.0
+     */
     public static function initAppPackage(): void
     {
-        /** @var PackageManager $packageManager */
-        $packageManager = Bootstrap::getInstance()->getEarlyInstance(PackageManager::class);
-        $package = new Package($packageManager, 'app', \rtrim(\realpath(self::$kernel->getProjectDir().'/app/'), '\\/').'/');
-        $packageManager->registerPackage($package);
-
-        \Closure::bind(function (PackageManager $instance) use ($package) {
-            $instance->runtimeActivatedPackages[$package->getPackageKey()] = $package;
-        }, $packageManager, PackageManager::class)($packageManager);
-
-        if (!isset($GLOBALS['TYPO3_LOADED_EXT'][$package->getPackageKey()])) {
-            $loadedExtArrayElement = new LoadedExtensionArrayElement($package);
-            \Closure::bind(function (LoadedExtensionArrayElement $instance) {
-                $instance->extensionInformation['type'] = 'L';
-            }, $loadedExtArrayElement, LoadedExtensionArrayElement::class)($loadedExtArrayElement);
-
-            $GLOBALS['TYPO3_LOADED_EXT'][$package->getPackageKey()] = $loadedExtArrayElement->toArray();
-        }
+        @\trigger_error('The SymfonyBootstrap::initAppPackage() is deprecated since version 1.2 and will be removed in 2.0. It is not used with Symfony 4 anymore', E_USER_DEPRECATED);
     }
 }
