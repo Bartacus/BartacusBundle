@@ -27,7 +27,7 @@
         "friendsofphp/php-cs-fixer": "^2.5"
     },
     "conflict": {
-        "helhum/typo3-console": "<4.7.0 >4.7.0",
+        "helhum/typo3-console": "<5.6.0 >5.6.0",
         "jms/di-extra-bundle": "*"
     },
     "autoload": {
@@ -52,7 +52,7 @@
                 "Patch entry point for proper Symfony kernel bootstrap": "https://github.com/Bartacus/cms-cli/compare/master...patch/1.0/bartacus-entry-script.patch"
             },
             "helhum/typo3-console": {
-                "Patch console entry script for proper Symfony kernel bootstrap": "https://github.com/Bartacus/TYPO3-Console/compare/4.7.0...patch/4.7.0/bartacus-entry-script.patch"
+                "Patch console entry script for proper Symfony kernel bootstrap": "https://github.com/Bartacus/TYPO3-Console/compare/5.6.0...patch/5.6.0/bartacus-entry-script.patch"
             }
         }
     }
