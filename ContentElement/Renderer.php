@@ -23,16 +23,19 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\ContentElement;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\EventListener\RouterListener;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernel;
+use Symfony\Component\HttpKernel\KernelEvents;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
@@ -78,7 +81,12 @@ class Renderer
      */
     private $argumentResolver;
 
-    public function __construct(RequestStack $requestStack, HttpKernel $kernel, RouterListener $routerListener, ControllerResolverInterface $resolver, TypoScriptFrontendController $frontendController, ArgumentResolverInterface $argumentResolver)
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
+    public function __construct(RequestStack $requestStack, HttpKernel $kernel, RouterListener $routerListener, ControllerResolverInterface $resolver, TypoScriptFrontendController $frontendController, ArgumentResolverInterface $argumentResolver, EventDispatcherInterface $eventDispatcher)
     {
         $this->requestStack = $requestStack;
         $this->kernel = $kernel;
@@ -86,6 +94,7 @@ class Renderer
         $this->resolver = $resolver;
         $this->frontendController = $frontendController;
         $this->argumentResolver = $argumentResolver;
+        $this->dispatcher = $eventDispatcher;
     }
 
     /**
@@ -117,6 +126,11 @@ class Renderer
                 )
             );
         }
+
+        // controller filter event
+        $event = new FilterControllerEvent($this->kernel, $controller, $request, HttpKernel::SUB_REQUEST);
+        $this->dispatcher->dispatch(KernelEvents::CONTROLLER, $event);
+        $controller = $event->getController();
 
         // controller arguments
         $arguments = $this->argumentResolver->getArguments($request, $controller);
