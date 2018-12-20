@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.12] - 2018-12-20
+### Fixed
+- Add missing filter controller event to content element renderer (#84)
+
 ## [1.1.11] - 2018-12-20
 ### Fixed
 - Compatibility with TYPO3 8.7.22
@@ -63,7 +67,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.1.11...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.1.12...HEAD
+[1.1.12]: https://github.com/Bartacus/BartacusBundle/compare/1.1.11...1.1.12
 [1.1.11]: https://github.com/Bartacus/BartacusBundle/compare/1.1.10...1.1.11
 [1.1.10]: https://github.com/Bartacus/BartacusBundle/compare/1.1.9...1.1.10
 [1.1.9]: https://github.com/Bartacus/BartacusBundle/compare/1.1.8...1.1.9
