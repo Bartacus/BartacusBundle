@@ -139,12 +139,9 @@ class SymfonyFrontendRequestHandler extends RequestHandler
         try {
             $handleWithRealUrl = false;
 
-            /** @var RequestContext $routerRequestContext */
-            $routerRequestContext = $this->kernel->getContainer()->get('router.request_context');
-            $routerRequestContext->fromRequest($symfonyRequest);
-
             /** @var Router $router */
             $router = $this->kernel->getContainer()->get('router');
+            $router->getContext()->fromRequest($symfonyRequest);
             $router->matchRequest($symfonyRequest);
         } catch (ResourceNotFoundException $e) {
             $handleWithRealUrl = true;
@@ -154,6 +151,7 @@ class SymfonyFrontendRequestHandler extends RequestHandler
             $this->controller->checkAlternativeIdMethods();
             $symfonyRequest = Request::createFromGlobals();
         }
+
         $this->controller->clear_preview();
         $this->controller->determineId();
 
@@ -383,13 +381,8 @@ class SymfonyFrontendRequestHandler extends RequestHandler
                 throw $e;
             }
 
-            /** @var EventDispatcherInterface $eventDispatcher */
             $eventDispatcher = $this->kernel->getContainer()->get('event_dispatcher');
-
-            /** @var RequestStack $requestStack */
             $requestStack = $this->kernel->getContainer()->get('request_stack');
-
-            /** @var HttpKernelInterface $httpKernel */
             $httpKernel = $this->kernel->getContainer()->get('http_kernel');
 
             // no route found, but to initialize locale and translator correctly

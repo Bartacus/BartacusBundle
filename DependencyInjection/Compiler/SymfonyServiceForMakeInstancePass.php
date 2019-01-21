@@ -39,6 +39,16 @@ class SymfonyServiceForMakeInstancePass implements CompilerPassInterface
         $definition = $container->findDefinition(SymfonyServiceForMakeInstanceLoader::class);
 
         $taggedServices = $container->findTaggedServiceIds('bartacus.typoscript');
+        if (\count($taggedServices) > 0) {
+            foreach ($taggedServices as $id => $tags) {
+                @\trigger_error(\sprintf(
+                    'The bartacus.typoscript service tag on "%s" is deprecated since version 1.0 and will be removed in 2.0. Use bartacus.make_instance instead',
+                        $id
+                    ),
+                    E_USER_DEPRECATED
+                );
+            }
+        }
 
         $taggedServices = \array_merge(
             $taggedServices,

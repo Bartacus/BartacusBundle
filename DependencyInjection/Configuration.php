@@ -38,7 +38,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('paths')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('web_dir')->defaultValue('%kernel.project_dir%/web')->end()
+                        ->scalarNode('web_dir')->defaultValue('%kernel.project_dir%/public')->end()
                     ->end()
                 ->end() // paths
             ->end()

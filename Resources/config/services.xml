@@ -24,8 +24,6 @@
         xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <defaults public="false" />
-
         <service id="Bartacus\Bundle\BartacusBundle\CacheWarmer\ContentElementCacheWarmer">
             <argument type="service" id="Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader" />
             <tag name="kernel.cache_warmer" />
@@ -41,6 +39,7 @@
         </service>
 
         <service id="Bartacus\Bundle\BartacusBundle\ContentElement\Loader\AnnotationContentElementLoader">
+            <argument>%kernel.project_dir%</argument>
             <argument>%kernel.bundles_metadata%</argument>
             <argument type="service" id="annotation_reader" />
         </service>

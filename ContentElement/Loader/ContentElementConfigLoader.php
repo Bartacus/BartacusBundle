@@ -73,7 +73,7 @@ final class ContentElementConfigLoader implements WarmableInterface
      *
      * @param ConfigCacheFactoryInterface $configCacheFactory The factory to use
      */
-    public function setConfigCacheFactory(ConfigCacheFactoryInterface $configCacheFactory)
+    public function setConfigCacheFactory(ConfigCacheFactoryInterface $configCacheFactory): void
     {
         $this->configCacheFactory = $configCacheFactory;
     }
@@ -126,7 +126,7 @@ final class ContentElementConfigLoader implements WarmableInterface
     public function setOption(string $key, $value): void
     {
         if (!\array_key_exists($key, $this->options)) {
-            throw new \InvalidArgumentException(\sprintf('The Router does not support the "%s" option.', $key));
+            throw new \InvalidArgumentException(\sprintf('The Content Element loader does not support the "%s" option.', $key));
         }
 
         $this->options[$key] = $value;
@@ -144,7 +144,7 @@ final class ContentElementConfigLoader implements WarmableInterface
     public function getOption(string $key)
     {
         if (!\array_key_exists($key, $this->options)) {
-            throw new \InvalidArgumentException(\sprintf('The Router does not support the "%s" option.', $key));
+            throw new \InvalidArgumentException(\sprintf('The Content Element loader does not support the "%s" option.', $key));
         }
 
         return $this->options[$key];

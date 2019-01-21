@@ -24,8 +24,6 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <defaults public="false" />
-
         <service alias="typo3" id="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" />
         <service id="typo3" class="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" public="true" />
 
