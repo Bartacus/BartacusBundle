@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [1.2.0] - 2019-01-21
 ### Changed
 - Adding support for Symfony 4, dropping support for Symfony 3
 - Compatibility with helhum/typo3-console 5.6.0
@@ -88,7 +90,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.1.12...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/Bartacus/BartacusBundle/compare/1.1.12...1.2.0
 [1.1.12]: https://github.com/Bartacus/BartacusBundle/compare/1.1.11...1.1.12
 [1.1.11]: https://github.com/Bartacus/BartacusBundle/compare/1.1.10...1.1.11
 [1.1.10]: https://github.com/Bartacus/BartacusBundle/compare/1.1.9...1.1.10
