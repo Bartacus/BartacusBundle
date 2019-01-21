@@ -27,10 +27,7 @@
         <service id="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" />
         <service id="typo3" class="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge"
                 parent="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" public="true">
-            <deprecated>
-                The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN
-                "Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" instead.
-            </deprecated>
+            <deprecated>The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN "Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" instead.</deprecated>
         </service>
 
         <service id="TYPO3\CMS\Core\Authentication\BackendUserAuthentication" shared="false">
@@ -39,10 +36,7 @@
         </service>
         <service id="typo3.backend_user" class="TYPO3\CMS\Core\Authentication\BackendUserAuthentication"
                 parent="TYPO3\CMS\Core\Authentication\BackendUserAuthentication" shared="false" public="true">
-            <deprecated>
-                The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN
-                "TYPO3\CMS\Core\Authentication\BackendUserAuthentication" instead.
-            </deprecated>
+            <deprecated>The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN "TYPO3\CMS\Core\Authentication\BackendUserAuthentication" instead.</deprecated>
         </service>
 
         <service id="TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication" shared="false">
@@ -51,10 +45,7 @@
         </service>
         <service id="typo3.frontend_user" class="TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication"
                 parent="TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication" shared="false" public="true">
-            <deprecated>
-                The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN
-                "TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication" instead.
-            </deprecated>
+            <deprecated>The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN "TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication" instead.</deprecated>
         </service>
 
         <service id="TYPO3\CMS\Core\Cache\CacheManager" shared="false">
@@ -63,10 +54,7 @@
         </service>
         <service id="typo3.cache.cache_manager" class="TYPO3\CMS\Core\Cache\CacheManager"
                 parent="TYPO3\CMS\Core\Cache\CacheManager" shared="false" public="true">
-            <deprecated>
-                The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN
-                "TYPO3\CMS\Core\Cache\CacheManager" instead.
-            </deprecated>
+            <deprecated>The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN "TYPO3\CMS\Core\Cache\CacheManager" instead.</deprecated>
         </service>
 
         <service id="typo3.cache.cache_hash" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface" public="true">
@@ -92,10 +80,7 @@
         </service>
         <service id="typo3.cache_hash_calculator" class="TYPO3\CMS\Frontend\Page\CacheHashCalculator"
                 parent="TYPO3\CMS\Frontend\Page\CacheHashCalculator" shared="false" public="true">
-            <deprecated>
-                The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN
-                "TYPO3\CMS\Frontend\Page\CacheHashCalculator" instead.
-            </deprecated>
+            <deprecated>The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN "TYPO3\CMS\Frontend\Page\CacheHashCalculator" instead.</deprecated>
         </service>
 
         <service id="TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer" shared="false">
@@ -103,20 +88,14 @@
         </service>
         <service id="typo3.content_object_renderer" class="TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer"
                 parent="TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer" shared="false" public="true">
-            <deprecated>
-                The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN
-                "TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer" instead.
-            </deprecated>
+            <deprecated>The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN "TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer" instead.</deprecated>
         </service>
 
         <service alias="typo3.db" id="TYPO3\CMS\Core\Database\DatabaseConnection" />
         <service id="typo3.db" class="TYPO3\CMS\Core\Database\DatabaseConnection" lazy="true" public="true">
             <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="getGlobal" />
             <argument>TYPO3_DB</argument>
-            <deprecated>
-                The "%service_id%" service a.k.a. TYPO3_DB has been superseded by Doctrine DBAL in TYPO3 v8, and will be
-                removed in TYPO3 v9.
-            </deprecated>
+            <deprecated>The "%service_id%" service a.k.a. TYPO3_DB has been superseded by Doctrine DBAL in TYPO3 v8, and will be removed in TYPO3 v9.</deprecated>
         </service>
 
         <service id="TYPO3\CMS\Core\Resource\FileRepository" shared="false">
@@ -125,10 +104,7 @@
         </service>
         <service id="typo3.file_repository" class="TYPO3\CMS\Core\Resource\FileRepository"
                 parent="TYPO3\CMS\Core\Resource\FileRepository" shared="false" public="true">
-            <deprecated>
-                The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN
-                "TYPO3\CMS\Core\Resource\FileRepository" instead.
-            </deprecated>
+            <deprecated>The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN "TYPO3\CMS\Core\Resource\FileRepository" instead.</deprecated>
         </service>
 
         <service id="TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController" shared="false">
@@ -137,10 +113,7 @@
         </service>
         <service id="typo3.frontend_controller" class="TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController"
                 parent="TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController" shared="false" public="true">
-            <deprecated>
-                The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN
-                "TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController" instead.
-            </deprecated>
+            <deprecated>The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN "TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController" instead.</deprecated>
         </service>
 
         <service id="TYPO3\CMS\Frontend\Page\PageRepository" shared="false">
@@ -148,10 +121,7 @@
         </service>
         <service id="typo3.page_repository" class="TYPO3\CMS\Frontend\Page\PageRepository"
                 parent="TYPO3\CMS\Frontend\Page\PageRepository" shared="false" public="true">
-            <deprecated>
-                The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN
-                "TYPO3\CMS\Frontend\Page\PageRepository" instead.
-            </deprecated>
+            <deprecated>The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN "TYPO3\CMS\Frontend\Page\PageRepository" instead.</deprecated>
         </service>
 
         <service id="TYPO3\CMS\Core\Registry" shared="false">
@@ -160,10 +130,7 @@
         </service>
         <service id="typo3.registry" class="TYPO3\CMS\Core\Registry"
                 parent=" a" shared="false" public="true">
-            <deprecated>
-                The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN
-                "TYPO3\CMS\Core\Registry" instead.
-            </deprecated>
+            <deprecated>The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN "TYPO3\CMS\Core\Registry" instead.</deprecated>
         </service>
 
         <service id="TYPO3\CMS\Core\Database\ConnectionPool" shared="false">
