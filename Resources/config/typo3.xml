@@ -129,7 +129,7 @@
             <argument>TYPO3\CMS\Core\Registry</argument>
         </service>
         <service id="typo3.registry" class="TYPO3\CMS\Core\Registry"
-                parent=" a" shared="false" public="true">
+                parent="TYPO3\CMS\Core\Registry" shared="false" public="true">
             <deprecated>The public "%service_id%" service is deprecated since 1.2 and will be be removed in 2.0. Inject the FCQN "TYPO3\CMS\Core\Registry" instead.</deprecated>
         </service>
 
