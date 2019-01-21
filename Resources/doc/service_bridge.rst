@@ -3,8 +3,6 @@ TYPO3 bridge services
 =====================
 
 The common TYPO3 classes are available in the service container for you.
-The class name is the service id as of Symfony 3.3 tp support the new autowiring
-feature.
 
 To see which TYPO3 classes are wireable as service, call
 
