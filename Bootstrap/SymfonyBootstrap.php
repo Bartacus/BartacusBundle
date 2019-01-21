@@ -43,54 +43,70 @@ final class SymfonyBootstrap
 
     public static function initKernel(): void
     {
-        if (isset($_SERVER['SYMFONY_ENV'])) {
-            @\trigger_error('The SYMFONY_ENV environment variable is deprecated since version 1.2 and will be removed in 2.0. Use APP_ENV instead.', E_USER_DEPRECATED);
-        }
+        // Load cached env vars if the .env.local.php file exists
+        // Run "composer dump-env prod" to create it (requires symfony/flex >=1.2)
+        if (is_array($env = @include dirname(__DIR__).'/.env.local.php')) {
+            $_SERVER += $env;
+            $_ENV += $env;
+        } elseif (!class_exists(Dotenv::class)) {
+            throw new \RuntimeException('Please run "composer require symfony/dotenv" to load the ".env" files configuring the application.');
+        } else {
+            $path = dirname(__DIR__).'/.env';
+            $dotenv = new Dotenv();
 
-        if (isset($_SERVER['SYMFONY_DEBUG'])) {
-            @\trigger_error('The SYMFONY_DEBUG environment variable is deprecated since version 1.2 and will be removed in 2.0. Use APP_DEBUG instead.', E_USER_DEPRECATED);
-        }
+            // load all the .env files
+            if (method_exists($dotenv, 'loadEnv')) {
+                $dotenv->loadEnv($path);
+            } else {
+                // fallback code in case your Dotenv component is not 4.2 or higher (when loadEnv() was added)
 
-        // The check is to ensure we don't use .env in production
-        if (!isset($_SERVER['APP_ENV']) && !isset($_SERVER['SYMFONY_ENV'])) {
-            if (!\class_exists(Dotenv::class)) {
-                throw new \RuntimeException('APP_ENV environment variable is not defined. You need to define environment variables for configuration or add "symfony/dotenv" as a Composer dependency to load variables from a .env file.');
+                if (file_exists($path) || !file_exists($p = "$path.dist")) {
+                    $dotenv->load($path);
+                } else {
+                    $dotenv->load($p);
+                }
+
+                if (null === $env = $_SERVER['APP_ENV'] ?? $_ENV['APP_ENV'] ?? null) {
+                    $dotenv->populate(['APP_ENV' => $env = 'dev']);
+                }
+
+                if ('test' !== $env && file_exists($p = "$path.local")) {
+                    $dotenv->load($p);
+                    $env = $_SERVER['APP_ENV'] ?? $_ENV['APP_ENV'] ?? $env;
+                }
+
+                if (file_exists($p = "$path.$env")) {
+                    $dotenv->load($p);
+                }
+
+                if (file_exists($p = "$path.$env.local")) {
+                    $dotenv->load($p);
+                }
             }
-            (new Dotenv())->load(__DIR__.'/../.env');
         }
 
-        $env = $_SERVER['APP_ENV'] ?? $_SERVER['SYMFONY_ENV'] ?? 'dev';
-        $debug = $_SERVER['APP_DEBUG'] ?? $_SERVER['SYMFONY_DEBUG'] ?? ('prod' !== $env);
+        $_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = ($_SERVER['APP_ENV'] ?? $_ENV['APP_ENV'] ?? null) ?: 'dev';
+        $_SERVER['APP_DEBUG'] = $_SERVER['APP_DEBUG'] ?? $_ENV['APP_DEBUG'] ?? 'prod' !== $_SERVER['APP_ENV'];
+        $_SERVER['APP_DEBUG'] = $_ENV['APP_DEBUG'] = (int) $_SERVER['APP_DEBUG'] || filter_var($_SERVER['APP_DEBUG'], FILTER_VALIDATE_BOOLEAN) ? '1' : '0';
 
-        if ($debug) {
+        if ($_SERVER['APP_DEBUG']) {
             \umask(0000);
 
             Debug::enable();
         }
 
-        if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? false) {
+        if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? $_ENV['TRUSTED_PROXIES'] ?? false) {
             Request::setTrustedProxies(
                 \explode(',', $trustedProxies),
                 Request::HEADER_X_FORWARDED_ALL ^ Request::HEADER_X_FORWARDED_HOST
             );
         }
 
-        if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
+        if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? $_ENV['TRUSTED_HOSTS'] ?? false) {
             Request::setTrustedHosts(\explode(',', $trustedHosts));
         }
 
-        self::$kernel = new AppKernel((string) $env, (bool) $debug);
+        self::$kernel = new AppKernel((string) $_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
         self::$kernel->boot();
-
-        /* @deprecated will be removed in 2.0, use SymfonyBootstrap::getKernel() instead */
-        $GLOBALS['kernel'] = self::$kernel;
-    }
-
-    /**
-     * @deprecated not used anymore, deprecated in 1.2 and will be removed in 2.0
-     */
-    public static function initAppPackage(): void
-    {
-        @\trigger_error('The SymfonyBootstrap::initAppPackage() is deprecated since version 1.2 and will be removed in 2.0. It is not used with Symfony 4 anymore', E_USER_DEPRECATED);
     }
 }
