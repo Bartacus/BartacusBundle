@@ -103,7 +103,7 @@ class RenderDefinitionCollection implements \IteratorAggregate, \Countable
      *
      * @param RenderDefinitionCollection $collection
      */
-    public function addCollection(RenderDefinitionCollection $collection)
+    public function addCollection(self $collection)
     {
         $this->renderDefinitions = \array_merge($this->renderDefinitions, $collection->all());
         $this->resources = \array_merge($this->resources, $collection->getResources());
