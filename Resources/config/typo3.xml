@@ -58,19 +58,19 @@
         </service>
 
         <service id="typo3.cache.cache_hash" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface" public="true">
-            <factory service="typo3.cache.cache_manager" method="getCache" />
+            <factory service="TYPO3\CMS\Core\Cache\CacheManager" method="getCache" />
             <argument>cache_hash</argument>
         </service>
         <service id="typo3.cache.cache_pages" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface" public="true">
-            <factory service="typo3.cache.cache_manager" method="getCache" />
+            <factory service="TYPO3\CMS\Core\Cache\CacheManager" method="getCache" />
             <argument>cache_pages</argument>
         </service>
         <service id="typo3.cache.cache_pagesection" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface" public="true">
-            <factory service="typo3.cache.cache_manager" method="getCache" />
+            <factory service="TYPO3\CMS\Core\Cache\CacheManager" method="getCache" />
             <argument>cache_pagesection</argument>
         </service>
         <service id="typo3.cache.cache_rootline" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface" public="true">
-            <factory service="typo3.cache.cache_manager" method="getCache" />
+            <factory service="TYPO3\CMS\Core\Cache\CacheManager" method="getCache" />
             <argument>cache_rootline</argument>
         </service>
 
