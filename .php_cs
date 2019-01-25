@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 $finder = PhpCsFixer\Finder::create()
     ->exclude('vendor')
+    ->exclude('public')
     ->in(__DIR__)
 ;
 
