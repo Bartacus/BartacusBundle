@@ -5,6 +5,28 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Changed
+- Support for TYPO3 9.5
+- Minimal required Symfony version is 4.2
+
+### Removed
+- The `$GLOBALS['kernel']` variable is removed, use `SymfonyBootstrap::getKernel()` instead
+- The `SymfonyBootstrap::initAppPackage()` is removed
+- The `SYMFONY_ENV` variable is removed, use `APP_ENV` instead
+- The `SYMFONY_DEBUG` variable is removed, use `APP_DEBUG` instead
+- The following public typo3 services are removed with the old id format, inject the FCQN instead
+  - `typo3`, inject `Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge` instead
+  - `typo3.backend_user`, inject `TYPO3\CMS\Core\Authentication\BackendUserAuthentication` instead
+  - `typo3.frontend_user`, inject `TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication` instead
+  - `typo3.cache.cache_manager`, inject `TYPO3\CMS\Core\Cache\CacheManager` instead
+  - `typo3.cache_hash_calculator`, inject `TYPO3\CMS\Frontend\Page\CacheHashCalculator` instead
+  - `typo3.content_object_renderer`, inject `TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer` instead
+  - `typo3.file_repository`, inject `TYPO3\CMS\Core\Resource\FileRepository` instead
+  - `typo3.frontend_controller`, inject `TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController` instead
+  - `typo3.page_repository`, inject `typo3.page_repository` instead
+  - `typo3.registry`, inject `TYPO3\CMS\Core\Registry` instead
+- The `typo3.db` and `TYPO3\CMS\Core\Database\DatabaseConnection` are removed. Use `TYPO3\CMS\Core\Database\ConnectionPool` instead
+
 
 ## [1.2.1] - 2019-01-25
 ### Fixed
