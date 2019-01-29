@@ -25,7 +25,6 @@ namespace Bartacus\Bundle\BartacusBundle\Bootstrap;
 
 use App\Kernel as AppKernel;
 use Symfony\Component\Debug\Debug;
-use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Kernel;
 
@@ -43,21 +42,11 @@ final class SymfonyBootstrap
 
     public static function initKernel(): void
     {
-        // Load cached env vars if the .env.local.php file exists
-        // Run "composer dump-env prod" to create it (requires symfony/flex >=1.2)
-        if (\is_array($env = @include \dirname(__DIR__).'/.env.local.php')) {
-            $_SERVER += $env;
-            $_ENV += $env;
-        } elseif (!\class_exists(Dotenv::class)) {
-            throw new \RuntimeException('Please run "composer require symfony/dotenv" to load the ".env" files configuring the application.');
-        } else {
-            // load all the .env files
-            (new Dotenv())->loadEnv(\dirname(__DIR__).'/.env');
-        }
+        /** @var Kernel $fakeKernel */
+        $fakeKernel = new AppKernel('prod', false);
+        $projectDir = $fakeKernel->getProjectDir();
 
-        $_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = ($_SERVER['APP_ENV'] ?? $_ENV['APP_ENV'] ?? null) ?: 'dev';
-        $_SERVER['APP_DEBUG'] = $_SERVER['APP_DEBUG'] ?? $_ENV['APP_DEBUG'] ?? 'prod' !== $_SERVER['APP_ENV'];
-        $_SERVER['APP_DEBUG'] = $_ENV['APP_DEBUG'] = (int) $_SERVER['APP_DEBUG'] || \filter_var($_SERVER['APP_DEBUG'], FILTER_VALIDATE_BOOLEAN) ? '1' : '0';
+        require $projectDir.'/config/bootstrap.php';
 
         if ($_SERVER['APP_DEBUG']) {
             \umask(0000);
@@ -73,10 +62,10 @@ final class SymfonyBootstrap
         }
 
         if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? $_ENV['TRUSTED_HOSTS'] ?? false) {
-            Request::setTrustedHosts(\explode(',', $trustedHosts));
+            Request::setTrustedHosts([$trustedHosts]);
         }
 
-        self::$kernel = new AppKernel((string) $_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
+        self::$kernel = new AppKernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
         self::$kernel->boot();
     }
 }
