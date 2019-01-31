@@ -28,7 +28,8 @@
         "typo3/cms-extbase": "^9.5",
         "typo3/cms-frontend": "^9.5",
         "psr/http-server-middleware": "^1.0",
-        "zendframework/zend-diactoros": "^2.1"
+        "zendframework/zend-diactoros": "^2.1",
+        "cweagans/composer-patches": "^1.6"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.5",
@@ -45,6 +46,17 @@
     "extra": {
         "branch-alias": {
             "dev-master": "2.0.x-dev"
+        },
+        "patches": {
+            "typo3/cms": {
+                "Patch all TYPO3 entry points for proper Symfony kernel bootstrap": "https://github.com/Bartacus/TYPO3.CMS/compare/9.5...Bartacus:patch/9.5/bartacus-entry-scripts.patch"
+            },
+            "typo3/cms-cli": {
+                "Patch entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/cms-cli/compare/master...Bartacus:patch/2.0.0/bartacus-entry-script.patch"
+            },
+            "helhum/typo3-console": {
+                "Patch console entry script for proper Symfony kernel bootstrap": "https://github.com/Bartacus/TYPO3-Console/compare/5.6.0...patch/5.6.0/bartacus-entry-script.patch"
+            }
         }
     }
 }
