@@ -76,15 +76,16 @@ class SymfonyRouteResolver implements MiddlewareInterface
         TypoScriptFrontendController $typoScriptFrontendController,
         HttpKernel $httpKernel,
         RequestStack $requestStack,
-        EventDispatcher $eventDispatcher
+        EventDispatcher $eventDispatcher,
+        HttpFoundationFactory $httpFoundationFactory,
+        DiactorosFactory $diactorosFactory
     ) {
         $this->typoScriptFrontendController = $typoScriptFrontendController;
         $this->requestStack = $requestStack;
         $this->eventDispatcher = $eventDispatcher;
         $this->httpKernel = $httpKernel;
-
-        $this->httpFoundationFactory = new HttpFoundationFactory();
-        $this->psr7Factory = new DiactorosFactory();
+        $this->httpFoundationFactory = $httpFoundationFactory;
+        $this->psr7Factory = $diactorosFactory;
     }
 
     /**

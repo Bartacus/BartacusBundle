@@ -69,9 +69,14 @@
             <argument type="service" id="http_kernel" />
             <argument type="service" id="request_stack" />
             <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory" />
+            <argument type="service" id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory" />
             <tag name="bartacus.make_instance" />
         </service>
 
         <service id="Bartacus\Bundle\BartacusBundle\Typo3\SymfonyServiceForMakeInstanceLoader" public="true" />
+
+        <service id="Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory" public="true" />
+        <service id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory" public="true" />
     </services>
 </container>
