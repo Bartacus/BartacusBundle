@@ -82,10 +82,11 @@ final class SymfonyBootstrap
     public static function terminate(): void
     {
         if (\function_exists('fastcgi_finish_request')) {
-            fastcgi_finish_request();
+            \fastcgi_finish_request();
         } elseif ('cli' !== PHP_SAPI) {
             Response::closeOutputBuffers(0, true);
         }
+
         self::$kernel->terminate(self::$request, self::$response);
     }
 
