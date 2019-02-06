@@ -30,11 +30,10 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -48,7 +47,7 @@ class SymfonyRouteResolver implements MiddlewareInterface
     private $httpFoundationFactory;
 
     /**
-     * @var HttpKernel
+     * @var HttpKernelInterface
      */
     private $httpKernel;
 
@@ -68,15 +67,15 @@ class SymfonyRouteResolver implements MiddlewareInterface
     private $requestStack;
 
     /**
-     * @var EventDispatcher
+     * @var EventDispatcherInterface
      */
     private $eventDispatcher;
 
     public function __construct(
         TypoScriptFrontendController $typoScriptFrontendController,
-        HttpKernel $httpKernel,
+        HttpKernelInterface $httpKernel,
         RequestStack $requestStack,
-        EventDispatcher $eventDispatcher
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->typoScriptFrontendController = $typoScriptFrontendController;
         $this->requestStack = $requestStack;
