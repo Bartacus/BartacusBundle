@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [1.1.13] - 2019-02-11
 ### Fixed
 - Add missing service bridge function to get objects from the Extbase object manager
 - Compatibility with TYPO3 8.7.24 and upwards
@@ -70,7 +72,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.1.12...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.1.13...HEAD
+[1.1.13]: https://github.com/Bartacus/BartacusBundle/compare/1.1.12...1.1.13
 [1.1.12]: https://github.com/Bartacus/BartacusBundle/compare/1.1.11...1.1.12
 [1.1.11]: https://github.com/Bartacus/BartacusBundle/compare/1.1.10...1.1.11
 [1.1.10]: https://github.com/Bartacus/BartacusBundle/compare/1.1.9...1.1.10
