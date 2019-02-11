@@ -24,6 +24,8 @@ declare(strict_types=1);
 namespace Bartacus\Bundle\BartacusBundle\Typo3;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Page\PageRepository;
@@ -34,6 +36,11 @@ use TYPO3\CMS\Frontend\Page\PageRepository;
 class ServiceBridge
 {
     /**
+     * @var ObjectManagerInterface
+     */
+    private $extbaseObjectManager;
+    
+    /**
      * Wrapper around {@see GeneralUtility::makeInstance()}.
      *
      * @param string $className
@@ -43,6 +50,15 @@ class ServiceBridge
     public function makeInstance(string $className)
     {
         return GeneralUtility::makeInstance($className);
+    }
+
+    public function getExtbaseInstance(string $objectName)
+    {
+        if (null === $this->extbaseObjectManager) {
+            $this->extbaseObjectManager = $this->makeInstance(ObjectManager::class);
+        }
+
+        return $this->extbaseObjectManager->get($objectName);
     }
 
     /**

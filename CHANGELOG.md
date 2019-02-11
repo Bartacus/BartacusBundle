@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `typo3.registry`, inject `TYPO3\CMS\Core\Registry` instead
 - The `typo3.db` and `TYPO3\CMS\Core\Database\DatabaseConnection` are removed. Use `TYPO3\CMS\Core\Database\ConnectionPool` instead
 
+## [1.2.2] - 2019-02-11
+### Fixed
+- Add missing service bridge function to get objects from the Extbase object manager
+- Compatibility with TYPO3 8.7.24 and upwards
 
 ## [1.2.1] - 2019-01-25
 ### Fixed
@@ -54,6 +58,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `typo3.page_repository`, inject `typo3.page_repository` instead
   - `typo3.registry`, inject `TYPO3\CMS\Core\Registry` instead
 - The `typo3.db` and `TYPO3\CMS\Core\Database\DatabaseConnection` is deprecated and removed with TYPO3v9. Use `TYPO3\CMS\Core\Database\ConnectionPool` instead
+
+## [1.1.13] - 2019-02-11
+### Fixed
+- Add missing service bridge function to get objects from the Extbase object manager
+- Compatibility with TYPO3 8.7.24 and upwards
 
 ## [1.1.12] - 2018-12-20
 ### Fixed
@@ -116,9 +125,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.2.1...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.2.2...HEAD
+[1.2.2]: https://github.com/Bartacus/BartacusBundle/compare/1.2.1...1.2.2
 [1.2.1]: https://github.com/Bartacus/BartacusBundle/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/Bartacus/BartacusBundle/compare/1.1.12...1.2.0
+[1.1.13]: https://github.com/Bartacus/BartacusBundle/compare/1.1.12...1.1.13
 [1.1.12]: https://github.com/Bartacus/BartacusBundle/compare/1.1.11...1.1.12
 [1.1.11]: https://github.com/Bartacus/BartacusBundle/compare/1.1.10...1.1.11
 [1.1.10]: https://github.com/Bartacus/BartacusBundle/compare/1.1.9...1.1.10
