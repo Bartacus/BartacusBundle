@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.2.2] - 2019-02-11
+### Fixed
+- Add missing service bridge function to get objects from the Extbase object manager
+- Compatibility with TYPO3 8.7.24 and upwards
+
 ## [1.2.1] - 2019-01-25
 ### Fixed
 - Don't use the deprecated typo3 services internally 
@@ -99,7 +104,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.2.1...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/1.2.2...HEAD
+[1.2.2]: https://github.com/Bartacus/BartacusBundle/compare/1.2.1...1.2.2
 [1.2.1]: https://github.com/Bartacus/BartacusBundle/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/Bartacus/BartacusBundle/compare/1.1.12...1.2.0
 [1.1.13]: https://github.com/Bartacus/BartacusBundle/compare/1.1.12...1.1.13
