@@ -16,13 +16,13 @@ Additionally the common caches can be retrieved via the ids
 ``typo3.cache.cache_hash``, ``typo3.cache.cache_pages``,
 ``typo3.cache.cache_pagesection`` and ``typo3.cache.cache_rootline``.
 
-Globals and ``makeInstance``
-===========================
+Globals, ``makeInstance`` and Extbase object manager
+====================================================
 
 Although you have a common set of services available above, sometimes you need
 access to some of the other TYPO3 globals or retrieve other TYPO3 classes with
-``GeneralUtility::makeInstance()``. This will clutter your code and is really
-bad as it makes your services not testable.
+``GeneralUtility::makeInstance()`` or the Extbase object manager. This will
+clutter your code and is really bad as it makes your services not testable.
 
 Instead you can create services from TYPO3 globals with the factory pattern:
 
@@ -47,7 +47,19 @@ The same it possible with classes from ``GeneralUtility::makeInstance()``:
             arguments:
                 - 'TYPO3\CMS\Core\TypoScript\TemplateService'
 
-Always the the service to be not shared!
+Or getting instances from the Extbase object manager:
+
+.. code-block:: yaml
+
+    services:
+        TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface:
+            class: TYPO3\CMS\Extbase\Configuration\ConfigurationManager
+            shared: false
+            factory: 'Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge:getExtbaseInstance'
+            arguments:
+                - TYPO3\CMS\Extbase\Configuration\ConfigurationManager
+
+Always set the service to be not shared!
 
 Other caches as service
 =======================
