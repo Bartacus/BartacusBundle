@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Fixed
 - Add missing service bridge function to get objects from the Extbase object manager
+- Compatibility with TYPO3 8.7.24 and upwards
 
 ## [1.1.12] - 2018-12-20
 ### Fixed
