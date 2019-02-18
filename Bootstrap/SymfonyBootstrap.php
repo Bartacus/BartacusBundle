@@ -26,6 +26,7 @@ namespace Bartacus\Bundle\BartacusBundle\Bootstrap;
 use App\Kernel as AppKernel;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Kernel;
 
 final class SymfonyBootstrap
@@ -35,7 +36,17 @@ final class SymfonyBootstrap
      */
     private static $kernel;
 
-    public static function getKernel(): Kernel
+    /**
+     * @var Request
+     */
+    private static $request;
+
+    /**
+     * @var Response
+     */
+    private static $response;
+
+    public static function getKernel(): ? Kernel
     {
         return self::$kernel;
     }
@@ -50,7 +61,6 @@ final class SymfonyBootstrap
 
         if ($_SERVER['APP_DEBUG']) {
             \umask(0000);
-
             Debug::enable();
         }
 
@@ -67,5 +77,22 @@ final class SymfonyBootstrap
 
         self::$kernel = new AppKernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
         self::$kernel->boot();
+    }
+
+    public static function terminate(): void
+    {
+        if (\function_exists('fastcgi_finish_request')) {
+            \fastcgi_finish_request();
+        } elseif ('cli' !== PHP_SAPI) {
+            Response::closeOutputBuffers(0, true);
+        }
+
+        self::$kernel->terminate(self::$request, self::$response);
+    }
+
+    public static function setRequestResponseForTermination(Request $request, Response $response): void
+    {
+        self::$request = $request;
+        self::$response = $response;
     }
 }

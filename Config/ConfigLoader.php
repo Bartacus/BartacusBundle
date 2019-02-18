@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace Bartacus\Bundle\BartacusBundle\Config;
 
 use Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader;
+use Bartacus\Bundle\BartacusBundle\Middleware\SymfonyRouteResolver;
 
 /**
  * Delegating central config loader called on various places within TYPO3
@@ -44,5 +45,22 @@ class ConfigLoader
     public function loadFromAdditionalConfiguration(): void
     {
         $this->contentElement->load();
+    }
+
+    public function loadFromRequestMiddlewares(): array
+    {
+        return [
+            'frontend' => [
+                'bartacus/symfony-route-resolver' => [
+                    'target' => SymfonyRouteResolver::class,
+                    'after' => [
+                        'typo3/cms-frontend/site',
+                    ],
+                    'before' => [
+                        'typo3/cms-frontend/base-redirect-resolver',
+                    ],
+                ],
+            ],
+        ];
     }
 }
