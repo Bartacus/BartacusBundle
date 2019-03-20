@@ -65,12 +65,15 @@ final class AnnotationContentElementLoader
         $collection = new RenderDefinitionCollection();
         $dirs = [];
 
-        if (\file_exists($dir = $this->projectDir.'/src/Action')) {
-            $dirs[] = $dir;
-        }
+        $directories = \scandir($this->projectDir.'/src');
+        foreach ($directories as $directory) {
+            if (\file_exists($dir = $this->projectDir.'/src/'.$directory.'/Action')) {
+                $dirs[] = $dir;
+            }
 
-        if (\file_exists($dir = $this->projectDir.'/src/Controller')) {
-            $dirs[] = $dir;
+            if (\file_exists($dir = $this->projectDir.'/src/'.$directory.'/Controller')) {
+                $dirs[] = $dir;
+            }
         }
 
         foreach ($this->bundles as $name => $bundle) {

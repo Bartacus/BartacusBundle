@@ -39,7 +39,7 @@ class ServiceBridge
      * @var ObjectManagerInterface
      */
     private $extbaseObjectManager;
-    
+
     /**
      * Wrapper around {@see GeneralUtility::makeInstance()}.
      *
