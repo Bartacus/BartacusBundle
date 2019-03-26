@@ -151,14 +151,11 @@ class SymfonyRouteResolver implements MiddlewareInterface
         $site = $request->getAttribute('site', null);
 
         if ($requestId || !($site instanceof  SiteInterface)) {
-
             return $request;
         }
 
-
         $routeResult = $request->getAttribute('routing', null);
         if (!($routeResult->getLanguage() instanceof SiteLanguage)) {
-
             return $request;
         }
 
@@ -166,7 +163,6 @@ class SymfonyRouteResolver implements MiddlewareInterface
             /** @var PageArguments $pageArguments */
             $pageArguments = $site->getRouter()->matchRequest($request, $routeResult);
         } catch (RouteNotFoundException $e) {
-
             return $request;
         }
 
