@@ -157,7 +157,7 @@ class SymfonyRouteResolver implements MiddlewareInterface
 
 
         $routeResult = $request->getAttribute('routing', null);
-        if (!($routeResult->getLanguage() instanceof SiteLanguage)){
+        if (!($routeResult->getLanguage() instanceof SiteLanguage)) {
 
             return $request;
         }
@@ -172,7 +172,7 @@ class SymfonyRouteResolver implements MiddlewareInterface
 
         $preparedRequest = $request->withAttribute('routing', $pageArguments);
         // merge the PageArguments with the request query parameters
-        $queryParams = array_replace_recursive(
+        $queryParams = \array_replace_recursive(
             $preparedRequest->getQueryParams(),
             $pageArguments->getArguments()
         );
