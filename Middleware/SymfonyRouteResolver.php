@@ -37,6 +37,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use TYPO3\CMS\Core\Routing\PageArguments;
+use TYPO3\CMS\Core\Routing\RouteNotFoundException;
+use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Core\Site\Entity\SiteInterface;
+use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class SymfonyRouteResolver implements MiddlewareInterface
@@ -95,7 +100,7 @@ class SymfonyRouteResolver implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $symfonyRequest = $this->httpFoundationFactory->createRequest($request);
+        $symfonyRequest = $this->httpFoundationFactory->createRequest($this->prepareForSymfonyRequest($request));
         $symfonyResponse = null;
 
         // set the locale from TypoScript, effectively killing _locale from router :/
@@ -131,5 +136,47 @@ class SymfonyRouteResolver implements MiddlewareInterface
         SymfonyBootstrap::setRequestResponseForTermination($symfonyRequest, $symfonyResponse);
 
         return $response;
+    }
+
+    /**
+     * Resolving the PageArguments (e.g. Typo3 page id) from the route.
+     * This is normally done by typo3 in a later middleware, but we want to have this information in our symfony request.
+     * Legacy URIs (?id=12345) are not supported for the time being (only routes).
+     */
+    protected function prepareForSymfonyRequest(ServerRequestInterface $request): ServerRequestInterface
+    {
+        $requestId = (string) ($request->getQueryParams()['id'] ?? '');
+
+        /** @var Site $site */
+        $site = $request->getAttribute('site', null);
+
+        if ($requestId || !($site instanceof  SiteInterface)) {
+
+            return $request;
+        }
+
+
+        $routeResult = $request->getAttribute('routing', null);
+        if (!($routeResult->getLanguage() instanceof SiteLanguage)){
+
+            return $request;
+        }
+
+        try {
+            /** @var PageArguments $pageArguments */
+            $pageArguments = $site->getRouter()->matchRequest($request, $routeResult);
+        } catch (RouteNotFoundException $e) {
+
+            return $request;
+        }
+
+        $preparedRequest = $request->withAttribute('routing', $pageArguments);
+        // merge the PageArguments with the request query parameters
+        $queryParams = array_replace_recursive(
+            $preparedRequest->getQueryParams(),
+            $pageArguments->getArguments()
+        );
+
+        return $preparedRequest->withQueryParams($queryParams);
     }
 }
