@@ -100,20 +100,19 @@ class SymfonyRouteResolver implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $symfonyRequest = $this->httpFoundationFactory->createRequest($this->prepareForSymfonyRequest($request));
         $symfonyResponse = null;
-
-        // set the locale from TypoScript, effectively killing _locale from router :/
-        [$locale] = \explode('.', $this->typoScriptFrontendController->config['config']['locale_all'] ?? 'en_GB.');
-        $symfonyRequest->attributes->set('_locale', $locale);
+        $preparedRequest = $this->setLocaleFromSiteLanguage($request);
 
         try {
+            $symfonyRequest = $this->httpFoundationFactory->createRequest($preparedRequest);
             $symfonyResponse = $this->httpKernel->handle($symfonyRequest, HttpKernelInterface::MASTER_REQUEST, false);
         } catch (NotFoundHttpException $e) {
             // only catch when route matching failed
             if (!$e->getPrevious() instanceof  ResourceNotFoundException) {
                 throw $e;
             }
+
+            $symfonyRequest = $this->httpFoundationFactory->createRequest($this->addPageArguments($preparedRequest));
 
             // no route found, but to initialize locale and translator correctly
             // dispatch request event again, but skip router.
@@ -143,7 +142,7 @@ class SymfonyRouteResolver implements MiddlewareInterface
      * This is normally done by typo3 in a later middleware, but we want to have this information in our symfony request.
      * Legacy URIs (?id=12345) are not supported for the time being (only routes).
      */
-    protected function prepareForSymfonyRequest(ServerRequestInterface $request): ServerRequestInterface
+    protected function addPageArguments(ServerRequestInterface $request): ServerRequestInterface
     {
         $requestId = (string) ($request->getQueryParams()['id'] ?? '');
 
@@ -166,7 +165,7 @@ class SymfonyRouteResolver implements MiddlewareInterface
             return $request;
         }
 
-        $preparedRequest = $request->withAttribute('routing', $pageArguments);
+        $preparedRequest = $request->withAttribute('page', $pageArguments);
         // merge the PageArguments with the request query parameters
         $queryParams = \array_replace_recursive(
             $preparedRequest->getQueryParams(),
@@ -174,5 +173,22 @@ class SymfonyRouteResolver implements MiddlewareInterface
         );
 
         return $preparedRequest->withQueryParams($queryParams);
+    }
+
+    protected function setLocaleFromSiteLanguage(ServerRequestInterface $request): ServerRequestInterface
+    {
+        $locale = null;
+
+        if ((bool) $language = $request->getAttribute('language')) {
+            [$locale] = \explode('.', $request->getAttribute('language')->getLocale());
+        } elseif ((bool) $site = $request->getAttribute('site')) {
+            [$locale] = \explode('.', $site->getDefaultLanguage()->getLocale());
+        }
+
+        if ($locale) {
+            $preparedRequest = $request->withAttribute('_locale', $locale);
+        }
+
+        return $preparedRequest ?? $request;
     }
 }
