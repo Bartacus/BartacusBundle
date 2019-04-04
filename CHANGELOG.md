@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Register `TYPO3\CMS\Install\Updates\UpgradeWizardInterface` for auto configuration with `bartacus.make_instance` tags
 
 ### Changed
-- Support for TYPO3 9.5
+- Support for TYPO3 9.5 only
 - Minimal required Symfony version is 4.2
 - Symfony translator locale is now retrieved from site settings instead of TypoScript config
 
