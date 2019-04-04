@@ -95,12 +95,10 @@ class SymfonyRouteResolver implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $request = $this->setLocaleFromSiteLanguage($request);
+
         $symfonyRequest = $this->httpFoundationFactory->createRequest($request);
         $symfonyResponse = null;
-
-        // set the locale from TypoScript, effectively killing _locale from router :/
-        [$locale] = \explode('.', $this->typoScriptFrontendController->config['config']['locale_all'] ?? 'en_GB.');
-        $symfonyRequest->attributes->set('_locale', $locale);
 
         try {
             $symfonyResponse = $this->httpKernel->handle($symfonyRequest, HttpKernelInterface::MASTER_REQUEST, false);
@@ -131,5 +129,22 @@ class SymfonyRouteResolver implements MiddlewareInterface
         SymfonyBootstrap::setRequestResponseForTermination($symfonyRequest, $symfonyResponse);
 
         return $response;
+    }
+
+    private function setLocaleFromSiteLanguage(ServerRequestInterface $request): ServerRequestInterface
+    {
+        $locale = null;
+
+        if ((bool) $language = $request->getAttribute('language')) {
+            [$locale] = \explode('.', $request->getAttribute('language')->getLocale());
+        } elseif ((bool) $site = $request->getAttribute('site')) {
+            [$locale] = \explode('.', $site->getDefaultLanguage()->getLocale());
+        }
+
+        if ($locale) {
+            $preparedRequest = $request->withAttribute('_locale', $locale);
+        }
+
+        return $preparedRequest ?? $request;
     }
 }
