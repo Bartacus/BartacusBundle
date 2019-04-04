@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Support for TYPO3 9.5
 - Minimal required Symfony version is 4.2
+- Symfony translator locale is now retrieved from site settings instead of TypoScript config
 
 ### Removed
 - The `$GLOBALS['kernel']` variable is removed, use `SymfonyBootstrap::getKernel()` instead
