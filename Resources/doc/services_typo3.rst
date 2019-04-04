@@ -23,6 +23,7 @@ information about the service container see the
 
 
 .. code-block:: php
+
     <?php
 
     declare(strict_types=1);
@@ -36,14 +37,12 @@ information about the service container see the
 
 .. code-block:: yaml
 
-    // services.yml
+    // config/services.yml
     services:
         AppBundle\TypoScript\PageTitle:
             tags: [bartacus.make_instance]
 
-Or if you use the autowiring config (since Symfony 3.3) and have all your
-TypoScript, Hook, etc. classes in specific subfolders, you can use this shorter
-autowiring definition instead of declaring and tagging each service.
+Or if you use the autowiring config and have all your TypoScript, Hook, etc. classes in specific subfolders, you can use this shorter autowiring definition instead of declaring and tagging each service.
 
 .. code-block:: yaml
 
@@ -51,11 +50,29 @@ autowiring definition instead of declaring and tagging each service.
     services:
         _defaults:
             autowire: true
-            public: false
+            autoconfigure: true
 
         AppBundle\TypoScript\:
-            resource: '../../src/AppBundle/TypoScript'
+            resource: '../src/AppBundle/TypoScript'
             tags: [bartacus.make_instance]
+
+Alternatively, if something implements an interface, you can autoconfigure it with the `_instanceof` and it doesn't matter in which namespace your class lives.
+
+.. code-block:: yaml
+
+    // services.yml
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        _instanceof:
+            TYPO3\CMS\Install\Updates\UpgradeWizardInterface:
+               tags: [bartacus.make_instance]
+
+Some of the TYPO3 interfaces are already registered for autoconfiguration, so you don't need the above snippets. If you find one, which is not included in the list, head up us a pull request.
+
+* ``TYPO3\CMS\Install\Updates\UpgradeWizardInterface``
 
 Usage
 -----

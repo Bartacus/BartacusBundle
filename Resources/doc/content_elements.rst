@@ -31,10 +31,10 @@ plugin is now injected into the ``$data`` parameter of the method if it exists.
 
     use Bartacus\Bundle\BartacusBundle\Annotation\ContentElement;
     use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-    use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+    use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
     use Symfony\Component\HttpFoundation\Response;
 
-    class ContentController extends Controller
+    class ContentController extends AbstractController
     {
         /**
          * @ContentElement("content_text")
@@ -59,10 +59,7 @@ available fields MUST be done in ``Configuration/TCA`` and
 
 .. note::
 
-    Bartacus mocks the Symfony http foundation kernel requests, which means you
-    have access to the ``Request`` instance as a sub request as seen above and
-    must return a ``Response`` instance, but none of the usual kernel events are
-    dispatched.
+    Bartacus mocks the Symfony http foundation kernel requests, which means you have access to the ``Request`` instance as a sub request as seen above and must return a ``Response`` instance, but only a subset of the usual kernel events are dispatched.
 
 Redirect responses
 ------------------

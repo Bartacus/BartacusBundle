@@ -20,8 +20,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'BartacusBundle'
-copyright = u'2016, Patrik Karisch'
-author = u'Patrik Karisch'
+copyright = u'Emily Karisch'
+author = u'Emily Karisch'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

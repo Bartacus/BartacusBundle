@@ -28,18 +28,17 @@ Instead you can create services from TYPO3 globals with the factory pattern:
 
     services:
         TYPO3\CMS\Lang\LanguageService:
-            factory: 'Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge:getGlobal'
             shared: false
+            factory: 'Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge:getGlobal'
             arguments:
                 - LANG
 
-The same it possible with classes from ``GeneralUtility::makeInstance()``:
+The same is possible with classes from ``GeneralUtility::makeInstance()``:
 
 .. code-block:: yaml
 
     services:
         TYPO3\CMS\Core\TypoScript\TemplateService:
-            class: TYPO3\CMS\Core\TypoScript\TemplateService
             shared: false
             factory: 'Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge:makeInstance'
             arguments:
@@ -51,7 +50,6 @@ Or getting instances from the Extbase object manager:
 
     services:
         TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface:
-            class: TYPO3\CMS\Extbase\Configuration\ConfigurationManager
             shared: false
             factory: 'Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge:getExtbaseInstance'
             arguments:

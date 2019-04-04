@@ -4,11 +4,6 @@ BartacusBundle Documentation
 
 This is the main bundle of the Symfony full stack integration into TYPO3 CMS.
 
-Roadmap
-=======
-
-To know all the plans for Bartacus visit our `Waffle Board <https://waffle.io/Bartacus/Bartacus>`_.
-
 Contents
 ========
 
