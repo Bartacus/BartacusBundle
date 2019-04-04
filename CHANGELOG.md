@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Register `\TYPO3\CMS\Install\Updates\UpgradeWizardInterface` for auto configuration with `bartacus.make_instance` tags
+
 ### Changed
 - Support for TYPO3 9.5
 - Minimal required Symfony version is 4.2

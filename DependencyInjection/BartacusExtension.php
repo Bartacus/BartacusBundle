@@ -27,6 +27,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
 
 class BartacusExtension extends Extension
 {
@@ -45,5 +46,7 @@ class BartacusExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('bartacus.paths.web_dir', $config['paths']['web_dir']);
+
+        $container->registerForAutoconfiguration(UpgradeWizardInterface::class)->addTag('bartacus.make_instance');
     }
 }
