@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Fixed
+- Handle TYPO3 content elements with Symfony in a way better than before
 
 ## [2.0.1] - 2019-04-12
 ### Added

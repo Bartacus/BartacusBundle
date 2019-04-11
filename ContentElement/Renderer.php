@@ -106,6 +106,7 @@ class Renderer
     public function handle(string $content, array $configuration): string
     {
         $request = $this->requestStack->getCurrentRequest();
+        $oldController = $request->attributes->get('_controller');
 
         $request->attributes->set('data', $this->cObj->data);
         $request->attributes->set('_controller', $configuration['controller']);
@@ -162,7 +163,11 @@ class Renderer
         );
 
         $request->attributes->remove('data');
-        $request->attributes->remove('_controller');
+        if (null !== $oldController) {
+            $request->attributes->set('_controller', $oldController);
+        } else {
+            $request->attributes->remove('_controller');
+        }
 
         if ($response instanceof RedirectResponse) {
             $response->send();

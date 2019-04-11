@@ -24,10 +24,12 @@ declare(strict_types=1);
 namespace Bartacus\Bundle\BartacusBundle\Bootstrap;
 
 use App\Kernel as AppKernel;
+use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Kernel;
+use TYPO3\CMS\Core\Http\NullResponse;
 
 final class SymfonyBootstrap
 {
@@ -77,6 +79,8 @@ final class SymfonyBootstrap
 
         self::$kernel = new AppKernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
         self::$kernel->boot();
+
+        self::$response = (new HttpFoundationFactory())->createResponse(new NullResponse());
     }
 
     public static function terminate(): void

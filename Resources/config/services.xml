@@ -64,11 +64,10 @@
             <tag name="kernel.event_listener" event="kernel.request" priority="8" />
         </service>
 
-        <service id="Bartacus\Bundle\BartacusBundle\Middleware\SymfonyRouteResolver">
-            <argument type="service" id="TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController" />
+        <service id="Bartacus\Bundle\BartacusBundle\Middleware\PrepareContentElementRenderer">
+            <argument type="service" id="event_dispatcher" />
             <argument type="service" id="http_kernel" />
             <argument type="service" id="request_stack" />
-            <argument type="service" id="event_dispatcher" />
             <tag name="bartacus.make_instance" />
         </service>
 
