@@ -25,6 +25,11 @@
 
     <services>
         <service id="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" />
+        
+        <service id="TYPO3\CMS\Core\Context\Context" shared="false">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
+            <argument>TYPO3\CMS\Core\Context\Context</argument>
+        </service>
 
         <service id="TYPO3\CMS\Core\Authentication\BackendUserAuthentication" shared="false">
             <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="getGlobal" />
