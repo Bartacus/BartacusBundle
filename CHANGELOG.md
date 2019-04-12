@@ -5,8 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
-## Added
+### Added
 - Add relevant `TYPO3\CMS\Core\Context\Context` as service
+
+### Fixed
+- Use a patch to make TYPO3 own PSR-7 implementation really compliant
 
 ## [2.0.0] - 2019-04-05
 ### Added

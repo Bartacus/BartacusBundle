@@ -53,7 +53,8 @@
                 "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/9.5...Bartacus:patch/9.5/backend/bartacus-entry-script.patch"
             },
             "typo3/cms-core": {
-                "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/9.5...Bartacus:patch/9.5/core/bartacus-entry-script.patch"
+                "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/9.5...Bartacus:patch/9.5/core/bartacus-entry-script.patch",
+                "Make TYPO3 own PSR-7 implementation really compliant": "https://github.com/TYPO3/TYPO3.CMS/compare/9.5...Bartacus:patch/9.5/core/psr7-compliance.patch"
             },
             "typo3/cms-frontend": {
                 "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/9.5...Bartacus:patch/9.5/frontend/bartacus-entry-script.patch"
