@@ -24,6 +24,13 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+        <service id="locale_listener" class="Bartacus\Bundle\BartacusBundle\EventSubscriber\LocaleSubscriber">
+            <argument type="service" id="request_stack" />
+            <argument>%kernel.default_locale%</argument>
+            <argument type="service" id="router" on-invalid="ignore" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+
         <service id="session.storage.php_bridge" class="Bartacus\Bundle\BartacusBundle\Session\Storage\PhpBridgeSessionStorage">
             <argument>%session.storage.options%</argument>
             <argument type="service" id="session.handler" />

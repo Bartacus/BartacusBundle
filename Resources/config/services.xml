@@ -76,6 +76,13 @@
             <tag name="bartacus.make_instance" />
         </service>
 
+        <service id="Bartacus\Bundle\BartacusBundle\Twig\LocaleAwareHttpKernelExtension">
+            <call method="setContext">
+                <argument type="service" id="router.request_context" />
+            </call>
+            <tag name="twig.extension" />
+        </service>
+
         <service id="Bartacus\Bundle\BartacusBundle\Typo3\SymfonyServiceForMakeInstanceLoader" public="true" />
     </services>
 </container>

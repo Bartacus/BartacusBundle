@@ -87,7 +87,6 @@ class PrepareContentElementRenderer implements MiddlewareInterface
 
         $symfonyRequest = $this->httpFoundationFactory->createRequest($request);
         $symfonyRequest->attributes->set('_controller', 'typo3');
-        $this->setLocaleFromSiteLanguage($request, $symfonyRequest);
 
         $this->requestStack->push($symfonyRequest);
 
@@ -114,20 +113,5 @@ class PrepareContentElementRenderer implements MiddlewareInterface
         $response = $this->psrHttpFactory->createResponse($symfonyResponse);
 
         return $response;
-    }
-
-    private function setLocaleFromSiteLanguage(ServerRequestInterface $request, Request $symfonyRequest)
-    {
-        $locale = null;
-
-        if ((bool) $language = $request->getAttribute('language')) {
-            [$locale] = \explode('.', $request->getAttribute('language')->getLocale());
-        } elseif ((bool) $site = $request->getAttribute('site')) {
-            [$locale] = \explode('.', $site->getDefaultLanguage()->getLocale());
-        }
-
-        if ($locale) {
-            $symfonyRequest->attributes->set('_locale', $locale);
-        }
     }
 }
