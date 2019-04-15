@@ -5,8 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
-### Fixed
-- Handle TYPO3 content elements with Symfony in a way better than before
+### Changed
+- Handle TYPO3 page rendering with all the usual Symfony events around as master request
+- Dispatch all the usual Symfony events around each content element as sub request
 
 ## [2.0.1] - 2019-04-12
 ### Added

@@ -51,11 +51,10 @@
         <service id="Bartacus\Bundle\BartacusBundle\ContentElement\Renderer">
             <argument type="service" id="request_stack" />
             <argument type="service" id="http_kernel" />
-            <argument type="service" id="router_listener" />
             <argument type="service" id="controller_resolver" />
-            <argument type="service" id="TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController" />
             <argument type="service" id="argument_resolver" />
             <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="TYPO3\CMS\Frontend\Controller\ErrorController" />
             <tag name="bartacus.make_instance" />
         </service>
 

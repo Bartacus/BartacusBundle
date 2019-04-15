@@ -68,6 +68,11 @@
             <argument>TYPO3\CMS\Frontend\Page\CacheHashCalculator</argument>
         </service>
 
+        <service id="TYPO3\CMS\Frontend\Controller\ErrorController" shared="false">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
+            <argument>TYPO3\CMS\Frontend\Controller\ErrorController</argument>
+        </service>
+
         <service id="TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer" shared="false">
             <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="getContentObjectRenderer" />
         </service>
