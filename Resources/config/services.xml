@@ -70,6 +70,12 @@
             <tag name="bartacus.make_instance" />
         </service>
 
+        <service id="Bartacus\Bundle\BartacusBundle\Middleware\SymfonyRouteResolver">
+            <argument type="service" id="http_kernel" />
+            <argument type="service" id="router" />
+            <tag name="bartacus.make_instance" />
+        </service>
+
         <service id="Bartacus\Bundle\BartacusBundle\Typo3\SymfonyServiceForMakeInstanceLoader" public="true" />
     </services>
 </container>

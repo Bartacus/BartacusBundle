@@ -28,7 +28,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
+use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
  * Initializes the several stuff on the TSFE, when not done yet.
@@ -56,8 +59,18 @@ class FrontendControllerSubscriber implements EventSubscriberInterface
         }
 
         $frontendController = $this->serviceBridge->getGlobal('TSFE');
-        if ($frontendController && !$frontendController->cObj instanceof ContentObjectRenderer) {
-            $frontendController->newCObj();
+
+        if ($frontendController) {
+            if (!$frontendController->cObj instanceof ContentObjectRenderer) {
+                $frontendController->newCObj();
+            }
+
+            if (!$frontendController->sys_page instanceof PageRepository) {
+                $frontendController->sys_page = GeneralUtility::makeInstance(
+                    PageRepository::class,
+                    GeneralUtility::makeInstance(Context::class)
+                );
+            }
         }
     }
 
