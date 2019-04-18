@@ -51,25 +51,36 @@
         <service id="Bartacus\Bundle\BartacusBundle\ContentElement\Renderer">
             <argument type="service" id="request_stack" />
             <argument type="service" id="http_kernel" />
-            <argument type="service" id="router_listener" />
             <argument type="service" id="controller_resolver" />
-            <argument type="service" id="TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController" />
             <argument type="service" id="argument_resolver" />
             <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="TYPO3\CMS\Frontend\Controller\ErrorController" />
             <tag name="bartacus.make_instance" />
         </service>
 
-        <service id="Bartacus\Bundle\BartacusBundle\EventListener\ContentObjectListener">
-            <argument type="service" id="TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController" />
-            <tag name="kernel.event_listener" event="kernel.request" priority="8" />
+        <service id="Bartacus\Bundle\BartacusBundle\EventSubscriber\FrontendControllerSubscriber">
+            <argument type="service" id="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service id="Bartacus\Bundle\BartacusBundle\Middleware\PrepareContentElementRenderer">
+            <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="http_kernel" />
+            <argument type="service" id="request_stack" />
+            <tag name="bartacus.make_instance" />
         </service>
 
         <service id="Bartacus\Bundle\BartacusBundle\Middleware\SymfonyRouteResolver">
-            <argument type="service" id="TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController" />
             <argument type="service" id="http_kernel" />
-            <argument type="service" id="request_stack" />
-            <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="router" />
             <tag name="bartacus.make_instance" />
+        </service>
+
+        <service id="Bartacus\Bundle\BartacusBundle\Twig\LocaleAwareHttpKernelExtension">
+            <call method="setContext">
+                <argument type="service" id="router.request_context" />
+            </call>
+            <tag name="twig.extension" />
         </service>
 
         <service id="Bartacus\Bundle\BartacusBundle\Typo3\SymfonyServiceForMakeInstanceLoader" public="true" />

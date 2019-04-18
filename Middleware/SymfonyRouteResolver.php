@@ -24,127 +24,119 @@ declare(strict_types=1);
 namespace Bartacus\Bundle\BartacusBundle\Middleware;
 
 use Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap;
+use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class SymfonyRouteResolver implements MiddlewareInterface
 {
+    /**
+     * @var HttpKernelInterface
+     */
+    private $kernel;
+
+    /**
+     * @var Router
+     */
+    private $router;
+
     /**
      * @var HttpFoundationFactory
      */
     private $httpFoundationFactory;
 
     /**
-     * @var HttpKernelInterface
+     * @var PsrHttpFactory
      */
-    private $httpKernel;
+    private $psrHttpFactory;
 
-    /**
-     * @var TypoScriptFrontendController
-     */
-    private $typoScriptFrontendController;
-
-    /**
-     * @var DiactorosFactory
-     */
-    private $psr7Factory;
-
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    public function __construct(
-        TypoScriptFrontendController $typoScriptFrontendController,
-        HttpKernelInterface $httpKernel,
-        RequestStack $requestStack,
-        EventDispatcherInterface $eventDispatcher
-    ) {
-        $this->typoScriptFrontendController = $typoScriptFrontendController;
-        $this->requestStack = $requestStack;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->httpKernel = $httpKernel;
+    public function __construct(HttpKernelInterface $kernel, Router $router)
+    {
+        $this->kernel = $kernel;
+        $this->router = $router;
 
         $this->httpFoundationFactory = new HttpFoundationFactory();
-        $this->psr7Factory = new DiactorosFactory();
+
+        $psr17Factory = new Psr17Factory();
+        $this->psrHttpFactory = new PsrHttpFactory($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
     }
 
     /**
-     * Process an incoming server request.
-     *
-     * Processes an incoming server request in order to produce a response.
-     * If unable to produce the response itself, it may delegate to the provided
-     * request handler to do so.
+     * @throws \Exception
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $request = $this->setLocaleFromSiteLanguage($request);
+        if (!$this->handleWithSymfony($request)) {
+            return $handler->handle($request);
+        }
 
         $symfonyRequest = $this->httpFoundationFactory->createRequest($request);
-        $symfonyResponse = null;
-
-        try {
-            $symfonyResponse = $this->httpKernel->handle($symfonyRequest, HttpKernelInterface::MASTER_REQUEST, false);
-        } catch (NotFoundHttpException $e) {
-            // only catch when route matching failed
-            if (!$e->getPrevious() instanceof  ResourceNotFoundException) {
-                throw $e;
-            }
-
-            // no route found, but to initialize locale and translator correctly
-            // dispatch request event again, but skip router.
-            $symfonyRequest->attributes->set('_controller', 'typo3');
-
-            // add back to request stack, because the finishRequest after exception popped.
-            $this->requestStack->push($symfonyRequest);
-
-            $event = new GetResponseEvent($this->httpKernel, $symfonyRequest, HttpKernelInterface::MASTER_REQUEST);
-            $this->eventDispatcher->dispatch(KernelEvents::REQUEST, $event);
-        }
-
-        if ($symfonyResponse) {
-            $response = $this->psr7Factory->createResponse($symfonyResponse);
-        } else {
-            $response = $handler->handle($request);
-            $symfonyResponse = $this->httpFoundationFactory->createResponse($response);
-        }
-
+        $symfonyResponse = $this->kernel->handle($symfonyRequest, HttpKernelInterface::MASTER_REQUEST, false);
         SymfonyBootstrap::setRequestResponseForTermination($symfonyRequest, $symfonyResponse);
 
-        return $response;
+        return $this->psrHttpFactory->createResponse($symfonyResponse);
     }
 
-    private function setLocaleFromSiteLanguage(ServerRequestInterface $request): ServerRequestInterface
+    private function handleWithSymfony(ServerRequestInterface $request): bool
     {
-        $locale = null;
+        $fakeRequest = $this->createFakeRequest($request);
 
-        if ((bool) $language = $request->getAttribute('language')) {
-            [$locale] = \explode('.', $request->getAttribute('language')->getLocale());
-        } elseif ((bool) $site = $request->getAttribute('site')) {
-            [$locale] = \explode('.', $site->getDefaultLanguage()->getLocale());
+        try {
+            $this->router->getContext()->fromRequest($fakeRequest);
+            $this->router->matchRequest($fakeRequest);
+        } catch (ResourceNotFoundException $e) {
+            return false;
+        } catch (MethodNotAllowedException $e) {
+            return false;
         }
 
-        if ($locale) {
-            $preparedRequest = $request->withAttribute('_locale', $locale);
+        return true;
+    }
+
+    /**
+     * Create a fake Symfony request without files and without body to match.
+     */
+    private function createFakeRequest(ServerRequestInterface $psrRequest): Request
+    {
+        $server = [];
+        $uri = $psrRequest->getUri();
+
+        if ($uri instanceof UriInterface) {
+            $server['SERVER_NAME'] = $uri->getHost();
+            $server['SERVER_PORT'] = $uri->getPort();
+            $server['REQUEST_URI'] = $uri->getPath();
+            $server['QUERY_STRING'] = $uri->getQuery();
         }
 
-        return $preparedRequest ?? $request;
+        $server['REQUEST_METHOD'] = $psrRequest->getMethod();
+
+        $server = \array_replace($server, $psrRequest->getServerParams());
+
+        $parsedBody = $psrRequest->getParsedBody();
+        $parsedBody = \is_array($parsedBody) ? $parsedBody : [];
+
+        $request = new Request(
+            $psrRequest->getQueryParams(),
+            $parsedBody,
+            $psrRequest->getAttributes(),
+            $psrRequest->getCookieParams(),
+            [],
+            $server,
+            ''
+        );
+
+        $request->headers->replace($psrRequest->getHeaders());
+
+        return $request;
     }
 }

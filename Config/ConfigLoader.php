@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace Bartacus\Bundle\BartacusBundle\Config;
 
 use Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader;
+use Bartacus\Bundle\BartacusBundle\Middleware\PrepareContentElementRenderer;
 use Bartacus\Bundle\BartacusBundle\Middleware\SymfonyRouteResolver;
 
 /**
@@ -54,10 +55,26 @@ class ConfigLoader
                 'bartacus/symfony-route-resolver' => [
                     'target' => SymfonyRouteResolver::class,
                     'after' => [
+                        'typo3/cms-frontend/authentication',
+                        'typo3/cms-frontend/backend-user-authentication',
+                        'typo3/cms-frontend/tsfe',
                         'typo3/cms-frontend/site',
+                        'typo3/cms-frontend/base-redirect-resolver',
+                        'typo3/cms-frontend/static-route-resolver',
+                        'typo3/cms-redirects/redirecthandler',
                     ],
                     'before' => [
-                        'typo3/cms-frontend/base-redirect-resolver',
+                        'typo3/cms-frontend/page-resolver',
+                    ],
+                ],
+                'bartacus/prepare-content-element-renderer' => [
+                    'target' => PrepareContentElementRenderer::class,
+                    'after' => [
+                        'typo3/cms-frontend/tsfe',
+                        'typo3/cms-frontend/site',
+                        'typo3/cms-frontend/page-resolver',
+                        'typo3/cms-frontend/page-argument-validator',
+                        'typo3/cms-frontend/prepare-tsfe-rendering',
                     ],
                 ],
             ],

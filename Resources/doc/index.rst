@@ -19,3 +19,4 @@ Contents
     services_typo3
     content_elements
     service_bridge
+    translations

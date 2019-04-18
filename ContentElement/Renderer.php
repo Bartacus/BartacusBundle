@@ -23,21 +23,29 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\ContentElement;
 
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
+use Symfony\Component\HttpKernel\Event\FilterControllerArgumentsEvent;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpKernel\EventListener\RouterListener;
+use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+use Symfony\Component\HttpKernel\Exception\ControllerDoesNotReturnResponseException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\KernelEvents;
+use TYPO3\CMS\Core\Error\Http\PageNotFoundException;
+use TYPO3\CMS\Core\Http\ImmediateResponseException;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+use TYPO3\CMS\Frontend\Controller\ErrorController;
 
 /**
  * Dispatch a content element to controller action.
@@ -62,19 +70,9 @@ class Renderer
     private $kernel;
 
     /**
-     * @var RouterListener
-     */
-    private $routerListener;
-
-    /**
      * @var ControllerResolverInterface
      */
     private $resolver;
-
-    /**
-     * @var TypoScriptFrontendController
-     */
-    private $frontendController;
 
     /**
      * @var ArgumentResolverInterface
@@ -86,20 +84,35 @@ class Renderer
      */
     private $dispatcher;
 
-    public function __construct(RequestStack $requestStack, HttpKernel $kernel, RouterListener $routerListener, ControllerResolverInterface $resolver, TypoScriptFrontendController $frontendController, ArgumentResolverInterface $argumentResolver, EventDispatcherInterface $eventDispatcher)
+    /**
+     * @var ErrorController
+     */
+    private $errorController;
+
+    /**
+     * @var PsrHttpFactory
+     */
+    private $psrHttpFactory;
+
+    public function __construct(RequestStack $requestStack, HttpKernel $kernel, ControllerResolverInterface $resolver, ArgumentResolverInterface $argumentResolver, EventDispatcherInterface $eventDispatcher, ErrorController $errorController)
     {
         $this->requestStack = $requestStack;
         $this->kernel = $kernel;
-        $this->routerListener = $routerListener;
         $this->resolver = $resolver;
-        $this->frontendController = $frontendController;
         $this->argumentResolver = $argumentResolver;
         $this->dispatcher = $eventDispatcher;
+        $this->errorController = $errorController;
+
+        $psr17Factory = new Psr17Factory();
+        $this->psrHttpFactory = new PsrHttpFactory($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
     }
 
     /**
      * @param string $content       The content. Not used
      * @param array  $configuration The TS configuration array
+     *
+     * @throws ImmediateResponseException
+     * @throws PageNotFoundException
      *
      * @return string $content The processed content
      */
@@ -114,20 +127,18 @@ class Renderer
 
         // request
         $event = new GetResponseEvent($this->kernel, $request, HttpKernel::SUB_REQUEST);
-        $this->routerListener->onKernelRequest($event);
+        $this->dispatcher->dispatch(KernelEvents::REQUEST, $event);
+
+        if ($event->hasResponse()) {
+            return $this->filterResponse($event->getResponse(), $request, HttpKernel::SUB_REQUEST);
+        }
 
         // load controller
         $controller = $this->resolver->getController($request);
         if (false === $controller) {
-            throw new NotFoundHttpException(
-                \sprintf(
-                    'Unable to find the controller "%s". The content element is wrongly configured.',
-                    $request->attributes->get('_controller', $configuration['controller'])
-                )
-            );
+            throw new NotFoundHttpException(\sprintf('Unable to find the controller "%s". The content element is wrongly configured.', $request->attributes->get('_controller', $configuration['controller'])));
         }
 
-        // controller filter event
         $event = new FilterControllerEvent($this->kernel, $controller, $request, HttpKernel::SUB_REQUEST);
         $this->dispatcher->dispatch(KernelEvents::CONTROLLER, $event);
         $controller = $event->getController();
@@ -135,34 +146,66 @@ class Renderer
         // controller arguments
         $arguments = $this->argumentResolver->getArguments($request, $controller);
 
+        $event = new FilterControllerArgumentsEvent($this->kernel, $controller, $arguments, $request, HttpKernel::SUB_REQUEST);
+        $this->dispatcher->dispatch(KernelEvents::CONTROLLER_ARGUMENTS, $event);
+        $controller = $event->getController();
+        $arguments = $event->getArguments();
+
+        // call controller
         try {
-            // call controller
-            $response = \call_user_func_array($controller, $arguments);
+            $response = $controller(...$arguments);
         } catch (NotFoundHttpException $e) {
-            $this->frontendController->pageNotFoundAndExit($e->getMessage());
+            $psrResponse = $this->errorController->pageNotFoundAction(
+                $this->psrHttpFactory->createRequest($request),
+                $e->getMessage()
+            );
+
+            throw new ImmediateResponseException($psrResponse);
         }
 
         // view
         if (!$response instanceof Response) {
-            $msg = \sprintf(
-                'The controller must return a response (%s given).',
-                $this->varToString($response)
-            );
+            $event = new GetResponseForControllerResultEvent($this->kernel, $request, HttpKernel::SUB_REQUEST, $response);
+            $this->dispatcher->dispatch(KernelEvents::VIEW, $event);
 
-            // the user may have forgotten to return something
-            if (null === $response) {
-                $msg .= ' Did you forget to add a return statement somewhere in your controller?';
+            if ($event->hasResponse()) {
+                $response = $event->getResponse();
+            } else {
+                $msg = \sprintf('The controller must return a "Symfony\Component\HttpFoundation\Response" object but it returned %s.', $this->varToString($response));
+
+                // the user may have forgotten to return something
+                if (null === $response) {
+                    $msg .= ' Did you forget to add a return statement somewhere in your controller?';
+                }
+
+                throw new ControllerDoesNotReturnResponseException($msg, $controller, __FILE__, __LINE__ - 23);
             }
-
-            throw new \LogicException($msg);
         }
 
-        $this->routerListener->onKernelFinishRequest(
-            new FinishRequestEvent($this->kernel, $request, HttpKernel::SUB_REQUEST)
-        );
+        return $this->filterResponse($response, $request, HttpKernel::SUB_REQUEST);
+    }
+
+    /**
+     * Filters a response object and returns the content.
+     *
+     * @param Response $response A Response instance
+     * @param Request  $request  An error message in case the response is not a Response object
+     * @param int      $type     The type of the request (one of HttpKernelInterface::MASTER_REQUEST or HttpKernelInterface::SUB_REQUEST)
+     *
+     * @throws \RuntimeException if the passed object is not a Response instance
+     *
+     * @return string The filtered and resulting content
+     */
+    private function filterResponse(Response $response, Request $request, int $type): string
+    {
+        $event = new FilterResponseEvent($this->kernel, $request, $type, $response);
+        $this->dispatcher->dispatch(KernelEvents::RESPONSE, $event);
+        $this->dispatcher->dispatch(KernelEvents::FINISH_REQUEST, new FinishRequestEvent($this->kernel, $request, $type));
 
         $request->attributes->remove('data');
-        $request->attributes->remove('_controller');
+        $request->attributes->set('_controller', 'typo3');
+
+        $response = $event->getResponse();
 
         if ($response instanceof RedirectResponse) {
             $response->send();
@@ -179,27 +222,27 @@ class Renderer
     }
 
     /**
-     * @param $var
+     * Returns a human-readable string for the specified variable.
      *
-     * @return string
+     * @param mixed $var
      */
     private function varToString($var): string
     {
         if (\is_object($var)) {
-            return \sprintf('Object(%s)', \get_class($var));
+            return \sprintf('an object of type %s', \get_class($var));
         }
 
         if (\is_array($var)) {
             $a = [];
             foreach ($var as $k => $v) {
-                $a[] = \sprintf('%s => %s', $k, $this->varToString($v));
+                $a[] = \sprintf('%s => ...', $k);
             }
 
-            return \sprintf('Array(%s)', \implode(', ', $a));
+            return \sprintf('an array ([%s])', \mb_substr(\implode(', ', $a), 0, 255));
         }
 
         if (\is_resource($var)) {
-            return \sprintf('Resource(%s)', \get_resource_type($var));
+            return \sprintf('a resource (%s)', \get_resource_type($var));
         }
 
         if (null === $var) {
@@ -207,11 +250,19 @@ class Renderer
         }
 
         if (false === $var) {
-            return 'false';
+            return 'a boolean value (false)';
         }
 
         if (true === $var) {
-            return 'true';
+            return 'a boolean value (true)';
+        }
+
+        if (\is_string($var)) {
+            return \sprintf('a string ("%s%s")', \mb_substr($var, 0, 255), \mb_strlen($var) > 255 ? '...' : '');
+        }
+
+        if (\is_numeric($var)) {
+            return \sprintf('a number (%s)', (string) $var);
         }
 
         return (string) $var;
