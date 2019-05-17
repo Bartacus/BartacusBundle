@@ -23,29 +23,17 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\ErrorHandler;
 
-use Symfony\Component\Debug\ErrorHandler;
-
-class DebugErrorHandler extends ErrorHandler
+trait OutputBufferTrait
 {
     /**
-     * Overwrite the exception handling as we need to clean the output buffer of
-     * the TwigBundle and the BartacusTwigBundle for Fatal Errors as they won't
-     * be cleaned by themselves and result in an empty 500 page instead of printing
-     * the exception stack trace.
-     *
-     * @param mixed $exception
-     *
-     * @throws \ErrorException
-     * @throws \Symfony\Component\Debug\Exception\FatalErrorException
-     * @throws \Symfony\Component\Debug\Exception\FatalThrowableError
-     * @throws \Symfony\Component\Debug\Exception\OutOfMemoryException
-     * @throws \Throwable
+     * Clean the output buffer opened by the TwigBundle and the BartacusTwigBundle
+     * for Fatal Errors as they won't be cleaned by themselves and result in an
+     * empty 500 error page instead of printing the exception stack trace.
      */
-    public function handleException($exception, array $error = null)
+    public function fixOutputBuffer(\Throwable $exception): void
     {
         // check for exceptions or fatal errors
         if (!$exception instanceof \Exception) {
-            // fatal error occurred -> clean the output buffer opened by TwigBundle and BartacusTwigBundle
             // clean all output buffers down to the CompressionUtility as this should be the latest one
             while (\ob_get_level() > 0) {
                 $status = \ob_get_status();
@@ -57,8 +45,5 @@ class DebugErrorHandler extends ErrorHandler
                 \ob_end_clean();
             }
         }
-
-        // proceed with the default Symfony exception handling
-        return parent::handleException($exception, $error);
     }
 }

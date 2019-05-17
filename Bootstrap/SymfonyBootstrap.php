@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace Bartacus\Bundle\BartacusBundle\Bootstrap;
 
 use App\Kernel as AppKernel;
-use Bartacus\Bundle\BartacusBundle\ErrorHandler\DebugErrorHandler;
+use Bartacus\Bundle\BartacusBundle\ErrorHandler\SymfonyErrorHandler;
 use Symfony\Component\Debug\BufferingLogger;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,9 +67,7 @@ final class SymfonyBootstrap
         }
 
         // override the default Symfony Error Handler and use our own instead
-        // If APP_DEBUG is false, then the default Symfony error handler still needs to be overwritten
-        // in order to apply our fix for the output buffer of the TwigBundle and BartacusTwigBundle for Fatal Errors.
-        DebugErrorHandler::register(new DebugErrorHandler(new BufferingLogger()));
+        SymfonyErrorHandler::register(new SymfonyErrorHandler(new BufferingLogger()));
 
         if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? $_ENV['TRUSTED_PROXIES'] ?? false) {
             Request::setTrustedProxies(
