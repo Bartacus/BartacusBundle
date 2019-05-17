@@ -46,6 +46,11 @@ class ConfigLoader
     public function loadFromAdditionalConfiguration(): void
     {
         $this->contentElement->load();
+
+        // remove TYPO3 error and exception handler to use Symfony instead
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler'] = '';
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler'] = '';
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['errorHandler'] = '';
     }
 
     public function loadFromRequestMiddlewares(): array

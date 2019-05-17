@@ -24,6 +24,8 @@ declare(strict_types=1);
 namespace Bartacus\Bundle\BartacusBundle\Bootstrap;
 
 use App\Kernel as AppKernel;
+use Bartacus\Bundle\BartacusBundle\ErrorHandler\DebugErrorHandler;
+use Symfony\Component\Debug\BufferingLogger;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -62,6 +64,8 @@ final class SymfonyBootstrap
         if ($_SERVER['APP_DEBUG']) {
             \umask(0000);
             Debug::enable();
+            // override the default Symfony Error Handler and use our own instead
+            DebugErrorHandler::register(new DebugErrorHandler(new BufferingLogger()));
         }
 
         if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? $_ENV['TRUSTED_PROXIES'] ?? false) {
