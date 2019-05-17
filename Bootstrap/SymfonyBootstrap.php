@@ -81,6 +81,13 @@ final class SymfonyBootstrap
 
         self::$kernel = new AppKernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
         self::$kernel->boot();
+
+        if (!$_SERVER['APP_DEBUG']) {
+            // if APP_DEBUG is false, then the default Symfony error handler will be set when booting the kernel.
+            // We need to override the handler in order to apply our fix for the output buffer of the TwigBundle
+            // and BartacusTwigBundle for Fatal Errors.
+            DebugErrorHandler::register(new DebugErrorHandler(new BufferingLogger()));
+        }
     }
 
     public static function terminate(): void

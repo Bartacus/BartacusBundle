@@ -33,6 +33,8 @@ class DebugErrorHandler extends ErrorHandler
      * be cleaned by themselves and result in an empty 500 page instead of printing
      * the exception stack trace.
      *
+     * @param mixed $exception
+     *
      * @throws \ErrorException
      * @throws \Symfony\Component\Debug\Exception\FatalErrorException
      * @throws \Symfony\Component\Debug\Exception\FatalThrowableError
@@ -45,14 +47,14 @@ class DebugErrorHandler extends ErrorHandler
         if (!$exception instanceof \Exception) {
             // fatal error occurred -> clean the output buffer opened by TwigBundle and BartacusTwigBundle
             // clean all output buffers down to the CompressionUtility as this should be the latest one
-            while (ob_get_level() > 0) {
-                $status = ob_get_status();
+            while (\ob_get_level() > 0) {
+                $status = \ob_get_status();
 
                 if ('TYPO3\\CMS\\Frontend\\Utility\\CompressionUtility::compressionOutputHandler' === (string) $status['name']) {
                     break;
                 }
 
-                ob_end_clean();
+                \ob_end_clean();
             }
         }
 
