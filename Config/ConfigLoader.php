@@ -40,16 +40,22 @@ class ConfigLoader
      */
     protected $contentElement;
 
-    public function __construct(ContentElementConfigLoader $contentElement)
+    /**
+     * @var bool
+     */
+    private $debug;
+
+    public function __construct(ContentElementConfigLoader $contentElement, bool $debug)
     {
         $this->contentElement = $contentElement;
+        $this->debug = $debug;
     }
 
     public function loadFromAdditionalConfiguration(): void
     {
         $this->contentElement->load();
 
-        if ($_SERVER['APP_DEBUG']) {
+        if ($this->debug) {
             // remove TYPO3 error and exception handler to use Symfony instead, if in DEBUG mode
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler'] = '';
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler'] = '';
