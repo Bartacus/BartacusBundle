@@ -6,7 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Fixed
-- Fetch TypoScript setup for site root on Symfony routes 
+- Fetch TypoScript setup for site root on Symfony routes
+- Change order of `base-redirect-resolver` and `static-route-resolver` from TYPO3
+- The Symfony route resolver is placed before the `base-redirect-resolver`, but after all other redirects
 
 ## [2.0.2] - 2019-04-18
 ### Changed
