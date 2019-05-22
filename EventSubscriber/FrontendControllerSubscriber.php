@@ -29,6 +29,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Site\Entity\SiteInterface;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -71,6 +72,13 @@ class FrontendControllerSubscriber implements EventSubscriberInterface
                     TemplateService::class,
                     GeneralUtility::makeInstance(Context::class)
                 );
+            }
+
+            $site = $event->getRequest()->attributes->get('site');
+            if (empty($frontendController->tmpl->setup) && $site instanceof SiteInterface) {
+                $frontendController->id = $site->getRootPageId();
+                $frontendController->determineId();
+                $frontendController->getConfigArray();
             }
 
             if (!$frontendController->sys_page instanceof PageRepository) {

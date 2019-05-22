@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Fixed
+- Fetch TypoScript setup for site root on Symfony routes 
 
 ## [2.0.2] - 2019-04-18
 ### Changed
