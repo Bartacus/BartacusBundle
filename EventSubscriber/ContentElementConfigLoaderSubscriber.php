@@ -21,38 +21,34 @@ declare(strict_types=1);
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Bundle\BartacusBundle\Config;
+namespace Bartacus\Bundle\BartacusBundle\EventSubscriber;
 
 use Bartacus\Bundle\BartacusBundle\ConfigEvents;
-use Bartacus\Bundle\BartacusBundle\Event\RequestMiddlewaresEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader;
+use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-/**
- * Delegating central config loader called on various places within TYPO3
- * to load and configure specific parts of the system.
- */
-class ConfigLoader
+final class ContentElementConfigLoaderSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var EventDispatcherInterface
+     * @var ContentElementConfigLoader
      */
-    private $eventDispatcher;
+    private $contentElement;
 
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct(ContentElementConfigLoader $contentElement)
     {
-        $this->eventDispatcher = $eventDispatcher;
+        $this->contentElement = $contentElement;
     }
 
-    public function loadFromAdditionalConfiguration(): void
+    public function loadContentElements(Event $event): void
     {
-        $this->eventDispatcher->dispatch(ConfigEvents::ADDITIONAL_CONFIGURATION);
+        $this->contentElement->load();
     }
 
-    public function loadFromRequestMiddlewares(): array
+    public static function getSubscribedEvents(): array
     {
-        $event = new RequestMiddlewaresEvent();
-        $this->eventDispatcher->dispatch(ConfigEvents::REQUEST_MIDDLEWARES, $event);
-
-        return $event->getRequestMiddlewares();
+        return [
+            ConfigEvents::ADDITIONAL_CONFIGURATION => [['loadContentElements', 8]],
+        ];
     }
 }

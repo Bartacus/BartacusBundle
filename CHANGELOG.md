@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Added `bartacus.config.additional_configuration` event when the `AdditionalConfiguration.php` is loaded
+- Added `bartacus.config.request_middlewares` event when the request middlewares of the app are loaded
+
+### Changed
+- [internal] Moved code from config loader into the appropriate event subscribers
 
 ## [2.0.3] - 2019-05-23
 ### Fixed
