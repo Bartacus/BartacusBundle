@@ -50,8 +50,26 @@ class ConfigLoader
 
     public function loadFromRequestMiddlewares(): array
     {
+        $frontendMiddlewares = require \dirname(__DIR__, 4).'/public/typo3/sysext/frontend/Configuration/RequestMiddlewares.php';
+
         return [
             'frontend' => [
+                'typo3/cms-frontend/static-route-resolver' => \array_merge($frontendMiddlewares['frontend']['typo3/cms-frontend/static-route-resolver'], [
+                    'after' => [
+                        'typo3/cms-frontend/site-resolver',
+                    ],
+                    'before' => [
+                        'typo3/cms-frontend/base-redirect-resolver',
+                    ],
+                ]),
+                'typo3/cms-frontend/base-redirect-resolver' => \array_merge($frontendMiddlewares['frontend']['typo3/cms-frontend/base-redirect-resolver'], [
+                    'after' => [
+                        'typo3/cms-frontend/static-route-resolver',
+                    ],
+                    'before' => [
+                        'typo3/cms-frontend/page-resolver',
+                    ],
+                ]),
                 'bartacus/symfony-route-resolver' => [
                     'target' => SymfonyRouteResolver::class,
                     'after' => [
