@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [2.0.3] - 2019-05-23
 ### Fixed
 - Fetch TypoScript setup for site root on Symfony routes
 - Change order of `base-redirect-resolver` and `static-route-resolver` from TYPO3
