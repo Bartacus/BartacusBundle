@@ -20,3 +20,4 @@ Contents
     content_elements
     service_bridge
     translations
+    config_loader
