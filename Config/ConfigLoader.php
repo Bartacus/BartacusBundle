@@ -23,11 +23,11 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Config;
 
-use Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader;
+use Bartacus\Bundle\BartacusBundle\ConfigEvents;
 use Bartacus\Bundle\BartacusBundle\ErrorHandler\Typo3DebugExceptionHandler;
 use Bartacus\Bundle\BartacusBundle\ErrorHandler\Typo3ProductionExceptionHandler;
-use Bartacus\Bundle\BartacusBundle\Middleware\PrepareContentElementRenderer;
-use Bartacus\Bundle\BartacusBundle\Middleware\SymfonyRouteResolver;
+use Bartacus\Bundle\BartacusBundle\Event\RequestMiddlewaresEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Delegating central config loader called on various places within TYPO3
@@ -36,24 +36,24 @@ use Bartacus\Bundle\BartacusBundle\Middleware\SymfonyRouteResolver;
 class ConfigLoader
 {
     /**
-     * @var ContentElementConfigLoader
+     * @var EventDispatcherInterface
      */
-    protected $contentElement;
+    private $eventDispatcher;
 
     /**
      * @var bool
      */
     private $debug;
 
-    public function __construct(ContentElementConfigLoader $contentElement, bool $debug)
+    public function __construct(EventDispatcherInterface $eventDispatcher, bool $debug)
     {
-        $this->contentElement = $contentElement;
+        $this->eventDispatcher = $eventDispatcher;
         $this->debug = $debug;
     }
 
     public function loadFromAdditionalConfiguration(): void
     {
-        $this->contentElement->load();
+        $this->eventDispatcher->dispatch(ConfigEvents::ADDITIONAL_CONFIGURATION);
 
         if ($this->debug) {
             // remove TYPO3 error and exception handler to use Symfony instead, if in DEBUG mode
@@ -71,34 +71,9 @@ class ConfigLoader
 
     public function loadFromRequestMiddlewares(): array
     {
-        return [
-            'frontend' => [
-                'bartacus/symfony-route-resolver' => [
-                    'target' => SymfonyRouteResolver::class,
-                    'after' => [
-                        'typo3/cms-frontend/authentication',
-                        'typo3/cms-frontend/backend-user-authentication',
-                        'typo3/cms-frontend/tsfe',
-                        'typo3/cms-frontend/site',
-                        'typo3/cms-frontend/base-redirect-resolver',
-                        'typo3/cms-frontend/static-route-resolver',
-                        'typo3/cms-redirects/redirecthandler',
-                    ],
-                    'before' => [
-                        'typo3/cms-frontend/page-resolver',
-                    ],
-                ],
-                'bartacus/prepare-content-element-renderer' => [
-                    'target' => PrepareContentElementRenderer::class,
-                    'after' => [
-                        'typo3/cms-frontend/tsfe',
-                        'typo3/cms-frontend/site',
-                        'typo3/cms-frontend/page-resolver',
-                        'typo3/cms-frontend/page-argument-validator',
-                        'typo3/cms-frontend/prepare-tsfe-rendering',
-                    ],
-                ],
-            ],
-        ];
+        $event = new RequestMiddlewaresEvent();
+        $this->eventDispatcher->dispatch(ConfigEvents::REQUEST_MIDDLEWARES, $event);
+
+        return $event->getRequestMiddlewares();
     }
 }
