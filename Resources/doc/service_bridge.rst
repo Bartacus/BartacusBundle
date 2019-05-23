@@ -8,7 +8,7 @@ To see which TYPO3 classes are wireable as service, call
 
 .. code-block:: bash
 
-    php bin/container debug:container --types
+    php bin/console debug:container --types
 
 Additionally the common caches can be retrieved via the ids
 ``typo3.cache.cache_hash``, ``typo3.cache.cache_pages``,
