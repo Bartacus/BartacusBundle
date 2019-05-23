@@ -24,8 +24,6 @@ declare(strict_types=1);
 namespace Bartacus\Bundle\BartacusBundle\Config;
 
 use Bartacus\Bundle\BartacusBundle\ConfigEvents;
-use Bartacus\Bundle\BartacusBundle\ErrorHandler\Typo3DebugExceptionHandler;
-use Bartacus\Bundle\BartacusBundle\ErrorHandler\Typo3ProductionExceptionHandler;
 use Bartacus\Bundle\BartacusBundle\Event\RequestMiddlewaresEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -40,33 +38,14 @@ class ConfigLoader
      */
     private $eventDispatcher;
 
-    /**
-     * @var bool
-     */
-    private $debug;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher, bool $debug)
+    public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
-        $this->debug = $debug;
     }
 
     public function loadFromAdditionalConfiguration(): void
     {
         $this->eventDispatcher->dispatch(ConfigEvents::ADDITIONAL_CONFIGURATION);
-
-        if ($this->debug) {
-            // remove TYPO3 error and exception handler to use Symfony instead, if in DEBUG mode
-            $GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler'] = '';
-            $GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler'] = '';
-        } else {
-            // use custom TYPO3 exception handler if not in DEBUG mode to fix the Output Buffer issue of
-            // the TwigBundle and BartacusTwigBundle
-            $GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler'] = Typo3DebugExceptionHandler::class;
-            $GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler'] = Typo3ProductionExceptionHandler::class;
-        }
-
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['errorHandler'] = '';
     }
 
     public function loadFromRequestMiddlewares(): array
