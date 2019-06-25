@@ -100,5 +100,16 @@
             <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
             <argument>TYPO3\CMS\Core\Database\ConnectionPool</argument>
         </service>
+
+        <service id="TYPO3\CMS\Extbase\Object\ObjectManagerInterface" alias="TYPO3\CMS\Extbase\Object\ObjectManager" />
+        <service id="TYPO3\CMS\Extbase\Object\ObjectManager" shared="false">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance"/>
+            <argument>TYPO3\CMS\Extbase\Object\ObjectManager</argument>
+        </service>
+
+        <service id="TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager" shared="false" public="true">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="getExtbaseInstance" />
+            <argument>TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager</argument>
+        </service>
     </services>
 </container>

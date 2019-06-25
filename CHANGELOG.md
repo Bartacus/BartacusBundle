@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Added `TYPO3\CMS\Extbase\Object\ObjectManager` as service and `TYPO3\CMS\Extbase\Object\ObjectManagerInterface` as alias
+- Added `TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager` as service
 - Added `bartacus.config.additional_configuration` event when the `AdditionalConfiguration.php` is loaded
 - Added `bartacus.config.request_middlewares` event when the request middlewares of the app are loaded
 
