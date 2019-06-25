@@ -27,7 +27,10 @@
         "symfony/http-kernel": "^4.2",
         "symfony/proxy-manager-bridge": "^4.2",
         "symfony/psr-http-message-bridge": "^1.0",
-        "typo3/minimal": "^9.5"
+        "typo3/cms-core": "^9.5",
+        "typo3/cms-extbase": "^9.5",
+        "typo3/cms-frontend": "^9.5",
+        "typo3/cms-install": "^9.5"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.5",
