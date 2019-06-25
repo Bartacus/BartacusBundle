@@ -53,6 +53,11 @@
             <tag name="kernel.event_subscriber" />
         </service>
 
+        <service id="Bartacus\Bundle\BartacusBundle\EventSubscriber\ErrorHandlerSubscriber">
+            <argument>%kernel.debug%</argument>
+            <tag name="kernel.event_subscriber" />
+        </service>
+
         <service id="Bartacus\Bundle\BartacusBundle\EventSubscriber\BartacusRequestMiddlewaresSubscriber">
             <tag name="kernel.event_subscriber" />
         </service>
