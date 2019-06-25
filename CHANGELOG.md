@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Added `bartacus.config.additional_configuration` event when the `AdditionalConfiguration.php` is loaded
 - Added `bartacus.config.request_middlewares` event when the request middlewares of the app are loaded
+- Use Symfony debug error and exception handling instead of the TYPO3 one
+- Fix for Twig to correctly close the output buffers
 
 ### Changed
 - [internal] Moved code from config loader into the appropriate event subscribers
