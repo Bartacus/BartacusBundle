@@ -42,11 +42,11 @@ class BartacusRequestMiddlewaresSubscriber implements EventSubscriberInterface
                         'typo3/cms-frontend/backend-user-authentication',
                         'typo3/cms-frontend/tsfe',
                         'typo3/cms-frontend/site',
-                        'typo3/cms-frontend/base-redirect-resolver',
                         'typo3/cms-frontend/static-route-resolver',
                         'typo3/cms-redirects/redirecthandler',
                     ],
                     'before' => [
+                        'typo3/cms-frontend/base-redirect-resolver',
                         'typo3/cms-frontend/page-resolver',
                     ],
                 ],

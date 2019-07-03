@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Fixed
+- Fix ordering of Symfony route resolver to be before the `base-redirect-resolver`, but after all other redirects
 
 ## [2.1.0] - 2019-06-25
 ### Added
