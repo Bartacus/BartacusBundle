@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [2.1.1] - 2019-07-03
 ### Fixed
 - Fix ordering of Symfony route resolver to be before the `base-redirect-resolver`, but after all other redirects
 
@@ -165,7 +167,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/2.1.0...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/2.1.1...HEAD
+[2.1.1]: https://github.com/Bartacus/BartacusBundle/compare/2.1.0...2.1.1
 [2.1.0]: https://github.com/Bartacus/BartacusBundle/compare/2.0.3...2.1.0
 [2.0.3]: https://github.com/Bartacus/BartacusBundle/compare/2.0.2...2.0.3
 [2.0.2]: https://github.com/Bartacus/BartacusBundle/compare/2.0.1...2.0.2
