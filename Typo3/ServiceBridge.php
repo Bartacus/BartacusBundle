@@ -26,6 +26,7 @@ namespace Bartacus\Bundle\BartacusBundle\Typo3;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Page\PageRepository;
@@ -93,5 +94,15 @@ class ServiceBridge
         $frontendController = $this->getGlobal('TSFE');
 
         return $frontendController->sys_page;
+    }
+
+    public function getFrontendUser(): ?FrontendUserAuthentication
+    {
+        /** @var TypoScriptFrontendController $frontendController */
+        $frontendController = $this->getGlobal('TSFE');
+
+        return $frontendController->fe_user instanceof FrontendUserAuthentication
+            ? $frontendController->fe_user
+            : null;
     }
 }

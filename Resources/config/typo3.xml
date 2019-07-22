@@ -37,8 +37,7 @@
         </service>
 
         <service id="TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication" shared="false">
-            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="getGlobal" />
-            <argument>FE_USER</argument>
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="getFrontendUser" />
         </service>
 
         <service id="TYPO3\CMS\Core\Cache\CacheManager" shared="false">

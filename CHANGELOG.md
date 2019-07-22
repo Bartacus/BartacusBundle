@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Fixed
+- Fix how the `TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication` is registered as a service
+- `TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication` can be `null`
 
 ## [2.1.1] - 2019-07-03
 ### Fixed
