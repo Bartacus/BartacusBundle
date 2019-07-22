@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [2.1.2] - 2019-07-22
 ### Fixed
 - Fix how the `TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication` is registered as a service
 - `TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication` can be `null`
@@ -170,7 +172,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/2.1.1...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/2.1.2...HEAD
+[2.1.2]: https://github.com/Bartacus/BartacusBundle/compare/2.1.1...2.1.2
 [2.1.1]: https://github.com/Bartacus/BartacusBundle/compare/2.1.0...2.1.1
 [2.1.0]: https://github.com/Bartacus/BartacusBundle/compare/2.0.3...2.1.0
 [2.0.3]: https://github.com/Bartacus/BartacusBundle/compare/2.0.2...2.0.3
