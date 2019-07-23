@@ -92,7 +92,9 @@ final class SymfonyBootstrap
             Response::closeOutputBuffers(0, true);
         }
 
-        self::$kernel->terminate(self::$request, self::$response);
+        if (self::$request instanceof Request && self::$response instanceof Response) {
+            self::$kernel->terminate(self::$request, self::$response);
+        }
     }
 
     public static function setRequestResponseForTermination(Request $request, Response $response): void
