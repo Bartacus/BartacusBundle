@@ -82,8 +82,6 @@ final class ClassNameInflector implements ClassNameInflectorInterface
      */
     public function getProxyClassName(string $className, array $options = []): string
     {
-        unset($options['proxyManagerVersion']);
-
         $shortClassName = \mb_substr($className, \mb_strrpos($className, '\\') + 1);
 
         return $this->proxyNamespace
