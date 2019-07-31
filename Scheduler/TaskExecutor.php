@@ -21,31 +21,29 @@ declare(strict_types=1);
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Bundle\BartacusBundle;
+namespace Bartacus\Bundle\BartacusBundle\Scheduler;
 
-use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\SymfonyServiceForMakeInstancePass;
-use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\TaskProxyPass;
-use Bartacus\Bundle\BartacusBundle\Scheduler\TaskInterface;
-use Bartacus\Bundle\BartacusBundle\Typo3\SymfonyServiceForMakeInstanceLoader;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Psr\Container\ContainerInterface;
 
-class BartacusBundle extends Bundle
+final class TaskExecutor
 {
     /**
-     * {@inheritdoc}
+     * @var ContainerInterface
      */
-    public function boot()
+    private $locator;
+
+    public function __construct(ContainerInterface $locator)
     {
-        $this->container->get(SymfonyServiceForMakeInstanceLoader::class)->load();
+        $this->locator = $locator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
+    public function execute(string $task, array $options): bool
     {
-        $container->addCompilerPass(new SymfonyServiceForMakeInstancePass());
-        $container->addCompilerPass(new TaskProxyPass());
+        return $this->getTask($task)->execute($options);
+    }
+
+    private function getTask(string $task): TaskInterface
+    {
+        $this->locator->get($task);
     }
 }

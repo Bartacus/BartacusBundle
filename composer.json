@@ -18,9 +18,11 @@
         "cweagans/composer-patches": "^1.6",
         "doctrine/annotations": "^1.6",
         "nyholm/psr7": "^1.1",
+        "ocramius/proxy-manager": "^2.2",
         "psr/http-server-middleware": "^1.0",
         "symfony/config": "^4.2",
         "symfony/event-dispatcher": "^4.2",
+        "symfony/filesystem": "^4.2",
         "symfony/finder": "^4.2",
         "symfony/framework-bundle": "^4.2",
         "symfony/http-foundation": "^4.2",
@@ -36,7 +38,8 @@
         "friendsofphp/php-cs-fixer": "^2.5",
         "symfony/debug": "^4.2",
         "symfony/twig-bundle": "^4.2",
-        "typo3/cms-redirects": "^9.5"
+        "typo3/cms-redirects": "^9.5",
+        "typo3/cms-scheduler": "^9.5"
     },
     "conflict": {
         "helhum/typo3-console": "<5.7.0, >=5.8.0",
