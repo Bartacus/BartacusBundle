@@ -24,7 +24,9 @@ declare(strict_types=1);
 namespace Bartacus\Bundle\BartacusBundle\Scheduler\Proxy;
 
 use Bartacus\Bundle\BartacusBundle\Scheduler\OptionsProviderInterface;
+use Bartacus\Bundle\BartacusBundle\Scheduler\ProgressProviderInterface;
 use Bartacus\Bundle\BartacusBundle\Scheduler\Proxy\TaskProxy\ExecuteMethod;
+use Bartacus\Bundle\BartacusBundle\Scheduler\Proxy\TaskProxy\GetProgressMethod;
 use Bartacus\Bundle\BartacusBundle\Scheduler\Proxy\TaskProxy\OptionsProperty;
 use Bartacus\Bundle\BartacusBundle\Scheduler\Proxy\TaskProxy\SetOptionsMethod;
 use Bartacus\Bundle\BartacusBundle\Scheduler\TaskInterface;
@@ -51,6 +53,10 @@ class TaskProxyGenerator implements ProxyGeneratorInterface
 
         if ($originalClass->implementsInterface(OptionsProviderInterface::class)) {
             $classGenerator->addMethodFromGenerator(new SetOptionsMethod($originalClass, $classGenerator));
+        }
+
+        if ($originalClass->implementsInterface(ProgressProviderInterface::class)) {
+            $classGenerator->addMethodFromGenerator(new GetProgressMethod($originalClass, $classGenerator));
         }
     }
 }
