@@ -39,6 +39,7 @@
         "typo3/cms-redirects": "^9.5"
     },
     "conflict": {
+        "helhum/typo3-console": "<5.7.0, >=5.8.0",
         "jms/di-extra-bundle": "*"
     },
     "autoload": {
@@ -71,7 +72,7 @@
                 "Patch entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/cms-cli/compare/master...Bartacus:patch/2.0.0/bartacus-entry-script.patch"
             },
             "helhum/typo3-console": {
-                "Patch console entry script for proper Symfony kernel bootstrap": "https://github.com/Bartacus/TYPO3-Console/compare/5.6.0...patch/5.6.0/bartacus-entry-script.patch"
+                "Patch console entry script for proper Symfony kernel bootstrap": "https://github.com/Bartacus/TYPO3-Console/compare/v5.7.0...patch/5.7/bartacus-entry-script.patch"
             }
         },
         "enable-patching": true
