@@ -23,8 +23,10 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Scheduler\Proxy;
 
+use Bartacus\Bundle\BartacusBundle\Scheduler\OptionsProviderInterface;
 use Bartacus\Bundle\BartacusBundle\Scheduler\Proxy\TaskProxy\ExecuteMethod;
 use Bartacus\Bundle\BartacusBundle\Scheduler\Proxy\TaskProxy\OptionsProperty;
+use Bartacus\Bundle\BartacusBundle\Scheduler\Proxy\TaskProxy\SetOptionsMethod;
 use Bartacus\Bundle\BartacusBundle\Scheduler\TaskInterface;
 use ProxyManager\ProxyGenerator\Assertion\CanProxyAssertion;
 use ProxyManager\ProxyGenerator\ProxyGeneratorInterface;
@@ -46,5 +48,9 @@ class TaskProxyGenerator implements ProxyGeneratorInterface
 
         $classGenerator->addPropertyFromGenerator(new OptionsProperty());
         $classGenerator->addMethodFromGenerator(new ExecuteMethod($originalClass, $classGenerator));
+
+        if ($originalClass->implementsInterface(OptionsProviderInterface::class)) {
+            $classGenerator->addMethodFromGenerator(new SetOptionsMethod($originalClass, $classGenerator));
+        }
     }
 }
