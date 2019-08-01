@@ -26,6 +26,7 @@ namespace Bartacus\Bundle\BartacusBundle\EventSubscriber;
 use Bartacus\Bundle\BartacusBundle\ConfigEvents;
 use Bartacus\Bundle\BartacusBundle\Scheduler\TaskGenerator;
 use Bartacus\Bundle\BartacusBundle\Scheduler\TaskInterface;
+use Bartacus\Bundle\BartacusBundle\UpgradeWizard\TaskProxyUpdateWizard;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -59,6 +60,8 @@ final class TaskLoaderSubscriber implements EventSubscriberInterface, ServiceSub
     public function loadTasks(Event $event): void
     {
         if (TYPO3_MODE === 'BE') {
+            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/install']['update'][TaskProxyUpdateWizard::IDENTIFIER] = TaskProxyUpdateWizard::class;
+
             $this->taskGenerator()->registerAutoloader();
             $mapping = $this->taskGenerator()->generateAll();
 

@@ -26,6 +26,7 @@ namespace Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler;
 use Bartacus\Bundle\BartacusBundle\Scheduler\TaskExecutor;
 use Bartacus\Bundle\BartacusBundle\Scheduler\TaskGenerator;
 use Bartacus\Bundle\BartacusBundle\Scheduler\TaskInterface;
+use Bartacus\Bundle\BartacusBundle\UpgradeWizard\TaskProxyUpdateWizard;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -63,6 +64,8 @@ class TaskProxyPass implements CompilerPassInterface
         }
 
         $container->findDefinition(TaskGenerator::class)->replaceArgument(2, $taskClasses);
+        $container->findDefinition(TaskProxyUpdateWizard::class)->addMethodCall('setTaskClasses', $taskClasses);
+
         $container->findDefinition(TaskExecutor::class)
             ->replaceArgument(0, ServiceLocatorTagPass::register($container, $locatableServices))
         ;

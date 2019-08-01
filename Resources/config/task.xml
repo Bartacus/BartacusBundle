@@ -50,6 +50,13 @@
                 <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
+
+        <service id="Bartacus\Bundle\BartacusBundle\UpgradeWizard\TaskProxyUpdateWizard">
+            <argument type="service" id="TYPO3\CMS\Core\Database\ConnectionPool" />
+            <argument type="service" id="bartacus.task.proxy_configuration" />
+            <argument type="service" id="Bartacus\Bundle\BartacusBundle\Scheduler\Proxy\TaskProxyFactory" />
+            <tag name="bartacus.make_instance" />
+        </service>
     </services>
 </container>
 
