@@ -42,7 +42,7 @@
         "typo3/cms-scheduler": "^9.5"
     },
     "conflict": {
-        "helhum/typo3-console": "<5.7.0, >=5.8.0",
+        "helhum/typo3-console": "<5.7.0 >=5.7.0",
         "jms/di-extra-bundle": "*"
     },
     "autoload": {
@@ -75,6 +75,7 @@
                 "Patch entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/cms-cli/compare/master...Bartacus:patch/2.0.0/bartacus-entry-script.patch"
             },
             "helhum/typo3-console": {
+                "Respect repeatable interface for upgrade wizards": "https://github.com/TYPO3-Console/TYPO3-Console/compare/v5.7.0...pixelart:bugfix/repeatable-upgrade-wizard.patch",
                 "Patch console entry script for proper Symfony kernel bootstrap": "https://github.com/Bartacus/TYPO3-Console/compare/v5.7.0...patch/5.7/bartacus-entry-script.patch"
             }
         },
