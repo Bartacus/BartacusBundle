@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Scheduler `TaskInterface` for DI usage in TYPO3 scheduler tasks with proxy classes
+- Added `typo3.cache.cache_hash` as default service for autowiring `TYPO3\CMS\Core\Cache\Frontend\FrontendInterface`
+- Added `TYPO3\CMS\Core\DataHandling\DataHandler` as service
+- Added `TYPO3\CMS\Core\Log\LogManager` as service and `TYPO3\CMS\Core\Log\LogManagerInterface` as alias
+- Added `TYPO3\CMS\Core\Resource\Filter\FileExtensionFilter` as service
+- Added `TYPO3\CMS\Core\Resource\Filter\FileNameFilter` as service
+- Added `TYPO3\CMS\Core\Resource\ResourceFactory` as service
+- Added `TYPO3\CMS\Core\MetaTag\MetaTagManagerRegistry` as service
+- Added `TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager` as service
+- Added `TYPO3\CMS\Core\Session\SessionManager` as service
+- Added `TYPO3\CMS\Scheduler\Scheduler` as service
+- Added `TYPO3\CMS\Core\Localization\LanguageService` as service (from `$GLOBALS['LANG']`)
 
 ## [2.1.3] - 2019-08-01
 ### Fixed

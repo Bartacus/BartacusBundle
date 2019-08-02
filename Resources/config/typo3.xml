@@ -45,6 +45,7 @@
             <argument>TYPO3\CMS\Core\Cache\CacheManager</argument>
         </service>
 
+        <service id="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface" alias="typo3.cache.cache_hash"/>
         <service id="typo3.cache.cache_hash" class="TYPO3\CMS\Core\Cache\Frontend\FrontendInterface" public="true">
             <factory service="TYPO3\CMS\Core\Cache\CacheManager" method="getCache" />
             <argument>cache_hash</argument>
@@ -109,6 +110,52 @@
         <service id="TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager" shared="false" public="true">
             <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="getExtbaseInstance" />
             <argument>TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager</argument>
+        </service>
+
+        <service id="TYPO3\CMS\Core\DataHandling\DataHandler" shared="false">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
+            <argument>TYPO3\CMS\Core\DataHandling\DataHandler</argument>
+        </service>
+
+        <service id="TYPO3\CMS\Core\Log\LogManagerInterface" alias="TYPO3\CMS\Core\Log\LogManager" />
+        <service id="TYPO3\CMS\Core\Log\LogManager" shared="false">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
+            <argument>TYPO3\CMS\Core\Log\LogManager</argument>
+        </service>
+
+        <service id="TYPO3\CMS\Core\Resource\Filter\FileExtensionFilter" shared="false">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
+            <argument>TYPO3\CMS\Core\Resource\Filter\FileExtensionFilter</argument>
+        </service>
+
+        <service id="TYPO3\CMS\Core\Resource\Filter\FileNameFilter" shared="false">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
+            <argument>TYPO3\CMS\Core\Resource\Filter\FileNameFilter</argument>
+        </service>
+
+        <service id="TYPO3\CMS\Core\Resource\ResourceFactory" shared="false">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
+            <argument>TYPO3\CMS\Core\Resource\ResourceFactory</argument>
+        </service>
+
+        <service id="TYPO3\CMS\Core\MetaTag\MetaTagManagerRegistry" shared="false">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
+            <argument>TYPO3\CMS\Core\MetaTag\MetaTagManagerRegistry</argument>
+        </service>
+
+        <service id="TYPO3\CMS\Core\Session\SessionManager" shared="false">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
+            <argument>TYPO3\CMS\Core\Session\SessionManager</argument>
+        </service>
+
+        <service id="TYPO3\CMS\Scheduler\Scheduler" shared="false">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
+            <argument>TYPO3\CMS\Scheduler\Scheduler</argument>
+        </service>
+
+        <service id="TYPO3\CMS\Core\Localization\LanguageService" shared="false">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="getGlobal" />
+            <argument>LANG</argument>
         </service>
     </services>
 </container>
