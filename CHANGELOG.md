@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [2.2.0] - 2019-08-02
 ### Added
 - Scheduler `TaskInterface` for DI usage in TYPO3 scheduler tasks with proxy classes
 - Added `typo3.cache.cache_hash` as default service for autowiring `TYPO3\CMS\Core\Cache\Frontend\FrontendInterface`
@@ -189,7 +191,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/2.1.3...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/2.2.0...HEAD
+[2.2.0]: https://github.com/Bartacus/BartacusBundle/compare/2.1.3...2.2.0
 [2.1.3]: https://github.com/Bartacus/BartacusBundle/compare/2.1.2...2.1.3
 [2.1.2]: https://github.com/Bartacus/BartacusBundle/compare/2.1.1...2.1.2
 [2.1.1]: https://github.com/Bartacus/BartacusBundle/compare/2.1.0...2.1.1
