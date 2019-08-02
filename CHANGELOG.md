@@ -16,7 +16,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TYPO3\CMS\Core\Resource\Filter\FileNameFilter` as service
 - Added `TYPO3\CMS\Core\Resource\ResourceFactory` as service
 - Added `TYPO3\CMS\Core\MetaTag\MetaTagManagerRegistry` as service
-- Added `TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager` as service
 - Added `TYPO3\CMS\Core\Session\SessionManager` as service
 - Added `TYPO3\CMS\Scheduler\Scheduler` as service
 - Added `TYPO3\CMS\Core\Localization\LanguageService` as service (from `$GLOBALS['LANG']`)
