@@ -35,7 +35,8 @@ class GetProgressMethod extends MethodGenerator
      * @var string
      */
     private $methodTemplate = <<<'PHP'
-$task = SymfonyBootstrap::getKernel()->getContainer()->get(%s::class);
+$locator = SymfonyBootstrap::getKernel()->getContainer()->get('bartacus.task.locator');
+$task = $locator->get(%s::class);
 
 return $task->getProgress($this->options);
 PHP;

@@ -23,21 +23,21 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler;
 
-use Bartacus\Bundle\BartacusBundle\Scheduler\TaskExecutor;
 use Bartacus\Bundle\BartacusBundle\Scheduler\TaskGenerator;
 use Bartacus\Bundle\BartacusBundle\Scheduler\TaskInterface;
 use Bartacus\Bundle\BartacusBundle\UpgradeWizard\TaskProxyUpdateWizard;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class TaskProxyPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->has(TaskGenerator::class) || !$container->has(TaskExecutor::class)) {
+        if (!$container->has(TaskGenerator::class) || !$container->has(TaskProxyUpdateWizard::class)) {
             return;
         }
 
@@ -66,8 +66,13 @@ class TaskProxyPass implements CompilerPassInterface
         $container->findDefinition(TaskGenerator::class)->replaceArgument(2, $taskClasses);
         $container->findDefinition(TaskProxyUpdateWizard::class)->addMethodCall('setTaskClasses', $taskClasses);
 
-        $container->findDefinition(TaskExecutor::class)
-            ->replaceArgument(0, ServiceLocatorTagPass::register($container, $locatableServices))
-        ;
+        \ksort($locatableServices);
+
+        $locator = (new Definition(ServiceLocator::class))
+            ->addArgument($locatableServices)
+            ->setPublic(true)
+            ->addTag('container.service_locator');
+
+        $container->setDefinition('bartacus.task.locator', $locator);
     }
 }

@@ -36,7 +36,8 @@ class SetOptionsMethod extends MethodGenerator
      * @var string
      */
     private $methodTemplate = <<<'PHP'
-$task = SymfonyBootstrap::getKernel()->getContainer()->get(%s::class);
+$locator = SymfonyBootstrap::getKernel()->getContainer()->get('bartacus.task.locator');
+$task = $locator->get(%s::class);
 
 $optionsResolver = new OptionsResolver();
 $task->configureOptions($optionsResolver);
