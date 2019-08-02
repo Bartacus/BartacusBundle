@@ -21,30 +21,20 @@ declare(strict_types=1);
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Bundle\BartacusBundle;
+namespace Bartacus\Bundle\BartacusBundle\Scheduler;
 
-use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\SymfonyServiceForMakeInstancePass;
-use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\TaskProxyPass;
-use Bartacus\Bundle\BartacusBundle\Typo3\SymfonyServiceForMakeInstanceLoader;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
-class BartacusBundle extends Bundle
+/**
+ * Marker interface for the proxy task class to type hint against in additional field providers.
+ */
+interface OptionsInterface
 {
     /**
-     * {@inheritdoc}
+     * Get the options saved in the proxy task.
      */
-    public function boot()
-    {
-        $this->container->get(SymfonyServiceForMakeInstanceLoader::class)->load();
-    }
+    public function getOptions(): array;
 
     /**
-     * {@inheritdoc}
+     * Saves the options with the configured resolver from the proxied task.
      */
-    public function build(ContainerBuilder $container)
-    {
-        $container->addCompilerPass(new SymfonyServiceForMakeInstancePass());
-        $container->addCompilerPass(new TaskProxyPass());
-    }
+    public function setOptions(array $options): void;
 }

@@ -21,30 +21,21 @@ declare(strict_types=1);
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Bundle\BartacusBundle;
+namespace Bartacus\Bundle\BartacusBundle\Scheduler;
 
-use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\SymfonyServiceForMakeInstancePass;
-use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\TaskProxyPass;
-use Bartacus\Bundle\BartacusBundle\Typo3\SymfonyServiceForMakeInstanceLoader;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
-class BartacusBundle extends Bundle
+interface TaskInterface
 {
     /**
-     * {@inheritdoc}
+     * Configure the task itself in ext_localconf.php style.
      */
-    public function boot()
-    {
-        $this->container->get(SymfonyServiceForMakeInstanceLoader::class)->load();
-    }
+    public static function getConfiguration(): array;
 
     /**
-     * {@inheritdoc}
+     * This is the main method that is called when a task is executed.
+     *
+     * @param array $options The options configured for the task
+     *
+     * @return bool Returns true on successful execution, false on error
      */
-    public function build(ContainerBuilder $container)
-    {
-        $container->addCompilerPass(new SymfonyServiceForMakeInstancePass());
-        $container->addCompilerPass(new TaskProxyPass());
-    }
+    public function execute(array $options): bool;
 }

@@ -21,30 +21,18 @@ declare(strict_types=1);
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Bundle\BartacusBundle;
+namespace Bartacus\Bundle\BartacusBundle\Scheduler\Proxy\TaskProxy;
 
-use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\SymfonyServiceForMakeInstancePass;
-use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\TaskProxyPass;
-use Bartacus\Bundle\BartacusBundle\Typo3\SymfonyServiceForMakeInstanceLoader;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Zend\Code\Generator\PropertyGenerator;
 
-class BartacusBundle extends Bundle
+class OptionsProperty extends PropertyGenerator
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function boot()
+    public function __construct()
     {
-        $this->container->get(SymfonyServiceForMakeInstanceLoader::class)->load();
-    }
+        parent::__construct('options');
 
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
-    {
-        $container->addCompilerPass(new SymfonyServiceForMakeInstancePass());
-        $container->addCompilerPass(new TaskProxyPass());
+        $this->setDefaultValue([]);
+        $this->setVisibility(self::VISIBILITY_PRIVATE);
+        $this->setDocBlock('@var array resolved options for the task, configured in the backend');
     }
 }

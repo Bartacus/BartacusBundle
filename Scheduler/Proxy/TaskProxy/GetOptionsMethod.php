@@ -21,30 +21,29 @@ declare(strict_types=1);
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Bundle\BartacusBundle;
+namespace Bartacus\Bundle\BartacusBundle\Scheduler\Proxy\TaskProxy;
 
-use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\SymfonyServiceForMakeInstancePass;
-use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\TaskProxyPass;
-use Bartacus\Bundle\BartacusBundle\Typo3\SymfonyServiceForMakeInstanceLoader;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use ProxyManager\Generator\MethodGenerator;
 
-class BartacusBundle extends Bundle
+class GetOptionsMethod extends MethodGenerator
 {
     /**
-     * {@inheritdoc}
+     * @var string
      */
-    public function boot()
-    {
-        $this->container->get(SymfonyServiceForMakeInstanceLoader::class)->load();
-    }
+    private $methodTemplate = <<<'PHP'
+return $this->options;
+PHP;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
+    public function __construct()
     {
-        $container->addCompilerPass(new SymfonyServiceForMakeInstancePass());
-        $container->addCompilerPass(new TaskProxyPass());
+        parent::__construct('getOptions');
+
+        $this->setVisibility(self::VISIBILITY_PUBLIC);
+        $this->setDocBlock('Get the options saved in the proxy task.');
+        $this->setReturnType('array');
+
+        $this->setBody(\sprintf(
+            $this->methodTemplate
+        ));
     }
 }

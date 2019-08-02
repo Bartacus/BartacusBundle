@@ -21,30 +21,17 @@ declare(strict_types=1);
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Bundle\BartacusBundle;
+namespace Bartacus\Bundle\BartacusBundle\Scheduler;
 
-use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\SymfonyServiceForMakeInstancePass;
-use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\TaskProxyPass;
-use Bartacus\Bundle\BartacusBundle\Typo3\SymfonyServiceForMakeInstanceLoader;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
-class BartacusBundle extends Bundle
+/**
+ * Interface for tasks who can provide their progress.
+ */
+interface ProgressProviderInterface
 {
     /**
-     * {@inheritdoc}
+     * Gets the progress of a task.
+     *
+     * @return float Progress of the task as a two decimal precision float. f.e. 44.87
      */
-    public function boot()
-    {
-        $this->container->get(SymfonyServiceForMakeInstanceLoader::class)->load();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
-    {
-        $container->addCompilerPass(new SymfonyServiceForMakeInstancePass());
-        $container->addCompilerPass(new TaskProxyPass());
-    }
+    public function getProgress(array $options): float;
 }

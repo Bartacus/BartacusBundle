@@ -23,11 +23,14 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\DependencyInjection;
 
+use Bartacus\Bundle\BartacusBundle\Scheduler\TaskInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
+use TYPO3\CMS\Scheduler\AdditionalFieldProviderInterface;
+use TYPO3\CMS\Scheduler\Task\AbstractTask;
 
 class BartacusExtension extends Extension
 {
@@ -41,6 +44,13 @@ class BartacusExtension extends Extension
         $loader->load('services.xml');
         $loader->load('typo3.xml');
         $loader->load('overrides.xml');
+
+        if (\class_exists(AbstractTask::class)) {
+            $loader->load('task.xml');
+
+            $container->registerForAutoconfiguration(TaskInterface::class)->addTag('bartacus.scheduler_task');
+            $container->registerForAutoconfiguration(AdditionalFieldProviderInterface::class)->addTag('bartacus.make_instance');
+        }
 
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);

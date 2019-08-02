@@ -21,3 +21,4 @@ Contents
     service_bridge
     translations
     config_loader
+    scheduler_tasks

@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Scheduler `TaskInterface` for DI usage in TYPO3 scheduler tasks with proxy classes
 
 ## [2.1.3] - 2019-08-01
 ### Fixed

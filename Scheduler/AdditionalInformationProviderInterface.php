@@ -21,30 +21,15 @@ declare(strict_types=1);
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Bundle\BartacusBundle;
+namespace Bartacus\Bundle\BartacusBundle\Scheduler;
 
-use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\SymfonyServiceForMakeInstancePass;
-use Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler\TaskProxyPass;
-use Bartacus\Bundle\BartacusBundle\Typo3\SymfonyServiceForMakeInstanceLoader;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
-class BartacusBundle extends Bundle
+/**
+ * Interface for tasks who can provide additional information for the backend.
+ */
+interface AdditionalInformationProviderInterface
 {
     /**
-     * {@inheritdoc}
+     * Gets the information to display.
      */
-    public function boot()
-    {
-        $this->container->get(SymfonyServiceForMakeInstanceLoader::class)->load();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
-    {
-        $container->addCompilerPass(new SymfonyServiceForMakeInstancePass());
-        $container->addCompilerPass(new TaskProxyPass());
-    }
+    public function getAdditionalInformation(array $options): string;
 }
