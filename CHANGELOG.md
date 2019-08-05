@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [2.3.0] - 2019-08-05
 ### Added
 - Add `alias` attribute to `bartacus.makeInstance` tag
 
@@ -195,7 +197,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/2.2.0...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/2.3.0...HEAD
+[2.3.0]: https://github.com/Bartacus/BartacusBundle/compare/2.2.0...2.3.0
 [2.2.0]: https://github.com/Bartacus/BartacusBundle/compare/2.1.3...2.2.0
 [2.1.3]: https://github.com/Bartacus/BartacusBundle/compare/2.1.2...2.1.3
 [2.1.2]: https://github.com/Bartacus/BartacusBundle/compare/2.1.1...2.1.2
