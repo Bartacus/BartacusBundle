@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Changed
+- Use service locator instead of lazy services for `bartacus.make_instance` services
 
 ## [2.2.0] - 2019-08-02
 ### Added

@@ -9,10 +9,9 @@ This would prevent the use of proper DI
 
 Fortunately Bartacus integrates the service container into TYPO3 so the call
 ``GeneralUtility::makeInstace()`` for configured classes automatically
-transformed into a (lazy) service container load.
+transformed into a service container load from a service locator.
 
-It doesn't matter if you use old snake cased service ids or the new PSR-4
-service id naming.
+It doesn't matter if you use classic service ids or the new PSR-4 service id naming.
 
 makeInstance calls
 ==================
