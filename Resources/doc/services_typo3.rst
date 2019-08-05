@@ -73,6 +73,7 @@ Alternatively, if something implements an interface, you can autoconfigure it wi
 Some of the TYPO3 interfaces are already registered for autoconfiguration, so you don't need the above snippets. If you find one, which is not included in the list, head up us a pull request.
 
 * ``TYPO3\CMS\Install\Updates\UpgradeWizardInterface``
+* ``TYPO3\CMS\Scheduler\AdditionalFieldProviderInterface``
 
 Usage
 -----
