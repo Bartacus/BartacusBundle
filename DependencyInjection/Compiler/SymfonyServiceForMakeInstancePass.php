@@ -23,31 +23,58 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler;
 
+use Bartacus\Bundle\BartacusBundle\Typo3\MakeInstanceServiceLocator;
 use Bartacus\Bundle\BartacusBundle\Typo3\SymfonyServiceForMakeInstanceLoader;
+use Symfony\Component\Config\Resource\ClassExistenceResource;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Reference;
 
 class SymfonyServiceForMakeInstancePass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->has(SymfonyServiceForMakeInstanceLoader::class)) {
+        if (!$container->has(SymfonyServiceForMakeInstanceLoader::class) || !$container->has(MakeInstanceServiceLocator::class)) {
             return;
         }
 
-        $definition = $container->findDefinition(SymfonyServiceForMakeInstanceLoader::class);
-
         $taggedServices = $container->findTaggedServiceIds('bartacus.make_instance');
+
+        $classNames = [];
+        $locatableServices = [];
 
         foreach ($taggedServices as $id => $tags) {
             $taggedDefinition = $container->findDefinition($id);
-            $taggedDefinition->setLazy(true);
+            $class = $taggedDefinition->getClass();
 
-            $definition->addMethodCall(
-                'addService',
-                [$taggedDefinition->getClass(), new Reference($id)]
-            );
+            if (!$r = $container->getReflectionClass($class)) {
+                throw new InvalidArgumentException(\sprintf('Class "%s" used for service "%s" cannot be found.', $class, $id));
+            }
+
+            $class = $r->name;
+
+            foreach ($tags as $attributes) {
+                $locatableClass = $class;
+                if (isset($attributes['alias'])) {
+                    $locatableClass = $attributes['alias'];
+
+                    if (!$container->getReflectionClass($locatableClass) || !\interface_exists($locatableClass)) {
+                        if (\interface_exists($locatableClass)) {
+                            $container->addResource(new ClassExistenceResource($locatableClass, false));
+                        }
+
+                        throw new InvalidArgumentException(\sprintf('Class or interface "%s" used for service "%s" as alias cannot be found.', $locatableClass, $id));
+                    }
+                }
+
+                $classNames[] = $locatableClass;
+                $locatableServices[$locatableClass] = new Reference($id);
+            }
         }
+
+        $container->findDefinition(SymfonyServiceForMakeInstanceLoader::class)->replaceArgument(0, $classNames);
+        $container->findDefinition(MakeInstanceServiceLocator::class)->addArgument(ServiceLocatorTagPass::register($container, $locatableServices));
     }
 }

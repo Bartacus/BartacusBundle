@@ -31,21 +31,32 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 final class SymfonyServiceForMakeInstanceLoader
 {
     /**
-     * The tagged services for {@see GeneralUtility::makeInstance()} calls.
+     * Class names for the class name cache.
      *
-     * [class name => instance]
-     *
-     * @var array
+     * @var string[]
      */
-    private $services = [];
+    private $classNames = [];
 
     /**
-     * @param string $className
-     * @param object $instance
+     * @var MakeInstanceServiceLocator
      */
-    public function addService(string $className, $instance): void
+    private $serviceLocator;
+
+    public function __construct(array $classNames, MakeInstanceServiceLocator $serviceLocator)
     {
-        $this->services[$className] = $instance;
+        $this->classNames = $classNames;
+        $this->serviceLocator = $serviceLocator;
+    }
+
+    /**
+     * @deprecated since 2.3, will be removed in 3.0, use the bartacus.make_instance tag with alias attribute instead.
+     */
+    public function addService(string $className, object $instance): void
+    {
+        @\trigger_error(\sprintf('%s is deprecated since 2.3, will be removed in 3.0, use the bartacus.make_instance tag with alias attribute instead.', __METHOD__));
+
+        $this->classNames[] = $className;
+        $this->serviceLocator[$className] = $instance;
     }
 
     /**
@@ -64,8 +75,7 @@ final class SymfonyServiceForMakeInstanceLoader
         $reflProp = $refl->getProperty('finalClassNameCache');
         $reflProp->setAccessible(true);
 
-        $classes = \array_keys($this->services);
-        $classes = \array_combine($classes, $classes);
+        $classes = \array_combine($this->classNames, $this->classNames);
 
         $classNames = $reflProp->getValue();
         $classNames = \array_merge($classNames, $classes);
@@ -77,10 +87,6 @@ final class SymfonyServiceForMakeInstanceLoader
     {
         $reflProp = $refl->getProperty('singletonInstances');
         $reflProp->setAccessible(true);
-
-        $instances = $reflProp->getValue();
-        $instances = \array_merge($instances, $this->services);
-
-        $reflProp->setValue(null, $instances);
+        $reflProp->setValue(null, $this->serviceLocator);
     }
 }

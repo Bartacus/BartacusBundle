@@ -9,10 +9,9 @@ This would prevent the use of proper DI
 
 Fortunately Bartacus integrates the service container into TYPO3 so the call
 ``GeneralUtility::makeInstace()`` for configured classes automatically
-transformed into a (lazy) service container load.
+transformed into a service container load from a service locator.
 
-It doesn't matter if you use old snake cased service ids or the new PSR-4
-service id naming.
+It doesn't matter if you use classic service ids or the new PSR-4 service id naming.
 
 makeInstance calls
 ==================
@@ -74,6 +73,16 @@ Some of the TYPO3 interfaces are already registered for autoconfiguration, so yo
 
 * ``TYPO3\CMS\Install\Updates\UpgradeWizardInterface``
 * ``TYPO3\CMS\Scheduler\AdditionalFieldProviderInterface``
+
+If you need to add your specific class for ``makeInstance`` in replacement of another class or interface, you can add the `alias` attribute:
+
+.. code-block:: yaml
+
+    // config/services.yml
+    services:
+        App\Mail\AcmeTransport:
+            tags:
+                - { name: bartacus.make_instance, alias: Swift_Transport }
 
 Usage
 -----
