@@ -25,6 +25,7 @@ namespace Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler;
 
 use Bartacus\Bundle\BartacusBundle\Typo3\MakeInstanceServiceLocator;
 use Bartacus\Bundle\BartacusBundle\Typo3\SymfonyServiceForMakeInstanceLoader;
+use Symfony\Component\Config\Resource\ClassExistenceResource;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -53,8 +54,24 @@ class SymfonyServiceForMakeInstancePass implements CompilerPassInterface
             }
 
             $class = $r->name;
-            $classNames[] = $class;
-            $locatableServices[$class] = new Reference($id);
+
+            foreach ($tags as $attributes) {
+                $locatableClass = $class;
+                if (isset($attributes['alias'])) {
+                    $locatableClass = $attributes['alias'];
+
+                    if (!$container->getReflectionClass($locatableClass) || !\interface_exists($locatableClass)) {
+                        if (\interface_exists($locatableClass)) {
+                            $container->addResource(new ClassExistenceResource($locatableClass, false));
+                        }
+
+                        throw new InvalidArgumentException(\sprintf('Class or interface "%s" used for service "%s" as alias cannot be found.', $locatableClass, $id));
+                    }
+                }
+
+                $classNames[] = $locatableClass;
+                $locatableServices[$locatableClass] = new Reference($id);
+            }
         }
 
         $container->findDefinition(SymfonyServiceForMakeInstanceLoader::class)->replaceArgument(0, $classNames);

@@ -73,6 +73,16 @@ Some of the TYPO3 interfaces are already registered for autoconfiguration, so yo
 
 * ``TYPO3\CMS\Install\Updates\UpgradeWizardInterface``
 
+If you need to add your specific class for ``makeInstance`` in replacement of another class or interface, you can add the `alias` attribute:
+
+.. code-block:: yaml
+
+    // config/services.yml
+    services:
+        App\Mail\AcmeTransport:
+            tags:
+                - { name: bartacus.make_instance, alias: Swift_Transport }
+
 Usage
 -----
 
