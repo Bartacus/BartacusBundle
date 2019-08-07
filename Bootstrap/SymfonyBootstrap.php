@@ -25,11 +25,13 @@ namespace Bartacus\Bundle\BartacusBundle\Bootstrap;
 
 use App\Kernel as AppKernel;
 use Bartacus\Bundle\BartacusBundle\ErrorHandler\SymfonyErrorHandler;
+use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\Debug\BufferingLogger;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Kernel;
+use TYPO3\CMS\Core\Http\ServerRequest;
 
 final class SymfonyBootstrap
 {
@@ -92,9 +94,27 @@ final class SymfonyBootstrap
             Response::closeOutputBuffers(0, true);
         }
 
-        if (self::$request instanceof Request && self::$response instanceof Response) {
-            self::$kernel->terminate(self::$request, self::$response);
+        // check if a Symfony request object was set (either content element rendering or Symfony route handler)
+        // (may occur for TYPO3 StaticRoutes and PageNotFoundHandler)
+        if (!self::$request instanceof Request) {
+            /** @var ServerRequest $serverRequest */
+            $serverRequest = \array_key_exists('TYPO3_REQUEST', $GLOBALS) ? $GLOBALS['TYPO3_REQUEST'] : null;
+
+            // try to create Symfony request based on the TYPO3 server request
+            if ($serverRequest instanceof ServerRequest) {
+                self::$request = (new HttpFoundationFactory())->createRequest($serverRequest);
+            } else {
+                // fallback if neither the Symfony request was specified nor the TYPO3 server request is defined
+                self::$request = Request::createFromGlobals();
+            }
         }
+
+        // use an empty response if none is set (may occur for TYPO3 StaticRoutes and PageNotFoundHandler)
+        if (!self::$response instanceof Response) {
+            self::$response = new Response();
+        }
+
+        self::$kernel->terminate(self::$request, self::$response);
     }
 
     public static function setRequestResponseForTermination(Request $request, Response $response): void
