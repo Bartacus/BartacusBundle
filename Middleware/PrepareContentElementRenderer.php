@@ -92,13 +92,15 @@ class PrepareContentElementRenderer implements MiddlewareInterface
         $event = new GetResponseEvent($this->kernel, $symfonyRequest, HttpKernel::MASTER_REQUEST);
         $this->dispatcher->dispatch(KernelEvents::REQUEST, $event);
 
+        SymfonyBootstrap::setRequestForTermination($symfonyRequest);
+
         $request = $this->psrHttpFactory->createRequest($symfonyRequest);
         $GLOBALS['TYPO3_REQUEST'] = $request;
 
         $response = $handler->handle($request);
 
         $symfonyResponse = $this->httpFoundationFactory->createResponse($response);
-        SymfonyBootstrap::setRequestResponseForTermination($symfonyRequest, $symfonyResponse);
+        SymfonyBootstrap::setResponseForTermination($symfonyResponse);
 
         $event = new FilterResponseEvent($this->kernel, $symfonyRequest, HttpKernel::MASTER_REQUEST, $symfonyResponse);
         $this->dispatcher->dispatch(KernelEvents::RESPONSE, $event);
@@ -107,7 +109,7 @@ class PrepareContentElementRenderer implements MiddlewareInterface
         $this->requestStack->pop();
 
         $symfonyResponse = $event->getResponse();
-        SymfonyBootstrap::setRequestResponseForTermination($symfonyRequest, $symfonyResponse);
+        SymfonyBootstrap::setResponseForTermination($symfonyResponse);
 
         $response = $this->psrHttpFactory->createResponse($symfonyResponse);
 
