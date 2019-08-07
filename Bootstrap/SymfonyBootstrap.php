@@ -98,7 +98,7 @@ final class SymfonyBootstrap
         // (may occur for TYPO3 StaticRoutes and PageNotFoundHandler)
         if (!self::$request instanceof Request) {
             /** @var ServerRequest $serverRequest */
-            $serverRequest = \array_key_exists('TYPO3_REQUEST', $GLOBALS) ? $GLOBALS['TYPO3_REQUEST'] : null;
+            $serverRequest = $GLOBALS['TYPO3_REQUEST'] ?? null;
 
             // try to create Symfony request based on the TYPO3 server request
             if ($serverRequest instanceof ServerRequest) {
@@ -117,9 +117,33 @@ final class SymfonyBootstrap
         self::$kernel->terminate(self::$request, self::$response);
     }
 
+    /**
+     * @internal
+     *
+     * @deprecated since 2.3.1, will be removed in 3.0, use {@see setRequestForTermination} and
+     *             {@see setResponseForTermination} instead
+     */
     public static function setRequestResponseForTermination(Request $request, Response $response): void
     {
+        @\trigger_error(\sprintf('%s since 2.3.1, will be removed in 3.0, use setRequestForTermination and setResponseForTermination instead', __METHOD__));
+
+        self::setRequestForTermination($request);
+        self::setResponseForTermination($response);
+    }
+
+    /**
+     * @internal
+     */
+    public static function setRequestForTermination(Request $request): void
+    {
         self::$request = $request;
+    }
+
+    /**
+     * @internal
+     */
+    public static function setResponseForTermination(Response $response): void
+    {
         self::$response = $response;
     }
 }

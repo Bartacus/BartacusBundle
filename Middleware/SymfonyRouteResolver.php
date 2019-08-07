@@ -81,8 +81,10 @@ class SymfonyRouteResolver implements MiddlewareInterface
         }
 
         $symfonyRequest = $this->httpFoundationFactory->createRequest($request);
+        SymfonyBootstrap::setRequestForTermination($symfonyRequest);
+
         $symfonyResponse = $this->kernel->handle($symfonyRequest, HttpKernelInterface::MASTER_REQUEST, false);
-        SymfonyBootstrap::setRequestResponseForTermination($symfonyRequest, $symfonyResponse);
+        SymfonyBootstrap::setResponseForTermination($symfonyResponse);
 
         return $this->psrHttpFactory->createResponse($symfonyResponse);
     }
