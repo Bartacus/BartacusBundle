@@ -28,7 +28,6 @@ use ProxyManager\Configuration;
 use ProxyManager\Factory\AbstractBaseFactory;
 use ProxyManager\FileLocator\FileLocator;
 use ProxyManager\Generator\ClassGenerator;
-use ProxyManager\GeneratorStrategy\FileWriterGeneratorStrategy;
 use ProxyManager\ProxyGenerator\ProxyGeneratorInterface;
 use ProxyManager\Version;
 use Symfony\Component\Filesystem\Filesystem;
