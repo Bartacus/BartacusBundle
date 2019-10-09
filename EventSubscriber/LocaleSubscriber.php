@@ -132,8 +132,13 @@ class LocaleSubscriber implements EventSubscriberInterface
             [$locale] = \explode('.', $language->getLocale());
         } elseif ((bool) $site = $request->attributes->get('site')) {
             /* @var Site $site */
-            $languageId = (int) $request->get('L');
-            $siteLanguage = $site->getLanguageById($languageId);
+            if ($request->query->has('L')) {
+                $languageId = (int) $request->query->get('L');
+                $siteLanguage = $site->getLanguageById($languageId);
+            } else {
+                $siteLanguage = $site->getDefaultLanguage();
+            }
+
             [$locale] = \explode('.', $siteLanguage->getLocale());
         }
 
