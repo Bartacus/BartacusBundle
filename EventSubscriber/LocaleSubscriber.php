@@ -30,8 +30,11 @@ use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\RequestContextAwareInterface;
+use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
+use TYPO3\CMS\Core\Site\SiteFinder;
+use TYPO3\CMS\Core\Utility\RootlineUtility;
 
 /**
  * Normalizes and initializes the locale based on the current request.
@@ -125,22 +128,117 @@ class LocaleSubscriber implements EventSubscriberInterface
      */
     private function getLocaleFromTypo3(Request $request): ?string
     {
-        $locale = null;
+        // extract the TYPO3 Site and SiteLanguage models resolved by the SiteResolver middleware
+        $site = $request->attributes->get('site');
+        $siteLanguage = $request->attributes->get('language');
 
-        if ((bool) $language = $request->attributes->get('language')) {
-            /* @var SiteLanguage $language */
-            [$locale] = \explode('.', $language->getLocale());
-        } elseif ((bool) $site = $request->attributes->get('site')) {
-            /* @var Site $site */
+        // default behavior
+        // TYPO3 resolved a SiteLanguage model based on the lozalised request path.
+        if ($siteLanguage instanceof SiteLanguage) {
+            // keep only the real locale like 'en_GB' and remove the encoding suffix (like '.UTF-8')
+            [$locale] = \explode('.', $siteLanguage->getLocale());
+
+            return $locale;
+        }
+
+        // TYPO3 resolved a real Site but without a SiteLanguage
+        // This case occur if the request path matches a TYPO3 page, but the request path has no localized segment.
+        // Common cases are requesting the web root ('/'). Typically this case is useless as this route should be
+        // redirected to force a localized segment as request path prefix.
+        if ($site instanceof Site) {
+            // check if the language information is specified in the query as of TYPO v8
+            // the request uses the TYPO3 v9 url structure and the TYPO3 v8 query parameter(s)
             if ($request->query->has('L')) {
-                $languageId = (int) $request->query->get('L');
-                $siteLanguage = $site->getLanguageById($languageId);
-            } else {
+                try {
+                    // use the SiteLanguage which matches the requested sys language uid
+                    $siteLanguage = $site->getLanguageById((int) $request->query->get('L'));
+                } catch (\InvalidArgumentException $exception) {
+                    // the exception will be thrown if there is no SiteLanguage matching the requested sys language uid,
+                    // Instead of throwing the exeption we will use a fallback to the Site's default language.
+                }
+            }
+
+            // fallback to the Site's default language if either the language information is not set in the query
+            // parameters or if the requested sys langauge uid does not match any SiteLanguage.
+            if (!$siteLanguage instanceof SiteLanguage) {
                 $siteLanguage = $site->getDefaultLanguage();
             }
 
+            // keep only the real locale like 'en_GB' and remove the encoding suffix (like '.UTF-8')
             [$locale] = \explode('.', $siteLanguage->getLocale());
+
+            return $locale;
         }
+
+        // TYPO3 resolved neither a Site nor a SiteLanguage model
+        // This case occur if the request uses the old TYPO3 v8 url structure like SOLR does, which means the
+        // SiteResolver will already create and return a PseudoSite with incomplete SiteLanguage models.
+        // The request looks like 'index.php?id=123&L=5'
+
+        // if the request does not contain any language and page information
+        // there is nothing we can do to extract a locale
+        if (!$request->query->has('id') && !$request->query->has('L')) {
+            return null;
+        }
+
+        // get all Site models configured for this project
+        $siteFinder = new SiteFinder();
+        $availableSites = $siteFinder->getAllSites();
+
+        // if the project has only one Site configured we can convert the PseudoSite to the real Site and use
+        // the SiteLanguage which fits the requested sys language uid
+        if (1 === count($availableSites)) {
+            /** @var Site $site */
+            $site = array_values($availableSites)[0];
+
+            try {
+                // use the SiteLanguage which matches the requested sys language uid
+                $siteLanguage = $site->getLanguageById((int) $request->query->get('L'));
+            } catch (\InvalidArgumentException $exception) {
+                // the exception will be thrown if there is no SiteLanguage matching the requested sys language uid,
+                // Instead of throwing the exeption we will use a fallback to the Site's default language.
+                $siteLanguage = $site->getDefaultLanguage();
+            }
+
+            // keep only the real locale like 'en_GB' and remove the encoding suffix (like '.UTF-8')
+            [$locale] = \explode('.', $siteLanguage->getLocale());
+
+            return $locale;
+        }
+
+        // get the root line of the requested page as we need its root page id to get the Site which matches the
+        // requested page
+        $rootLinePages = (new RootlineUtility((int) $request->query->get('id')))->get();
+        $rootPage = (array) end($rootLinePages);
+
+        // verify and extract the uid of the resolved root page
+        if (array_key_exists('uid', $rootPage) && array_key_exists('is_siteroot', $rootPage) && (bool) $rootPage['is_siteroot']) {
+            $rootPageId = (int) $rootPage['uid'];
+        } else {
+            // root page not found - there is something wrong in the TYPO3 backend page tree
+            return null;
+        }
+
+        // try to find a configured Site which matches the resolved root page
+        try {
+            $site = $siteFinder->getSiteByRootPageId($rootPageId);
+        } catch (SiteNotFoundException $exception) {
+            // the exception will be thrown if there is no Site configured which matches the resolved root page
+            // there is no chance to find the Site which matches the requested  page to lookup its SiteLanguages
+            return null;
+        }
+
+        try {
+            // use the SiteLanguage which matches the requested sys language uid
+            $siteLanguage = $site->getLanguageById((int) $request->query->get('L'));
+        } catch (\InvalidArgumentException $exception) {
+            // the exception will be thrown if there is no SiteLanguage matching the requested sys language uid,
+            // Instead of throwing the exeption we will use a fallback to the Site's default language.
+            $siteLanguage = $site->getDefaultLanguage();
+        }
+
+        // keep only the real locale like 'en_GB' and remove the encoding suffix (like '.UTF-8')
+        [$locale] = \explode('.', $siteLanguage->getLocale());
 
         return $locale;
     }
