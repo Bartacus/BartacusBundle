@@ -73,13 +73,19 @@ class LocaleSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
         $request->setDefaultLocale($this->defaultLocale);
 
-        $this->setLocale($request);
+        // the locale should only be resolved and set for the master request and not for its sub requestes too
+        if ($event->isMasterRequest()) {
+            $this->setLocale($request);
+        }
     }
 
     public function onKernelFinishRequest(FinishRequestEvent $event): void
     {
         if (null !== $parentRequest = $this->requestStack->getParentRequest()) {
-            $this->setLocale($parentRequest);
+            // the locale should only be resolved and set for the master request and not for its sub requestes too
+            if ($event->isMasterRequest()) {
+                $this->setLocale($parentRequest);
+            }
         }
     }
 
