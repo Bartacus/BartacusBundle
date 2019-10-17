@@ -214,7 +214,7 @@ class LocaleSubscriber implements EventSubscriberInterface
         // get the root line of the requested page as we need its root page id to get the Site which matches the
         // requested page
         $rootLinePages = (new RootlineUtility((int) $request->query->get('id')))->get();
-        $rootPage = (array) end($rootLinePages);
+        $rootPage = (array) \end($rootLinePages);
 
         // verify and extract the uid of the resolved root page
         if (\array_key_exists('uid', $rootPage) && \array_key_exists('is_siteroot', $rootPage) && (bool) $rootPage['is_siteroot']) {
