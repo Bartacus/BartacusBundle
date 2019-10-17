@@ -101,16 +101,30 @@ class LocaleSubscriber implements EventSubscriberInterface
     private function setLocale(Request $request): void
     {
         if ($locale = $request->attributes->get('_locale')) {
-            $normalizedLocale = $this->getLocaleFromTypo3($request) ?? $this->normalizeLocale($locale);
+            $siteLanguage = $this->getTypo3SiteLanguage($request);
+
+            if ($siteLanguage instanceof SiteLanguage) {
+                $normalizedLocale = \explode('.', $siteLanguage->getLocale())[0];
+            } else {
+                $normalizedLocale = $this->normalizeLocale($locale);
+            }
+
             $request->setLocale($normalizedLocale);
 
             if (null !== $this->router) {
                 $this->router->getContext()->setParameter('_locale', $locale);
             }
-        } elseif ($locale = $this->getLocaleFromTypo3($request)) {
+
+            return;
+        }
+
+        $siteLanguage = $this->getTypo3SiteLanguage($request);
+
+        if ($siteLanguage instanceof SiteLanguage) {
+            $locale = \explode('.', $siteLanguage->getLocale())[0];
             $request->setLocale($locale);
 
-            $denormalizedLocale = $this->getDenormalizedLocaleFromTypo3($request);
+            $denormalizedLocale = \trim($siteLanguage->getBase()->getPath(), '/');
             $request->attributes->set('_locale', $denormalizedLocale);
 
             if (null !== $this->router) {
@@ -130,9 +144,9 @@ class LocaleSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Tries to get the exact locale from TYPO3 if it can be found in the request.
+     * Tries to get the exact the TYPO3 SiteLanguage based on the current request.
      */
-    private function getLocaleFromTypo3(Request $request): ?string
+    private function getTypo3SiteLanguage(Request $request): ?SiteLanguage
     {
         // extract the TYPO3 Site and SiteLanguage models resolved by the SiteResolver middleware
         $site = $request->attributes->get('site');
@@ -141,10 +155,7 @@ class LocaleSubscriber implements EventSubscriberInterface
         // default behavior
         // TYPO3 resolved a SiteLanguage model based on the lozalised request path.
         if ($siteLanguage instanceof SiteLanguage) {
-            // keep only the real locale like 'en_GB' and remove the encoding suffix (like '.UTF-8')
-            [$locale] = \explode('.', $siteLanguage->getLocale());
-
-            return $locale;
+            return $siteLanguage;
         }
 
         // TYPO3 resolved a real Site but without a SiteLanguage
@@ -157,7 +168,7 @@ class LocaleSubscriber implements EventSubscriberInterface
             if ($request->query->has('L')) {
                 try {
                     // use the SiteLanguage which matches the requested sys language uid
-                    $siteLanguage = $site->getLanguageById((int) $request->query->get('L'));
+                    return $site->getLanguageById((int) $request->query->get('L'));
                 } catch (\InvalidArgumentException $exception) {
                     // the exception will be thrown if there is no SiteLanguage matching the requested sys language uid,
                     // Instead of throwing the exeption we will use a fallback to the Site's default language.
@@ -166,14 +177,7 @@ class LocaleSubscriber implements EventSubscriberInterface
 
             // fallback to the Site's default language if either the language information is not set in the query
             // parameters or if the requested sys langauge uid does not match any SiteLanguage.
-            if (!$siteLanguage instanceof SiteLanguage) {
-                $siteLanguage = $site->getDefaultLanguage();
-            }
-
-            // keep only the real locale like 'en_GB' and remove the encoding suffix (like '.UTF-8')
-            [$locale] = \explode('.', $siteLanguage->getLocale());
-
-            return $locale;
+            return $site->getDefaultLanguage();
         }
 
         // TYPO3 resolved neither a Site nor a SiteLanguage model
@@ -193,32 +197,27 @@ class LocaleSubscriber implements EventSubscriberInterface
 
         // if the project has only one Site configured we can convert the PseudoSite to the real Site and use
         // the SiteLanguage which fits the requested sys language uid
-        if (1 === \count($availableSites)) {
+        if (1 === count($availableSites)) {
             /** @var Site $site */
-            $site = \array_values($availableSites)[0];
+            $site = array_values($availableSites)[0];
 
             try {
                 // use the SiteLanguage which matches the requested sys language uid
-                $siteLanguage = $site->getLanguageById((int) $request->query->get('L'));
+                return $site->getLanguageById((int) $request->query->get('L'));
             } catch (\InvalidArgumentException $exception) {
                 // the exception will be thrown if there is no SiteLanguage matching the requested sys language uid,
                 // Instead of throwing the exeption we will use a fallback to the Site's default language.
-                $siteLanguage = $site->getDefaultLanguage();
+                return $site->getDefaultLanguage();
             }
-
-            // keep only the real locale like 'en_GB' and remove the encoding suffix (like '.UTF-8')
-            [$locale] = \explode('.', $siteLanguage->getLocale());
-
-            return $locale;
         }
 
         // get the root line of the requested page as we need its root page id to get the Site which matches the
         // requested page
         $rootLinePages = (new RootlineUtility((int) $request->query->get('id')))->get();
-        $rootPage = (array) \end($rootLinePages);
+        $rootPage = (array) end($rootLinePages);
 
         // verify and extract the uid of the resolved root page
-        if (\array_key_exists('uid', $rootPage) && \array_key_exists('is_siteroot', $rootPage) && (bool) $rootPage['is_siteroot']) {
+        if (array_key_exists('uid', $rootPage) && array_key_exists('is_siteroot', $rootPage) && (bool) $rootPage['is_siteroot']) {
             $rootPageId = (int) $rootPage['uid'];
         } else {
             // root page not found - there is something wrong in the TYPO3 backend page tree
@@ -236,36 +235,12 @@ class LocaleSubscriber implements EventSubscriberInterface
 
         try {
             // use the SiteLanguage which matches the requested sys language uid
-            $siteLanguage = $site->getLanguageById((int) $request->query->get('L'));
+            return $site->getLanguageById((int) $request->query->get('L'));
         } catch (\InvalidArgumentException $exception) {
             // the exception will be thrown if there is no SiteLanguage matching the requested sys language uid,
             // Instead of throwing the exeption we will use a fallback to the Site's default language.
-            $siteLanguage = $site->getDefaultLanguage();
         }
 
-        // keep only the real locale like 'en_GB' and remove the encoding suffix (like '.UTF-8')
-        [$locale] = \explode('.', $siteLanguage->getLocale());
-
-        return $locale;
-    }
-
-    /**
-     * Tries to get a denormalized locale for routing resolved from the base path.
-     *
-     * It is assumed here, that every site configuration has the locale as base path only.
-     */
-    private function getDenormalizedLocaleFromTypo3(Request $request): ?string
-    {
-        if ((bool) $language = $request->attributes->get('language')) {
-            /* @var SiteLanguage $language */
-            return \trim($language->getBase()->getPath(), '/');
-        }
-
-        if ((bool) $site = $request->attributes->get('site')) {
-            /* @var Site $site */
-            return \trim($site->getDefaultLanguage()->getBase()->getPath(), '/');
-        }
-
-        return null;
+        return $site->getDefaultLanguage();
     }
 }
