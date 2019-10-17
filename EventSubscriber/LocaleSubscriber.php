@@ -197,9 +197,9 @@ class LocaleSubscriber implements EventSubscriberInterface
 
         // if the project has only one Site configured we can convert the PseudoSite to the real Site and use
         // the SiteLanguage which fits the requested sys language uid
-        if (1 === count($availableSites)) {
+        if (1 === \count($availableSites)) {
             /** @var Site $site */
-            $site = array_values($availableSites)[0];
+            $site = \array_values($availableSites)[0];
 
             try {
                 // use the SiteLanguage which matches the requested sys language uid
@@ -217,7 +217,7 @@ class LocaleSubscriber implements EventSubscriberInterface
         $rootPage = (array) end($rootLinePages);
 
         // verify and extract the uid of the resolved root page
-        if (array_key_exists('uid', $rootPage) && array_key_exists('is_siteroot', $rootPage) && (bool) $rootPage['is_siteroot']) {
+        if (\array_key_exists('uid', $rootPage) && \array_key_exists('is_siteroot', $rootPage) && (bool) $rootPage['is_siteroot']) {
             $rootPageId = (int) $rootPage['uid'];
         } else {
             // root page not found - there is something wrong in the TYPO3 backend page tree
