@@ -26,6 +26,7 @@ namespace Bartacus\Bundle\BartacusBundle\Config;
 use Bartacus\Bundle\BartacusBundle\ConfigEvents;
 use Bartacus\Bundle\BartacusBundle\Event\RequestMiddlewaresEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 
 /**
  * Delegating central config loader called on various places within TYPO3
@@ -40,18 +41,18 @@ class ConfigLoader
 
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
-        $this->eventDispatcher = $eventDispatcher;
+        $this->eventDispatcher = LegacyEventDispatcherProxy::decorate($eventDispatcher);
     }
 
     public function loadFromAdditionalConfiguration(): void
     {
-        $this->eventDispatcher->dispatch(ConfigEvents::ADDITIONAL_CONFIGURATION);
+        $this->eventDispatcher->dispatch(new Event(), ConfigEvents::ADDITIONAL_CONFIGURATION);
     }
 
     public function loadFromRequestMiddlewares(): array
     {
         $event = new RequestMiddlewaresEvent();
-        $this->eventDispatcher->dispatch(ConfigEvents::REQUEST_MIDDLEWARES, $event);
+        $this->eventDispatcher->dispatch($event, ConfigEvents::REQUEST_MIDDLEWARES);
 
         return $event->getRequestMiddlewares();
     }
