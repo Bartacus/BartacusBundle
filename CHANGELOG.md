@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.4.0] - 2020-03-19
+### Added
+- Support Symfony ^4.3
+
 ## [2.3.3] - 2019-09-05
 ### Fixed
 - Fix file permissions for generated task proxy classes
