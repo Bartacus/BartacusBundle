@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.4.1] - 2020-03-19
+### Added
+- Fix missing import statement
+
 ## [2.4.0] - 2020-03-19
 ### Added
 - Support Symfony ^4.3
@@ -213,7 +217,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/2.3.3...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/2.4.1...HEAD
+[2.4.1]: https://github.com/Bartacus/BartacusBundle/compare/2.4.0...2.4.1
+[2.4.0]: https://github.com/Bartacus/BartacusBundle/compare/2.3.3...2.4.0
 [2.3.3]: https://github.com/Bartacus/BartacusBundle/compare/2.3.2...2.3.3
 [2.3.2]: https://github.com/Bartacus/BartacusBundle/compare/2.3.1...2.3.2
 [2.3.1]: https://github.com/Bartacus/BartacusBundle/compare/2.3.0...2.3.1
