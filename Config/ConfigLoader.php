@@ -25,6 +25,7 @@ namespace Bartacus\Bundle\BartacusBundle\Config;
 
 use Bartacus\Bundle\BartacusBundle\ConfigEvents;
 use Bartacus\Bundle\BartacusBundle\Event\RequestMiddlewaresEvent;
+use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 
