@@ -26,18 +26,19 @@ namespace Bartacus\Bundle\BartacusBundle\ContentElement;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerArgumentsEvent;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerArgumentsEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\Exception\ControllerDoesNotReturnResponseException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernel;
@@ -100,7 +101,7 @@ class Renderer
         $this->kernel = $kernel;
         $this->resolver = $resolver;
         $this->argumentResolver = $argumentResolver;
-        $this->dispatcher = $eventDispatcher;
+        $this->dispatcher = LegacyEventDispatcherProxy::decorate($eventDispatcher);
         $this->errorController = $errorController;
 
         $psr17Factory = new Psr17Factory();
@@ -126,8 +127,8 @@ class Renderer
         $request->headers->set('X-Php-Ob-Level', \ob_get_level());
 
         // request
-        $event = new GetResponseEvent($this->kernel, $request, HttpKernel::SUB_REQUEST);
-        $this->dispatcher->dispatch(KernelEvents::REQUEST, $event);
+        $event = new RequestEvent($this->kernel, $request, HttpKernel::SUB_REQUEST);
+        $this->dispatcher->dispatch($event, KernelEvents::REQUEST);
 
         if ($event->hasResponse()) {
             return $this->filterResponse($event->getResponse(), $request, HttpKernel::SUB_REQUEST);
@@ -139,15 +140,15 @@ class Renderer
             throw new NotFoundHttpException(\sprintf('Unable to find the controller "%s". The content element is wrongly configured.', $request->attributes->get('_controller', $configuration['controller'])));
         }
 
-        $event = new FilterControllerEvent($this->kernel, $controller, $request, HttpKernel::SUB_REQUEST);
-        $this->dispatcher->dispatch(KernelEvents::CONTROLLER, $event);
+        $event = new ControllerEvent($this->kernel, $controller, $request, HttpKernel::SUB_REQUEST);
+        $this->dispatcher->dispatch($event, KernelEvents::CONTROLLER);
         $controller = $event->getController();
 
         // controller arguments
         $arguments = $this->argumentResolver->getArguments($request, $controller);
 
-        $event = new FilterControllerArgumentsEvent($this->kernel, $controller, $arguments, $request, HttpKernel::SUB_REQUEST);
-        $this->dispatcher->dispatch(KernelEvents::CONTROLLER_ARGUMENTS, $event);
+        $event = new ControllerArgumentsEvent($this->kernel, $controller, $arguments, $request, HttpKernel::SUB_REQUEST);
+        $this->dispatcher->dispatch($event, KernelEvents::CONTROLLER_ARGUMENTS);
         $controller = $event->getController();
         $arguments = $event->getArguments();
 
@@ -165,8 +166,8 @@ class Renderer
 
         // view
         if (!$response instanceof Response) {
-            $event = new GetResponseForControllerResultEvent($this->kernel, $request, HttpKernel::SUB_REQUEST, $response);
-            $this->dispatcher->dispatch(KernelEvents::VIEW, $event);
+            $event = new ViewEvent($this->kernel, $request, HttpKernel::SUB_REQUEST, $response);
+            $this->dispatcher->dispatch($event, KernelEvents::VIEW);
 
             if ($event->hasResponse()) {
                 $response = $event->getResponse();
@@ -198,9 +199,9 @@ class Renderer
      */
     private function filterResponse(Response $response, Request $request, int $type): string
     {
-        $event = new FilterResponseEvent($this->kernel, $request, $type, $response);
-        $this->dispatcher->dispatch(KernelEvents::RESPONSE, $event);
-        $this->dispatcher->dispatch(KernelEvents::FINISH_REQUEST, new FinishRequestEvent($this->kernel, $request, $type));
+        $event = new ResponseEvent($this->kernel, $request, $type, $response);
+        $this->dispatcher->dispatch($event, KernelEvents::RESPONSE);
+        $this->dispatcher->dispatch(new FinishRequestEvent($this->kernel, $request, $type), KernelEvents::FINISH_REQUEST);
 
         $request->attributes->remove('data');
         $request->attributes->set('_controller', 'typo3');
