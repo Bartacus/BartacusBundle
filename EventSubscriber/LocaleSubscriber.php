@@ -73,7 +73,7 @@ class LocaleSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
         $request->setDefaultLocale($this->defaultLocale);
 
-        // the locale should only be resolved and set for the master request and not for its sub requestes too
+        // the locale should only be resolved and set for the master request and not for its sub requests too
         if ($event->isMasterRequest()) {
             $this->setLocale($request);
         }
@@ -82,7 +82,7 @@ class LocaleSubscriber implements EventSubscriberInterface
     public function onKernelFinishRequest(FinishRequestEvent $event): void
     {
         if (null !== $parentRequest = $this->requestStack->getParentRequest()) {
-            // the locale should only be resolved and set for the master request and not for its sub requestes too
+            // the locale should only be resolved and set for the master request and not for its sub requests too
             if ($event->isMasterRequest()) {
                 $this->setLocale($parentRequest);
             }
@@ -153,7 +153,7 @@ class LocaleSubscriber implements EventSubscriberInterface
         $siteLanguage = $request->attributes->get('language');
 
         // default behavior
-        // TYPO3 resolved a SiteLanguage model based on the lozalised request path.
+        // TYPO3 resolved a SiteLanguage model based on the localised request path.
         if ($siteLanguage instanceof SiteLanguage) {
             return $siteLanguage;
         }
@@ -171,12 +171,12 @@ class LocaleSubscriber implements EventSubscriberInterface
                     return $site->getLanguageById((int) $request->query->get('L'));
                 } catch (\InvalidArgumentException $exception) {
                     // the exception will be thrown if there is no SiteLanguage matching the requested sys language uid,
-                    // Instead of throwing the exeption we will use a fallback to the Site's default language.
+                    // Instead of throwing the exception we will use a fallback to the Site's default language.
                 }
             }
 
             // fallback to the Site's default language if either the language information is not set in the query
-            // parameters or if the requested sys langauge uid does not match any SiteLanguage.
+            // parameters or if the requested sys language uid does not match any SiteLanguage.
             return $site->getDefaultLanguage();
         }
 
@@ -206,7 +206,7 @@ class LocaleSubscriber implements EventSubscriberInterface
                 return $site->getLanguageById((int) $request->query->get('L'));
             } catch (\InvalidArgumentException $exception) {
                 // the exception will be thrown if there is no SiteLanguage matching the requested sys language uid,
-                // Instead of throwing the exeption we will use a fallback to the Site's default language.
+                // Instead of throwing the exception we will use a fallback to the Site's default language.
                 return $site->getDefaultLanguage();
             }
         }
@@ -238,7 +238,7 @@ class LocaleSubscriber implements EventSubscriberInterface
             return $site->getLanguageById((int) $request->query->get('L'));
         } catch (\InvalidArgumentException $exception) {
             // the exception will be thrown if there is no SiteLanguage matching the requested sys language uid,
-            // Instead of throwing the exeption we will use a fallback to the Site's default language.
+            // Instead of throwing the exception we will use a fallback to the Site's default language.
         }
 
         return $site->getDefaultLanguage();

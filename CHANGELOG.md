@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.4.2] - 2020-03-30
+### Added
+- Fix fallback locale handling (respect L query parameter)
+
 ## [2.4.1] - 2020-03-19
 ### Added
 - Fix missing import statement
