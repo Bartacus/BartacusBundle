@@ -119,14 +119,13 @@ class Renderer
      */
     public function handle(string $content, array $configuration): string
     {
-        $request = $this->requestStack->getCurrentRequest();
+        $request = $this->requestStack->getCurrentRequest()->duplicate();
 
         $request->attributes->set('data', $this->cObj->data);
         $request->attributes->set('_controller', $configuration['controller']);
-
         $request->headers->set('X-Php-Ob-Level', \ob_get_level());
 
-        // request
+        $this->requestStack->push($request);
         $event = new RequestEvent($this->kernel, $request, HttpKernel::SUB_REQUEST);
         $this->dispatcher->dispatch($event, KernelEvents::REQUEST);
 
@@ -202,6 +201,7 @@ class Renderer
         $event = new ResponseEvent($this->kernel, $request, $type, $response);
         $this->dispatcher->dispatch($event, KernelEvents::RESPONSE);
         $this->dispatcher->dispatch(new FinishRequestEvent($this->kernel, $request, $type), KernelEvents::FINISH_REQUEST);
+        $this->requestStack->pop();
 
         $request->attributes->remove('data');
         $request->attributes->set('_controller', 'typo3');
