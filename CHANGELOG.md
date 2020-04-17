@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.4.3] - 2020-04-17
+### Fixed
+- Keep master requests for subrequests
+
 ## [2.4.2] - 2020-03-30
 ### Added
 - Fix fallback locale handling (respect L query parameter)
@@ -221,7 +225,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/2.4.1...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/2.4.3...HEAD
+[2.4.3]: https://github.com/Bartacus/BartacusBundle/compare/2.4.2...2.4.3
+[2.4.2]: https://github.com/Bartacus/BartacusBundle/compare/2.4.1...2.4.2
 [2.4.1]: https://github.com/Bartacus/BartacusBundle/compare/2.4.0...2.4.1
 [2.4.0]: https://github.com/Bartacus/BartacusBundle/compare/2.3.3...2.4.0
 [2.3.3]: https://github.com/Bartacus/BartacusBundle/compare/2.3.2...2.3.3
