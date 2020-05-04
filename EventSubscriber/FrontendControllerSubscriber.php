@@ -25,7 +25,8 @@ namespace Bartacus\Bundle\BartacusBundle\EventSubscriber;
 
 use Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 use TYPO3\CMS\Core\Context\Context;
@@ -50,7 +51,7 @@ class FrontendControllerSubscriber implements EventSubscriberInterface
         $this->serviceBridge = $serviceBridge;
     }
 
-    public function onKernelRequest(GetResponseEvent $event): void
+    public function onKernelRequest(RequestEvent $event): void
     {
         if (Kernel::MASTER_REQUEST !== $event->getRequestType()) {
             return;

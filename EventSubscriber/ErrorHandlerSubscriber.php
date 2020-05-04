@@ -26,8 +26,8 @@ namespace Bartacus\Bundle\BartacusBundle\EventSubscriber;
 use Bartacus\Bundle\BartacusBundle\ConfigEvents;
 use Bartacus\Bundle\BartacusBundle\ErrorHandler\Typo3DebugExceptionHandler;
 use Bartacus\Bundle\BartacusBundle\ErrorHandler\Typo3ProductionExceptionHandler;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ErrorHandlerSubscriber implements EventSubscriberInterface
 {

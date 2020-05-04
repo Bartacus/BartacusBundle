@@ -23,7 +23,8 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+
+use Symfony\Contracts\EventDispatcher\Event;
 
 final class RequestMiddlewaresEvent extends Event
 {

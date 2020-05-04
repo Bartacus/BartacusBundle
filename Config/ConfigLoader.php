@@ -25,9 +25,9 @@ namespace Bartacus\Bundle\BartacusBundle\Config;
 
 use Bartacus\Bundle\BartacusBundle\ConfigEvents;
 use Bartacus\Bundle\BartacusBundle\Event\RequestMiddlewaresEvent;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Delegating central config loader called on various places within TYPO3

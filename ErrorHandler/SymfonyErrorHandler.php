@@ -23,7 +23,8 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\ErrorHandler;
 
-use Symfony\Component\Debug\ErrorHandler;
+
+use Symfony\Component\ErrorHandler\ErrorHandler;
 
 /**
  * The custom Symfony error handler is used when APP_DEBUG is true.
@@ -36,6 +37,6 @@ class SymfonyErrorHandler extends ErrorHandler
     {
         $this->fixOutputBuffer($exception);
 
-        return parent::handleException($exception, $error);
+        return parent::handleException($exception);
     }
 }
