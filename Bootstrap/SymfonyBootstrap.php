@@ -26,8 +26,7 @@ namespace Bartacus\Bundle\BartacusBundle\Bootstrap;
 use App\Kernel as AppKernel;
 use Bartacus\Bundle\BartacusBundle\ErrorHandler\SymfonyErrorHandler;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
-use Symfony\Component\Debug\BufferingLogger;
-use Symfony\Component\Debug\Debug;
+use Symfony\Component\ErrorHandler\BufferingLogger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Kernel;
@@ -50,7 +49,7 @@ final class SymfonyBootstrap
      */
     private static $response;
 
-    public static function getKernel(): ? Kernel
+    public static function getKernel(): ?Kernel
     {
         return self::$kernel;
     }
@@ -65,7 +64,7 @@ final class SymfonyBootstrap
 
         if ($_SERVER['APP_DEBUG']) {
             \umask(0000);
-            Debug::enable();
+            \Symfony\Component\ErrorHandler\Debug::enable();
         }
 
         // override the default Symfony Error Handler and use our own instead
@@ -117,19 +116,6 @@ final class SymfonyBootstrap
         self::$kernel->terminate(self::$request, self::$response);
     }
 
-    /**
-     * @internal
-     *
-     * @deprecated since 2.3.1, will be removed in 3.0, use {@see setRequestForTermination} and
-     *             {@see setResponseForTermination} instead
-     */
-    public static function setRequestResponseForTermination(Request $request, Response $response): void
-    {
-        @\trigger_error(\sprintf('%s since 2.3.1, will be removed in 3.0, use setRequestForTermination and setResponseForTermination instead', __METHOD__));
-
-        self::setRequestForTermination($request);
-        self::setResponseForTermination($response);
-    }
 
     /**
      * @internal

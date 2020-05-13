@@ -38,10 +38,6 @@ class BartacusRequestMiddlewaresSubscriber implements EventSubscriberInterface
                 'bartacus/symfony-route-resolver' => [
                     'target' => SymfonyRouteResolver::class,
                     'after' => [
-                        'typo3/cms-frontend/authentication',
-                        'typo3/cms-frontend/backend-user-authentication',
-                        'typo3/cms-frontend/tsfe',
-                        'typo3/cms-frontend/site',
                         'typo3/cms-frontend/static-route-resolver',
                         'typo3/cms-redirects/redirecthandler',
                     ],
@@ -54,9 +50,6 @@ class BartacusRequestMiddlewaresSubscriber implements EventSubscriberInterface
                     'target' => PrepareContentElementRenderer::class,
                     'after' => [
                         'typo3/cms-frontend/tsfe',
-                        'typo3/cms-frontend/site',
-                        'typo3/cms-frontend/page-resolver',
-                        'typo3/cms-frontend/page-argument-validator',
                         'typo3/cms-frontend/prepare-tsfe-rendering',
                     ],
                 ],

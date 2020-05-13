@@ -25,10 +25,12 @@ namespace Bartacus\Bundle\BartacusBundle\EventSubscriber;
 
 use Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Localization\Locales;
 use TYPO3\CMS\Core\Site\Entity\SiteInterface;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -50,7 +52,7 @@ class FrontendControllerSubscriber implements EventSubscriberInterface
         $this->serviceBridge = $serviceBridge;
     }
 
-    public function onKernelRequest(GetResponseEvent $event): void
+    public function onKernelRequest(RequestEvent $event): void
     {
         if (Kernel::MASTER_REQUEST !== $event->getRequestType()) {
             return;
@@ -88,7 +90,7 @@ class FrontendControllerSubscriber implements EventSubscriberInterface
                 );
 
                 $frontendController->settingLanguage();
-                $frontendController->settingLocale();
+                Locales::setSystemLocaleFromSiteLanguage($frontendController->getLanguage());
             }
         }
     }

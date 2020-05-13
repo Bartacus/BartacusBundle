@@ -25,8 +25,8 @@ namespace Bartacus\Bundle\BartacusBundle\EventSubscriber;
 
 use Bartacus\Bundle\BartacusBundle\ConfigEvents;
 use Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Contracts\EventDispatcher\Event;
 
 final class ContentElementConfigLoaderSubscriber implements EventSubscriberInterface
 {

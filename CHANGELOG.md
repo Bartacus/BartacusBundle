@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.0] - 2020-05-13
+### Changed
+- Release for TYPO3 10.4 LTS
+- Support for symfony 5.0
+### Removed
+- SymfonyBootstrap::setRequestResponseForTermination
+- SymfonyServiceForMakeInstanceLoader::addService method
+
 ## [2.4.3] - 2020-04-17
 ### Fixed
 - Keep master requests for subrequests
@@ -225,7 +233,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/2.4.3...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/3.0.0...HEAD
+[3.0.0]: https://github.com/Bartacus/BartacusBundle/compare/2.4.3...3.0.0
 [2.4.3]: https://github.com/Bartacus/BartacusBundle/compare/2.4.2...2.4.3
 [2.4.2]: https://github.com/Bartacus/BartacusBundle/compare/2.4.1...2.4.2
 [2.4.1]: https://github.com/Bartacus/BartacusBundle/compare/2.4.0...2.4.1

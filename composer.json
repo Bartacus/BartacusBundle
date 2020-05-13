@@ -9,6 +9,9 @@
             "name": "Emily Karisch"
         },
         {
+            "name": "Simon Kendler"
+        },
+        {
             "name": "pixelart GmbH",
             "homepage": "https://www.pixelart.at"
         }
@@ -17,30 +20,31 @@
         "php": "^7.2",
         "cweagans/composer-patches": "^1.6",
         "doctrine/annotations": "^1.6",
-        "helhum/typo3-console": "^5.7.1",
+        "helhum/typo3-console": "^6.1",
         "nyholm/psr7": "^1.1",
         "ocramius/proxy-manager": "^2.2",
         "psr/http-server-middleware": "^1.0",
-        "symfony/config": "^4.3",
-        "symfony/event-dispatcher": "^4.3",
-        "symfony/filesystem": "^4.3",
-        "symfony/finder": "^4.3",
-        "symfony/framework-bundle": "^4.3",
-        "symfony/http-foundation": "^4.3",
-        "symfony/http-kernel": "^4.3",
-        "symfony/proxy-manager-bridge": "^4.3",
-        "symfony/psr-http-message-bridge": "^1.0",
-        "typo3/cms-core": "^9.5",
-        "typo3/cms-extbase": "^9.5",
-        "typo3/cms-frontend": "^9.5",
-        "typo3/cms-install": "^9.5"
+        "symfony/config": "^5.0",
+        "symfony/event-dispatcher": "^5.0",
+        "symfony/filesystem": "^5.0",
+        "symfony/finder": "^5.0",
+        "symfony/framework-bundle": "^5.0",
+        "symfony/http-foundation": "^5.0",
+        "symfony/http-kernel": "^5.0",
+        "symfony/options-resolver": "^5.0",
+        "symfony/proxy-manager-bridge": "^5.0",
+        "symfony/psr-http-message-bridge": "^2.0",
+        "typo3/cms-core": "^10.4",
+        "typo3/cms-extbase": "^10.4",
+        "typo3/cms-frontend": "^10.4",
+        "typo3/cms-install": "^10.4"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.5",
-        "symfony/debug": "^4.3",
-        "symfony/twig-bundle": "^4.3",
-        "typo3/cms-redirects": "^9.5",
-        "typo3/cms-scheduler": "^9.5"
+        "symfony/debug": "^4.4",
+        "symfony/twig-bundle": "^5.0",
+        "typo3/cms-redirects": "^10.4",
+        "typo3/cms-scheduler": "^10.4"
     },
     "conflict": {
         "jms/di-extra-bundle": "*"
@@ -55,27 +59,27 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.4.x-dev"
+            "dev-master": "3.0.x-dev"
         },
         "patches": {
             "typo3/cms-backend": {
-                "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/9.5...Bartacus:patch/9.5/backend/bartacus-entry-script.patch"
+                "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/v10.4.1...Bartacus:patch/10.4/backend/bartacus-entry-script.patch"
             },
             "typo3/cms-core": {
-                "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/9.5...Bartacus:patch/9.5/core/bartacus-entry-script.patch",
-                "Make TYPO3 own PSR-7 implementation really compliant": "https://github.com/TYPO3/TYPO3.CMS/compare/9.5...Bartacus:patch/9.5/core/psr7-compliance.patch"
+                "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/v10.4.1...Bartacus:patch/10.4/core/bartacus-entry-script.patch",
+                "Make TYPO3 own PSR-7 implementation really compliant": "https://github.com/TYPO3/TYPO3.CMS/compare/v10.4.1...Bartacus:patch/10.4/core/psr7-compliance.patch"
             },
             "typo3/cms-frontend": {
-                "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/9.5...Bartacus:patch/9.5/frontend/bartacus-entry-script.patch"
+                "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/v10.4.1...Bartacus:patch/10.4/frontend/bartacus-entry-script.patch"
             },
             "typo3/cms-install": {
-                "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/9.5...Bartacus:patch/9.5/install/bartacus-entry-script.patch"
+                "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/v10.4.1...Bartacus:patch/10.4/install/bartacus-entry-script.patch"
             },
             "typo3/cms-cli": {
                 "Patch entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/cms-cli/compare/master...Bartacus:patch/2.0.0/bartacus-entry-script.patch"
             },
             "helhum/typo3-console": {
-                "Patch console entry script for proper Symfony kernel bootstrap": "https://github.com/Bartacus/TYPO3-Console/compare/v5.7.0...patch/5.7/bartacus-entry-script.patch"
+                "Patch console entry script for proper Symfony kernel bootstrap": "https://github.com/Bartacus/TYPO3-Console/compare/v6.1.0...patch/6.1/bartacus-entry-script.patch"
             }
         },
         "enable-patching": true

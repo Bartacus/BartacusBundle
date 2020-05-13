@@ -48,16 +48,6 @@ final class SymfonyServiceForMakeInstanceLoader
         $this->serviceLocator = $serviceLocator;
     }
 
-    /**
-     * @deprecated since 2.3, will be removed in 3.0, use the bartacus.make_instance tag with alias attribute instead.
-     */
-    public function addService(string $className, object $instance): void
-    {
-        @\trigger_error(\sprintf('%s is deprecated since 2.3, will be removed in 3.0, use the bartacus.make_instance tag with alias attribute instead.', __METHOD__));
-
-        $this->classNames[] = $className;
-        $this->serviceLocator[$className] = $instance;
-    }
 
     /**
      * Loads all registered instances into the {@see GeneralUtility::makeInstance()} singleton cache.
