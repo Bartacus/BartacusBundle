@@ -115,7 +115,8 @@ class TaskProxyUpdateWizard implements UpgradeWizardInterface, RepeatableInterfa
                     // replace the serialized class name string
                     $serializedTaskObject = \preg_replace(
                         '/^'.\str_replace('\\', '\\\\', $search).'[a-f0-9]{32}"/',
-                        $replace, $serializedTaskObject,
+                        $replace,
+                        $serializedTaskObject,
                         1
                     );
 

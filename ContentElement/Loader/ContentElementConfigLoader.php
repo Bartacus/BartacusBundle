@@ -189,7 +189,8 @@ final class ContentElementConfigLoader implements WarmableInterface
         }
 
         $cache = $this->getConfigCacheFactory()
-            ->cache($this->options['cache_dir'].'/content_elements.typoscript',
+            ->cache(
+                $this->options['cache_dir'].'/content_elements.typoscript',
                 function (ConfigCacheInterface $cache) {
                     $cache->write(
                         $this->concatenateTypoScript(),
