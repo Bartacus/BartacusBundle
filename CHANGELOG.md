@@ -5,10 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Load event for extbase persistence classes
 
 ## [3.0.1] - 2020-05-14
 ### Added
-- Added load events for extension localconf and tables files
+- Load events for extension localconf and tables files
 
 ## [3.0.0] - 2020-05-13
 ### Changed

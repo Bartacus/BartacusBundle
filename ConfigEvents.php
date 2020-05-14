@@ -61,4 +61,12 @@ final class ConfigEvents
      * @Event("Bartacus\Bundle\BartacusBundle\Event\ExtensionTablesLoadEvent")
      */
     public const EXTENSION_LOCAL_CONF = 'bartacus.config.ext_localconf';
+
+    /**
+     * The REQUEST_EXTBASE_PERSISTENCE_CLASSES event occurs at when the request the extbase persistence classes
+     * of the app extension are loaded.
+     *
+     * @Event("Bartacus\Bundle\BartacusBundle\Event\RequestExtbasePersistenceClassesEvent")
+     */
+    public const REQUEST_EXTBASE_PERSISTENCE_CLASSES = 'bartacus.config.request_extbase_persistence_classes';
 }

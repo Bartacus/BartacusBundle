@@ -26,6 +26,7 @@ namespace Bartacus\Bundle\BartacusBundle\Config;
 use Bartacus\Bundle\BartacusBundle\ConfigEvents;
 use Bartacus\Bundle\BartacusBundle\Event\ExtensionLocalConfLoadEvent;
 use Bartacus\Bundle\BartacusBundle\Event\ExtensionTablesLoadEvent;
+use Bartacus\Bundle\BartacusBundle\Event\RequestExtbasePersistenceClassesEvent;
 use Bartacus\Bundle\BartacusBundle\Event\RequestMiddlewaresEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
@@ -70,5 +71,13 @@ class ConfigLoader
     public function loadFromExtensionLocalConf(string $extension = self::DEFAULT_EXTENSION): void
     {
         $this->eventDispatcher->dispatch(new ExtensionLocalConfLoadEvent($extension), ConfigEvents::EXTENSION_LOCAL_CONF);
+    }
+
+    public function loadFromRequestExtbasePersistenceClasses(): array
+    {
+        $event = new RequestExtbasePersistenceClassesEvent();
+        $this->eventDispatcher->dispatch($event, ConfigEvents::REQUEST_EXTBASE_PERSISTENCE_CLASSES);
+
+        return $event->getExtbasePersistenceClasses();
     }
 }
