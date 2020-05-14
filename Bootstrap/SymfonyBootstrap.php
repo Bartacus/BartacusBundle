@@ -116,7 +116,6 @@ final class SymfonyBootstrap
         self::$kernel->terminate(self::$request, self::$response);
     }
 
-
     /**
      * @internal
      */

@@ -14,7 +14,6 @@ enabled:
     - no_null_property_initialization
     - no_php4_constructor
     - no_superfluous_elseif
-    - no_unneeded_curly_braces
     - no_unneeded_final_method
     - no_unreachable_default_argument_value
     - no_useless_else

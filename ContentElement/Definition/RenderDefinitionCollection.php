@@ -61,9 +61,6 @@ class RenderDefinitionCollection implements \IteratorAggregate, \Countable
         return \count($this->renderDefinitions);
     }
 
-    /**
-     * @param RenderDefinition $renderDefinition
-     */
     public function add(RenderDefinition $renderDefinition)
     {
         $this->renderDefinitions[] = $renderDefinition;

@@ -25,7 +25,6 @@ namespace Bartacus\Bundle\BartacusBundle\EventSubscriber;
 
 use Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;

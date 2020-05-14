@@ -48,7 +48,6 @@ final class SymfonyServiceForMakeInstanceLoader
         $this->serviceLocator = $serviceLocator;
     }
 
-
     /**
      * Loads all registered instances into the {@see GeneralUtility::makeInstance()} singleton cache.
      */

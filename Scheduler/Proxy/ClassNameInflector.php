@@ -48,9 +48,6 @@ final class ClassNameInflector implements ClassNameInflectorInterface
      */
     private $parameterHasher;
 
-    /**
-     * @param string $proxyNamespace
-     */
     public function __construct(string $proxyNamespace)
     {
         $this->proxyNamespace = $proxyNamespace;

@@ -52,25 +52,16 @@ class RenderDefinition
         $this->controller = $controller;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return bool
-     */
     public function isCached(): bool
     {
         return $this->cached;
     }
 
-    /**
-     * @return string
-     */
     public function getController(): string
     {
         return $this->controller;

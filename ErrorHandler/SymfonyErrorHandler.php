@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\ErrorHandler;
 
-
 use Symfony\Component\ErrorHandler\ErrorHandler;
 
 /**

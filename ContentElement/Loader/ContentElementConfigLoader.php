@@ -108,10 +108,7 @@ final class ContentElementConfigLoader implements WarmableInterface
         }
 
         if ($invalid) {
-            throw new \InvalidArgumentException(\sprintf(
-                'The Content Element loader does not support the following options: "%s".',
-                \implode('", "', $invalid)
-            ));
+            throw new \InvalidArgumentException(\sprintf('The Content Element loader does not support the following options: "%s".', \implode('", "', $invalid)));
         }
     }
 
@@ -184,8 +181,6 @@ final class ContentElementConfigLoader implements WarmableInterface
      * itself without adding them to the template.
      *
      * @throws \Exception
-     *
-     * @return string
      */
     private function loadTypoScript(): string
     {
@@ -238,9 +233,6 @@ EOTS;
         return $startingConfig.\implode("\n\n", $typoScripts);
     }
 
-    /**
-     * @return RenderDefinitionCollection
-     */
     private function getRenderDefinitionCollection(): RenderDefinitionCollection
     {
         if (null === $this->collection) {
@@ -250,11 +242,6 @@ EOTS;
         return $this->collection;
     }
 
-    /**
-     * @param \Bartacus\Bundle\BartacusBundle\ContentElement\Definition\RenderDefinition $renderDefinition
-     *
-     * @return string
-     */
     private function renderPluginContent(RenderDefinition $renderDefinition): string
     {
         $pluginSignature = $renderDefinition->getName();

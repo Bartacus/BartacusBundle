@@ -44,8 +44,6 @@ class ServiceBridge
     /**
      * Wrapper around {@see GeneralUtility::makeInstance()}.
      *
-     * @param string $className
-     *
      * @return object
      */
     public function makeInstance(string $className)
@@ -65,8 +63,6 @@ class ServiceBridge
     /**
      * Get a TYPO3 global into the service container.
      *
-     * @param string $global
-     *
      * @return mixed
      */
     public function getGlobal(string $global)
@@ -74,9 +70,6 @@ class ServiceBridge
         return $GLOBALS[$global];
     }
 
-    /**
-     * @return ContentObjectRenderer
-     */
     public function getContentObjectRenderer(): ContentObjectRenderer
     {
         /** @var TypoScriptFrontendController $frontendController */
@@ -85,9 +78,6 @@ class ServiceBridge
         return $frontendController->cObj;
     }
 
-    /**
-     * @return PageRepository
-     */
     public function getPageRepository(): PageRepository
     {
         /** @var TypoScriptFrontendController $frontendController */
