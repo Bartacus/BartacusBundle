@@ -24,6 +24,8 @@ declare(strict_types=1);
 namespace Bartacus\Bundle\BartacusBundle\Config;
 
 use Bartacus\Bundle\BartacusBundle\ConfigEvents;
+use Bartacus\Bundle\BartacusBundle\Event\ExtensionLocalConfLoadEvent;
+use Bartacus\Bundle\BartacusBundle\Event\ExtensionTablesLoadEvent;
 use Bartacus\Bundle\BartacusBundle\Event\RequestMiddlewaresEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
@@ -35,6 +37,8 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class ConfigLoader
 {
+    public const DEFAULT_EXTENSION = 'app';
+
     /**
      * @var EventDispatcherInterface
      */
@@ -56,5 +60,15 @@ class ConfigLoader
         $this->eventDispatcher->dispatch($event, ConfigEvents::REQUEST_MIDDLEWARES);
 
         return $event->getRequestMiddlewares();
+    }
+
+    public function loadFromExtensionTables(string $extension = self::DEFAULT_EXTENSION): void
+    {
+        $this->eventDispatcher->dispatch(new ExtensionTablesLoadEvent($extension), ConfigEvents::EXTENSION_TABLES);
+    }
+
+    public function loadFromExtensionLocalConf(string $extension = self::DEFAULT_EXTENSION): void
+    {
+        $this->eventDispatcher->dispatch(new ExtensionLocalConfLoadEvent($extension), ConfigEvents::EXTENSION_LOCAL_CONF);
     }
 }

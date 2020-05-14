@@ -45,4 +45,20 @@ final class ConfigEvents
      * @Event("Bartacus\Bundle\BartacusBundle\Event\RequestMiddlewaresEvent")
      */
     public const REQUEST_MIDDLEWARES = 'bartacus.config.request_middlewares';
+
+    /**
+     * The EXTENSION_TABLES event occurs at when the extension tables file
+     * of the app extension are loaded.
+     *
+     * @Event("Bartacus\Bundle\BartacusBundle\Event\ExtensionTablesLoadEvent")
+     */
+    public const EXTENSION_TABLES = 'bartacus.config.ext_tables';
+
+    /**
+     * The EXTENSION_LOCALCONF event occurs at when the request extension localconf file
+     * of the app extension are loaded.
+     *
+     * @Event("Bartacus\Bundle\BartacusBundle\Event\ExtensionTablesLoadEvent")
+     */
+    public const EXTENSION_LOCAL_CONF = 'bartacus.config.ext_localconf';
 }
