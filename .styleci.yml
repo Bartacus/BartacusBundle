@@ -27,7 +27,6 @@ enabled:
     - phpdoc_order
     - short_array_syntax
     - short_list_syntax
-    - semicolon_after_instruction
     - strict_comparison
     - strict_param
     - ternary_to_null_coalescing
