@@ -53,8 +53,6 @@ class ErrorHandlerSubscriber implements EventSubscriberInterface
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler'] = Typo3DebugExceptionHandler::class;
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler'] = Typo3ProductionExceptionHandler::class;
         }
-
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['errorHandler'] = '';
     }
 
     public static function getSubscribedEvents(): array
