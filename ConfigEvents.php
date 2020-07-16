@@ -66,7 +66,17 @@ final class ConfigEvents
      * The REQUEST_EXTBASE_PERSISTENCE_CLASSES event occurs at when the request the extbase persistence classes
      * of the app extension are loaded.
      *
+     * @deprecated since 3.0.3, will be removed in 3.1.0
+     *
      * @Event("Bartacus\Bundle\BartacusBundle\Event\RequestExtbasePersistenceClassesEvent")
      */
     public const REQUEST_EXTBASE_PERSISTENCE_CLASSES = 'bartacus.config.request_extbase_persistence_classes';
+
+    /**
+     * The EXTBASE_PERSISTENCE_CLASSES event occurs at when the request the extbase persistence classes
+     * of the app extension are loaded.
+     *
+     * @Event("Bartacus\Bundle\BartacusBundle\Event\ExtbasePersistenceClassesEvent")
+     */
+    public const EXTBASE_PERSISTENCE_CLASSES = 'bartacus.config.extbase_persistence_classes';
 }

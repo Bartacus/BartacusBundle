@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace Bartacus\Bundle\BartacusBundle\Config;
 
 use Bartacus\Bundle\BartacusBundle\ConfigEvents;
+use Bartacus\Bundle\BartacusBundle\Event\ExtbasePersistenceClassesEvent;
 use Bartacus\Bundle\BartacusBundle\Event\ExtensionLocalConfLoadEvent;
 use Bartacus\Bundle\BartacusBundle\Event\ExtensionTablesLoadEvent;
 use Bartacus\Bundle\BartacusBundle\Event\RequestExtbasePersistenceClassesEvent;
@@ -73,10 +74,21 @@ class ConfigLoader
         $this->eventDispatcher->dispatch(new ExtensionLocalConfLoadEvent($extension), ConfigEvents::EXTENSION_LOCAL_CONF);
     }
 
+    /**
+     * @deprecated since 3.0.3, will be removed in 3.1.0
+     */
     public function loadFromRequestExtbasePersistenceClasses(): array
     {
         $event = new RequestExtbasePersistenceClassesEvent();
         $this->eventDispatcher->dispatch($event, ConfigEvents::REQUEST_EXTBASE_PERSISTENCE_CLASSES);
+
+        return $event->getExtbasePersistenceClasses();
+    }
+
+    public function loadExtbasePersistenceClasses(): array
+    {
+        $event = new ExtbasePersistenceClassesEvent();
+        $this->eventDispatcher->dispatch($event, ConfigEvents::EXTBASE_PERSISTENCE_CLASSES);
 
         return $event->getExtbasePersistenceClasses();
     }

@@ -21,27 +21,20 @@ declare(strict_types=1);
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Bundle\BartacusBundle\Event;
+namespace Bartacus\Bundle\BartacusBundle\RequestHandler;
 
-use Symfony\Contracts\EventDispatcher\Event;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use TYPO3\CMS\Core\Http\HtmlResponse;
 
-/**
- * @deprecated since 3.0.3, will be removed in 3.1.0
- */
-final class RequestExtbasePersistenceClassesEvent extends Event
+class DummyRequestHandler implements RequestHandlerInterface
 {
     /**
-     * @var array
+     * Returns always an empty HtmlResponse.
      */
-    private $extbasePersistenceClasses = [[]];
-
-    public function getExtbasePersistenceClasses(): array
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        return \array_replace_recursive(...$this->extbasePersistenceClasses);
-    }
-
-    public function addExtbasePersistenceClasses(array $extbasePersistenceClasses): void
-    {
-        $this->extbasePersistenceClasses[] = $extbasePersistenceClasses;
+        return new HtmlResponse('');
     }
 }

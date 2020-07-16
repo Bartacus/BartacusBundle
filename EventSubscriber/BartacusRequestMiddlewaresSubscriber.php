@@ -38,7 +38,6 @@ class BartacusRequestMiddlewaresSubscriber implements EventSubscriberInterface
                 'bartacus/symfony-route-resolver' => [
                     'target' => SymfonyRouteResolver::class,
                     'after' => [
-                        'typo3/cms-frontend/static-route-resolver',
                         'typo3/cms-redirects/redirecthandler',
                     ],
                     'before' => [
