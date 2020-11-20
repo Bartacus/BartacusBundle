@@ -26,7 +26,6 @@ namespace Bartacus\Bundle\BartacusBundle\ContentElement;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -101,7 +100,7 @@ class Renderer
         $this->kernel = $kernel;
         $this->resolver = $resolver;
         $this->argumentResolver = $argumentResolver;
-        $this->dispatcher = LegacyEventDispatcherProxy::decorate($eventDispatcher);
+        $this->dispatcher = $eventDispatcher;
         $this->errorController = $errorController;
 
         $psr17Factory = new Psr17Factory();
