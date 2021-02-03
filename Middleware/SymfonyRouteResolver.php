@@ -41,6 +41,7 @@ use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Routing\RouteNotFoundException;
 use TYPO3\CMS\Core\Routing\SiteRouteResult;
+use TYPO3\CMS\Core\Site\Entity\NullSite;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Frontend\Middleware\TypoScriptFrontendInitialization;
 
@@ -124,7 +125,7 @@ class SymfonyRouteResolver implements MiddlewareInterface
         }
         /** @var Site $site */
         $site = $request->getAttribute('site', null);
-        if (!$site) {
+        if (!$site || $site instanceof NullSite) {
             return;
         }
 
