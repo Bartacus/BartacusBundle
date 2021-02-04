@@ -38,6 +38,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Context\LanguageAspectFactory;
 use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Routing\RouteNotFoundException;
 use TYPO3\CMS\Core\Routing\SiteRouteResult;
@@ -146,6 +147,12 @@ class SymfonyRouteResolver implements MiddlewareInterface
             // route cannot be found if it's a symfony route
         }
         $request = $request->withAttribute('routing', $pageArguments);
+
+        // set language aspect
+        $language = $request->getAttribute('language', $site->getDefaultLanguage());
+        $languageAspect = LanguageAspectFactory::createFromSiteLanguage($language);
+        $this->context->setAspect('language', $languageAspect);
+
         $this->frontendInitialization->process($request, $this->dummyRequestHandler);
         // unset the changes
         $request = $request->withAttribute('routing', $previousRouting);
