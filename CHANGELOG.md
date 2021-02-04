@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [3.1.2] - 2021-02-04
+### Fixed
+- Set correct language for language aspect for symfony routes
+
 ## [3.1.1] - 2021-02-03
 ### Fixed
 - Check for NullSite in Symfony Route resolver
@@ -265,8 +269,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/3.1.1...HEAD
-[3.1.0]: https://github.com/Bartacus/BartacusBundle/compare/3.1.0...3.1.1
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/3.1.2...HEAD
+[3.1.2]: https://github.com/Bartacus/BartacusBundle/compare/3.1.1...3.1.2
+[3.1.1]: https://github.com/Bartacus/BartacusBundle/compare/3.1.0...3.1.1
 [3.1.0]: https://github.com/Bartacus/BartacusBundle/compare/3.0.4...3.1.0
 [3.0.4]: https://github.com/Bartacus/BartacusBundle/compare/3.0.3...3.0.4
 [3.0.3]: https://github.com/Bartacus/BartacusBundle/compare/3.0.2...3.0.3
