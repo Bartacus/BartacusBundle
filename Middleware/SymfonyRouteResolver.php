@@ -110,6 +110,8 @@ class SymfonyRouteResolver implements MiddlewareInterface
             return $handler->handle($request);
         }
 
+        $this->initializeTemporaryTSFE($request);
+
         $symfonyRequest = $this->httpFoundationFactory->createRequest($request);
         SymfonyBootstrap::setRequestForTermination($symfonyRequest);
 
@@ -159,25 +161,17 @@ class SymfonyRouteResolver implements MiddlewareInterface
         $GLOBALS['TYPO3_REQUEST'] = $request;
     }
 
-    private function removeTemporaryTSFE(): void
-    {
-        unset($GLOBALS['TSFE']);
-    }
-
     private function handleWithSymfony(ServerRequestInterface $request): bool
     {
         $fakeRequest = $this->createFakeRequest($request);
 
         try {
             $this->router->getContext()->fromRequest($fakeRequest);
-            $this->initializeTemporaryTSFE($request);
             $this->router->matchRequest($fakeRequest);
         } catch (ResourceNotFoundException $e) {
-            $this->removeTemporaryTSFE();
 
             return false;
         } catch (MethodNotAllowedException $e) {
-            $this->removeTemporaryTSFE();
 
             return false;
         }
