@@ -87,7 +87,7 @@
             <argument>TSFE</argument>
         </service>
 
-        <service id="TYPO3\CMS\Frontend\Page\PageRepository" shared="false">
+        <service id="TYPO3\CMS\Core\Domain\Repository\PageRepository" shared="false">
             <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="getPageRepository" />
         </service>
 
