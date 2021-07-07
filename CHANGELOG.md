@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [3.0.8] - 2021-07-07
+### Fixed
+- Always use main request as parent for content element subrequests
+
+## [3.0.7] - 2021-06-17
+### Fixed
+- Initialize TSFE only for symfony stack
+
 ## [3.0.6] - 2021-02-04
 ### Fixed
 - Set correct language for language aspect for symfony routes
@@ -262,7 +270,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/3.0.6...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/3.0.8...HEAD
+[3.0.8]: https://github.com/Bartacus/BartacusBundle/compare/3.0.7...3.0.8
+[3.0.7]: https://github.com/Bartacus/BartacusBundle/compare/3.0.6...3.0.7
 [3.0.6]: https://github.com/Bartacus/BartacusBundle/compare/3.0.5...3.0.6
 [3.0.5]: https://github.com/Bartacus/BartacusBundle/compare/3.0.4...3.0.5
 [3.0.4]: https://github.com/Bartacus/BartacusBundle/compare/3.0.3...3.0.4
