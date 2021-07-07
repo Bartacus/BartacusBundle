@@ -118,7 +118,7 @@ class Renderer
      */
     public function handle(string $content, array $configuration): string
     {
-        $request = $this->requestStack->getCurrentRequest()->duplicate();
+        $request = $this->requestStack->getMainRequest()->duplicate();
 
         $request->attributes->set('data', $this->cObj->data);
         $request->attributes->set('_controller', $configuration['controller']);
