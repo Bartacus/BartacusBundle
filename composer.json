@@ -17,10 +17,10 @@
         }
     ],
     "require": {
-        "php": "^7.4",
+        "php": "^7.4 || ^8.0",
         "cweagans/composer-patches": "^1.6",
         "doctrine/annotations": "^1.6",
-        "helhum/typo3-console": "^6.1",
+        "helhum/typo3-console": "^6.1 || ^7.0",
         "nyholm/psr7": "^1.1",
         "ocramius/proxy-manager": "^2.2",
         "psr/http-server-middleware": "^1.0",
