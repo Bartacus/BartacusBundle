@@ -96,7 +96,7 @@
             <argument>TYPO3\CMS\Core\Registry</argument>
         </service>
 
-        <service id="TYPO3\CMS\Core\Database\ConnectionPool" shared="false">
+        <service id="TYPO3\CMS\Core\Database\ConnectionPool" shared="false" public="true">
             <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
             <argument>TYPO3\CMS\Core\Database\ConnectionPool</argument>
         </service>
