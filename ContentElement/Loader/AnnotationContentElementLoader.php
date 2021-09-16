@@ -193,8 +193,6 @@ final class AnnotationContentElementLoader
             throw new \InvalidArgumentException(\sprintf('The file "%s" does not contain PHP code. Did you forgot to add the "<?php" start tag at the beginning of the file?', $file));
         }
 
-        $nameSpaceStringToken = defined('T_NAME_QUALIFIED') ? T_NAME_QUALIFIED : T_STRING;
-
         for ($i = 0; isset($tokens[$i]); ++$i) {
             $token = $tokens[$i];
 
@@ -203,11 +201,10 @@ final class AnnotationContentElementLoader
             }
 
             if (true === $class && T_STRING === $token[0]) {
-
                 return $namespace.'\\'.$token[1];
             }
 
-            if (true === $namespace && $nameSpaceStringToken === $token[0]) {
+            if (true === $namespace && T_STRING === $token[0]) {
                 $namespace = $token[1];
                 while (isset($tokens[++$i][1]) && \in_array($tokens[$i][0], [T_NS_SEPARATOR, T_STRING], true)) {
                     $namespace .= $tokens[$i][1];
