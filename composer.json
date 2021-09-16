@@ -25,7 +25,6 @@
         "psr/http-server-middleware": "^1.0",
         "symfony/config": "^5.2",
         "symfony/event-dispatcher": "^5.2",
-        "symfony/filesystem": "^5.2",
         "symfony/finder": "^5.2",
         "symfony/framework-bundle": "^5.2",
         "symfony/http-foundation": "^5.2",
@@ -42,8 +41,7 @@
         "friendsofphp/php-cs-fixer": "^2.5",
         "symfony/debug": "^4.2",
         "symfony/twig-bundle": "^5.2",
-        "typo3/cms-redirects": "^11.2",
-        "typo3/cms-scheduler": "^11.2"
+        "typo3/cms-redirects": "^11.2"
     },
     "conflict": {
         "jms/di-extra-bundle": "*",
