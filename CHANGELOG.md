@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.2.0] - 2021-10-06
+### Added
+- TYPO3 v11.5 support
+- PHP 8.0 support
+
+### Changed
+- Marked ConnectionPool as public service
+- Refactor request locale handling
+
 ### Removed
 - Scheduler `TaskInterface` for DI usage in TYPO3 scheduler tasks with proxy classes
 
@@ -286,7 +295,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/3.1.5...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/3.2.0...HEAD
+[3.1.5]: https://github.com/Bartacus/BartacusBundle/compare/3.1.5...3.2.0
 [3.1.5]: https://github.com/Bartacus/BartacusBundle/compare/3.1.4...3.1.5
 [3.1.4]: https://github.com/Bartacus/BartacusBundle/compare/3.1.3...3.1.4
 [3.1.3]: https://github.com/Bartacus/BartacusBundle/compare/3.1.2...3.1.3
