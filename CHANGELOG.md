@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Removed
+- Scheduler `TaskInterface` for DI usage in TYPO3 scheduler tasks with proxy classes
+
 ## [3.1.5] - 2021-07-07
 ### Fixed
 - Always use main request as parent for content element subrequests
