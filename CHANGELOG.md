@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.2.1] - 2022-11-17
+### Added
+- New fallback to resolve CType annotation name by extbase model
+
 ## [3.2.0] - 2021-10-06
 ### Added
 - TYPO3 v11.5 support
@@ -295,7 +299,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/3.2.0...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/3.2.1...HEAD
+[3.1.5]: https://github.com/Bartacus/BartacusBundle/compare/3.2.0...3.2.1
 [3.1.5]: https://github.com/Bartacus/BartacusBundle/compare/3.1.5...3.2.0
 [3.1.5]: https://github.com/Bartacus/BartacusBundle/compare/3.1.4...3.1.5
 [3.1.4]: https://github.com/Bartacus/BartacusBundle/compare/3.1.3...3.1.4
