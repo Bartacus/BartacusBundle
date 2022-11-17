@@ -30,6 +30,7 @@ use Doctrine\Common\Annotations\Reader;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 final class AnnotationContentElementLoader
 {
@@ -137,6 +138,25 @@ final class AnnotationContentElementLoader
 
     private function getDefaultName(\ReflectionClass $class, \ReflectionMethod $method): string
     {
+        // loop through all parameters of the annotated method
+        foreach ($method->getParameters() as $parameter) {
+            // skip strings, numbers, boolean and arrays
+            if ($parameter->getType()->isBuiltin()) {
+                continue;
+            }
+
+            // get the parameter's class name
+            $parameterReflectionClass = new \ReflectionClass($parameter->getType()->getName());
+
+            // check if the class extends the TYPO3 extbase entity and has our static 'getRecordType' to read its CType
+            if ($parameterReflectionClass->isSubclassOf(AbstractEntity::class) && $parameterReflectionClass->hasMethod('getRecordType')) {
+                return ($parameterReflectionClass->getName())::getRecordType();
+            }
+        }
+
+        // fallback if no name is provided within the annotation itself as the method does not use any extbase model
+        // e.g. still use 'array $data' without a specific annotation name
+
         $name = \mb_strtolower(\str_replace('\\', '_', $class->name).'_'.$method->name);
         if ($this->defaultRenderDefinitionIndex > 0) {
             $name .= '_'.$this->defaultRenderDefinitionIndex;
