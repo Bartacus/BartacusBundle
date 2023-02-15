@@ -25,27 +25,11 @@ namespace Bartacus\Bundle\BartacusBundle\ContentElement\Definition;
 
 class RenderDefinition
 {
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
+    private bool $cached;
+    private string $controller;
 
-    /**
-     * @var bool
-     */
-    private $cached;
-
-    /**
-     * @var string
-     */
-    private $controller;
-
-    /**
-     * @param string $name
-     * @param bool   $cached
-     * @param string $controller
-     */
-    public function __construct($name, $cached, $controller)
+    public function __construct(string $name, bool $cached, string $controller)
     {
         $this->name = $name;
         $this->cached = $cached;

@@ -31,6 +31,9 @@ use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
 
 class BartacusExtension extends Extension
 {
+    /**
+     * @throws \Exception
+     */
     public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new XmlFileLoader(

@@ -23,42 +23,43 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Typo3;
 
+use Psr\Container\ContainerExceptionInterface;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class MakeInstanceServiceLocator implements \ArrayAccess
 {
-    /**
-     * @var ServiceLocator
-     */
-    private $serviceLocator;
+    private ServiceLocator $serviceLocator;
 
     /**
      * @var object[]
      */
-    private $singletonInstances = [];
+    private array $singletonInstances = [];
 
     public function __construct(ServiceLocator $serviceLocator)
     {
         $this->serviceLocator = $serviceLocator;
     }
 
-    public function offsetExists($id): bool
+    public function offsetExists($offset): bool
     {
-        return $this->serviceLocator->has($id) || isset($this->singletonInstances[$id]);
+        return $this->serviceLocator->has($offset) || isset($this->singletonInstances[$offset]);
     }
 
-    public function offsetGet($id): object
+    /**
+     * @throws ContainerExceptionInterface
+     */
+    public function offsetGet($offset): object
     {
-        return $this->serviceLocator->has($id) ? $this->serviceLocator->get($id) : $this->singletonInstances[$id];
+        return $this->serviceLocator->has($offset) ? $this->serviceLocator->get($offset) : $this->singletonInstances[$offset];
     }
 
-    public function offsetSet($id, $service): void
+    public function offsetSet($offset, $value): void
     {
-        $this->singletonInstances[$id] = $service;
+        $this->singletonInstances[$offset] = $value;
     }
 
-    public function offsetUnset($id): void
+    public function offsetUnset($offset): void
     {
-        unset($this->singletonInstances[$id]);
+        unset($this->singletonInstances[$offset]);
     }
 }

@@ -31,15 +31,8 @@ namespace Bartacus\Bundle\BartacusBundle\Annotation;
  */
 final class ContentElement
 {
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var bool
-     */
-    private $cached = true;
+    private ?string $name = null;
+    private bool $cached = true;
 
     public function __construct(array $options = [])
     {

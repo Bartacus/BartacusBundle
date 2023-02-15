@@ -40,52 +40,15 @@ use TYPO3\CMS\Core\Site\SiteFinder;
  */
 class LocaleSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var RequestContextAwareInterface|null
-     */
-    private $router;
+    private RequestStack $requestStack;
+    private string $defaultLocale;
+    private ?RequestContextAwareInterface $router;
 
-    /**
-     * @var string
-     */
-    private $defaultLocale;
-
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
-    /**
-     * @param RequestStack                      $requestStack  A RequestStack instance
-     * @param string                            $defaultLocale The default locale
-     * @param RequestContextAwareInterface|null $router        The router
-     */
-    public function __construct(RequestStack $requestStack, string $defaultLocale = 'en', RequestContextAwareInterface $router = null)
+    public function __construct(RequestStack $requestStack, string $defaultLocale = 'en', ?RequestContextAwareInterface $router = null)
     {
-        $this->defaultLocale = $defaultLocale;
         $this->requestStack = $requestStack;
+        $this->defaultLocale = $defaultLocale;
         $this->router = $router;
-    }
-
-    public function onKernelRequest(RequestEvent $event): void
-    {
-        $request = $event->getRequest();
-        $request->setDefaultLocale($this->defaultLocale);
-
-        // the locale should only be resolved and set for the master request and not for its sub requests too
-        if ($event->isMasterRequest()) {
-            $this->setLocale($request);
-        }
-    }
-
-    public function onKernelFinishRequest(FinishRequestEvent $event): void
-    {
-        if (null !== $parentRequest = $this->requestStack->getParentRequest()) {
-            // the locale should only be resolved and set for the master request and not for its sub requests too
-            if ($event->isMasterRequest()) {
-                $this->setLocale($parentRequest);
-            }
-        }
     }
 
     public static function getSubscribedEvents(): array
@@ -95,6 +58,27 @@ class LocaleSubscriber implements EventSubscriberInterface
             KernelEvents::REQUEST => [['onKernelRequest', 16]],
             KernelEvents::FINISH_REQUEST => [['onKernelFinishRequest', 0]],
         ];
+    }
+
+    public function onKernelRequest(RequestEvent $event): void
+    {
+        $request = $event->getRequest();
+        $request->setDefaultLocale($this->defaultLocale);
+
+        // the locale should only be resolved and set for the master request and not for its sub requests too
+        if ($event->isMainRequest()) {
+            $this->setLocale($request);
+        }
+    }
+
+    public function onKernelFinishRequest(FinishRequestEvent $event): void
+    {
+        $parentRequest = $this->requestStack->getParentRequest();
+
+        // the locale should only be resolved and set for the master request and not for its sub requests too
+        if (null !== $parentRequest && $event->isMainRequest()) {
+            $this->setLocale($parentRequest);
+        }
     }
 
     private function setLocale(Request $request): void
@@ -119,7 +103,7 @@ class LocaleSubscriber implements EventSubscriberInterface
 
         if (null !== $this->router) {
             // use a url friendly locale for the router (e.g. 'de-at')
-            $lowercaseLocale = str_replace('_', '-', mb_strtolower($normalizedLocale));
+            $lowercaseLocale = \str_replace('_', '-', \mb_strtolower($normalizedLocale));
             $this->router->getContext()->setParameter('_locale', $lowercaseLocale);
         }
     }
@@ -166,7 +150,7 @@ class LocaleSubscriber implements EventSubscriberInterface
             try {
                 // try to find the Site by the requested page id (old TYPO3 request data which might still be in use)
                 $site = (new SiteFinder())->getSiteByPageId((int) $oldPageId);
-            } catch (SiteNotFoundException $e) {
+            } catch (SiteNotFoundException) {
                 // page is outside any site and cannot be resolved
                 // or we got no information about a requested TYPO3 page or Symfony Route
                 // -> no locale found
@@ -179,7 +163,7 @@ class LocaleSubscriber implements EventSubscriberInterface
             try {
                 // use the SiteLanguage which matches the requested sys language uid
                 return $site->getLanguageById((int) $oldLanguageId)->getLocale();
-            } catch (\InvalidArgumentException $exception) {
+            } catch (\InvalidArgumentException) {
                 // the exception will be thrown if there is no SiteLanguage matching the requested sys language uid,
                 // Instead of throwing the exception we will use a fallback to the Site's default language.
             }

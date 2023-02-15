@@ -27,6 +27,7 @@ use App\Kernel as AppKernel;
 use Bartacus\Bundle\BartacusBundle\ErrorHandler\SymfonyErrorHandler;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\ErrorHandler\BufferingLogger;
+use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Kernel;
@@ -34,20 +35,9 @@ use TYPO3\CMS\Core\Http\ServerRequest;
 
 final class SymfonyBootstrap
 {
-    /**
-     * @var Kernel
-     */
-    private static $kernel;
-
-    /**
-     * @var Request
-     */
-    private static $request;
-
-    /**
-     * @var Response
-     */
-    private static $response;
+    private static ?Kernel $kernel = null;
+    private static ?Request $request = null;
+    private static ?Response $response = null;
 
     public static function getKernel(): ?Kernel
     {
@@ -64,20 +54,27 @@ final class SymfonyBootstrap
 
         if ($_SERVER['APP_DEBUG']) {
             \umask(0000);
-            \Symfony\Component\ErrorHandler\Debug::enable();
+            Debug::enable();
         }
 
         // override the default Symfony Error Handler and use our own instead
         SymfonyErrorHandler::register(new SymfonyErrorHandler(new BufferingLogger()));
 
-        if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? $_ENV['TRUSTED_PROXIES'] ?? false) {
-            Request::setTrustedProxies(
-                \explode(',', $trustedProxies),
-                Request::HEADER_X_FORWARDED_ALL ^ Request::HEADER_X_FORWARDED_HOST
-            );
+        $trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? $_ENV['TRUSTED_PROXIES'] ?? false;
+        $trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? $_ENV['TRUSTED_HOSTS'] ?? false;
+
+        $trustedHeaderSet = (Request::HEADER_X_FORWARDED_FOR
+                | Request::HEADER_X_FORWARDED_HOST
+                | Request::HEADER_X_FORWARDED_PORT
+                | Request::HEADER_X_FORWARDED_PROTO
+            ) ^ Request::HEADER_X_FORWARDED_HOST
+        ;
+
+        if ($trustedProxies) {
+            Request::setTrustedProxies(\explode(',', $trustedProxies), $trustedHeaderSet);
         }
 
-        if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? $_ENV['TRUSTED_HOSTS'] ?? false) {
+        if ($trustedHosts) {
             Request::setTrustedHosts([$trustedHosts]);
         }
 
@@ -96,12 +93,9 @@ final class SymfonyBootstrap
         // check if a Symfony request object was set (either content element rendering or Symfony route handler)
         // (may occur for TYPO3 StaticRoutes and PageNotFoundHandler)
         if (!self::$request instanceof Request) {
-            /** @var ServerRequest $serverRequest */
-            $serverRequest = $GLOBALS['TYPO3_REQUEST'] ?? null;
-
             // try to create Symfony request based on the TYPO3 server request
-            if ($serverRequest instanceof ServerRequest) {
-                self::$request = (new HttpFoundationFactory())->createRequest($serverRequest);
+            if ($GLOBALS['TYPO3_REQUEST'] instanceof ServerRequest) {
+                self::$request = (new HttpFoundationFactory())->createRequest($GLOBALS['TYPO3_REQUEST']);
             } else {
                 // fallback if neither the Symfony request was specified nor the TYPO3 server request is defined
                 self::$request = Request::createFromGlobals();

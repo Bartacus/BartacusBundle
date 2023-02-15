@@ -39,66 +39,39 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\LanguageAspectFactory;
-use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Routing\RouteNotFoundException;
 use TYPO3\CMS\Core\Routing\SiteRouteResult;
-use TYPO3\CMS\Core\Site\Entity\NullSite;
 use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Middleware\TypoScriptFrontendInitialization;
 
 class SymfonyRouteResolver implements MiddlewareInterface
 {
-    /**
-     * @var HttpKernelInterface
-     */
-    private $kernel;
+    private HttpKernelInterface $kernel;
+    private Router $router;
+    private HttpFoundationFactory $httpFoundationFactory;
+    private PsrHttpFactory $psrHttpFactory;
+    private Context $context;
+    private RequestHandlerInterface $dummyRequestHandler;
+    private TypoScriptFrontendInitialization $frontendInitialization;
 
-    /**
-     * @var Router
-     */
-    private $router;
-
-    /**
-     * @var HttpFoundationFactory
-     */
-    private $httpFoundationFactory;
-
-    /**
-     * @var PsrHttpFactory
-     */
-    private $psrHttpFactory;
-
-    /**
-     * @var Context
-     */
-    private $context;
-
-    /**
-     * @var RequestHandlerInterface
-     */
-    private $dummyRequestHandler;
-
-    /**
-     * @var TypoScriptFrontendInitialization
-     */
-    private $frontendInitialization;
-
-    public function __construct(HttpKernelInterface $kernel,
+    public function __construct(
+        HttpKernelInterface $kernel,
         Router $router,
         Context $context,
         RequestHandlerInterface $dummyRequestHandler,
-        TypoScriptFrontendInitialization $frontendInitialization)
-    {
+        TypoScriptFrontendInitialization $frontendInitialization
+    ) {
         $this->kernel = $kernel;
         $this->router = $router;
         $this->context = $context;
         $this->dummyRequestHandler = $dummyRequestHandler;
+        $this->frontendInitialization = $frontendInitialization;
 
         $this->httpFoundationFactory = new HttpFoundationFactory();
 
         $psr17Factory = new Psr17Factory();
         $this->psrHttpFactory = new PsrHttpFactory($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
-        $this->frontendInitialization = $frontendInitialization;
     }
 
     /**
@@ -115,7 +88,7 @@ class SymfonyRouteResolver implements MiddlewareInterface
         $symfonyRequest = $this->httpFoundationFactory->createRequest($request);
         SymfonyBootstrap::setRequestForTermination($symfonyRequest);
 
-        $symfonyResponse = $this->kernel->handle($symfonyRequest, HttpKernelInterface::MASTER_REQUEST, false);
+        $symfonyResponse = $this->kernel->handle($symfonyRequest, HttpKernelInterface::MAIN_REQUEST, false);
         SymfonyBootstrap::setResponseForTermination($symfonyResponse);
 
         return $this->psrHttpFactory->createResponse($symfonyResponse);
@@ -123,32 +96,32 @@ class SymfonyRouteResolver implements MiddlewareInterface
 
     private function initializeTemporaryTSFE(ServerRequestInterface $request): void
     {
-        if ($GLOBALS['TSFE']) {
+        if ($GLOBALS['TSFE'] instanceof TypoScriptFrontendController) {
             return;
         }
-        /** @var Site $site */
+
         $site = $request->getAttribute('site', null);
-        if (!$site || $site instanceof NullSite) {
+        if (!$site instanceof Site) {
             return;
         }
 
-        /** @var SiteRouteResult $previousRouting */
         $previousRouting = $request->getAttribute('routing', null);
-        if (!$previousRouting) {
+        if (!$previousRouting instanceof SiteRouteResult) {
             return;
         }
 
-        $fakeRouting = new SiteRouteResult($previousRouting->getUri(),
+        $fakeRouting = new SiteRouteResult(
+            $previousRouting->getUri(),
             $previousRouting->getSite(),
-            $previousRouting->getLanguage() ?? $site->getDefaultLanguage());
+                $previousRouting->getLanguage() ?? $site->getDefaultLanguage()
+        );
 
-        /* @var PageArguments $pageArguments */
         try {
             $pageArguments = $site->getRouter()->matchRequest($request, $fakeRouting);
-        } catch (RouteNotFoundException $e) {
+            $request = $request->withAttribute('routing', $pageArguments);
+        } catch (RouteNotFoundException) {
             // route cannot be found if it's a symfony route
         }
-        $request = $request->withAttribute('routing', $pageArguments);
 
         // set language aspect
         $language = $request->getAttribute('language', $site->getDefaultLanguage());
@@ -156,6 +129,7 @@ class SymfonyRouteResolver implements MiddlewareInterface
         $this->context->setAspect('language', $languageAspect);
 
         $this->frontendInitialization->process($request, $this->dummyRequestHandler);
+
         // unset the changes
         $request = $request->withAttribute('routing', $previousRouting);
         $GLOBALS['TYPO3_REQUEST'] = $request;
@@ -168,11 +142,7 @@ class SymfonyRouteResolver implements MiddlewareInterface
         try {
             $this->router->getContext()->fromRequest($fakeRequest);
             $this->router->matchRequest($fakeRequest);
-        } catch (ResourceNotFoundException $e) {
-
-            return false;
-        } catch (MethodNotAllowedException $e) {
-
+        } catch (ResourceNotFoundException|MethodNotAllowedException) {
             return false;
         }
 

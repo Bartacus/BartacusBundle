@@ -30,19 +30,11 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 final class ContentElementConfigLoaderSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var ContentElementConfigLoader
-     */
-    private $contentElement;
+    private ContentElementConfigLoader $contentElement;
 
     public function __construct(ContentElementConfigLoader $contentElement)
     {
         $this->contentElement = $contentElement;
-    }
-
-    public function loadContentElements(Event $event): void
-    {
-        $this->contentElement->load();
     }
 
     public static function getSubscribedEvents(): array
@@ -50,5 +42,13 @@ final class ContentElementConfigLoaderSubscriber implements EventSubscriberInter
         return [
             ConfigEvents::ADDITIONAL_CONFIGURATION => [['loadContentElements', 8]],
         ];
+    }
+
+    /**
+     * @noinspection PhpUnusedParameterInspection
+     */
+    public function loadContentElements(Event $event): void
+    {
+        $this->contentElement->load();
     }
 }

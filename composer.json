@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "php": "^7.4 || ^8.0",
+        "php": "^8.0",
         "cweagans/composer-patches": "^1.6",
         "doctrine/annotations": "^1.6",
         "helhum/typo3-console": "^6.1 || ^7.0",
@@ -53,7 +53,12 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "cweagans/composer-patches": true,
+            "typo3/cms-composer-installers": true,
+            "typo3/class-alias-loader": true
+        }
     },
     "extra": {
         "branch-alias": {

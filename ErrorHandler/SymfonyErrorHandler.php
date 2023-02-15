@@ -32,7 +32,11 @@ class SymfonyErrorHandler extends ErrorHandler
 {
     use OutputBufferTrait;
 
-    public function handleException($exception, array $error = null)
+    /**
+     * @throws \Throwable
+     * @throws \ErrorException
+     */
+    public function handleException(\Throwable $exception)
     {
         $this->fixOutputBuffer($exception);
 

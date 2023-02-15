@@ -31,16 +31,10 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 final class SymfonyServiceForMakeInstanceLoader
 {
     /**
-     * Class names for the class name cache.
-     *
      * @var string[]
      */
-    private $classNames = [];
-
-    /**
-     * @var MakeInstanceServiceLocator
-     */
-    private $serviceLocator;
+    private array $classNames;
+    private MakeInstanceServiceLocator $serviceLocator;
 
     public function __construct(array $classNames, MakeInstanceServiceLocator $serviceLocator)
     {
@@ -50,32 +44,40 @@ final class SymfonyServiceForMakeInstanceLoader
 
     /**
      * Loads all registered instances into the {@see GeneralUtility::makeInstance()} singleton cache.
+     *
+     * @throws \ReflectionException
      */
     public function load(): void
     {
-        $refl = new \ReflectionClass(GeneralUtility::class);
+        $reflectionClass = new \ReflectionClass(GeneralUtility::class);
 
-        $this->loadClassNameCache($refl);
-        $this->loadInstanceCache($refl);
+        $this->loadClassNameCache($reflectionClass);
+        $this->loadInstanceCache($reflectionClass);
     }
 
-    private function loadClassNameCache(\ReflectionClass $refl): void
+    /**
+     * @throws \ReflectionException
+     */
+    private function loadClassNameCache(\ReflectionClass $reflectionClass): void
     {
-        $reflProp = $refl->getProperty('finalClassNameCache');
-        $reflProp->setAccessible(true);
+        $reflectionProp = $reflectionClass->getProperty('finalClassNameCache');
+        $reflectionProp->setAccessible(true);
 
         $classes = \array_combine($this->classNames, $this->classNames);
 
-        $classNames = $reflProp->getValue();
+        $classNames = $reflectionProp->getValue();
         $classNames = \array_merge($classNames, $classes);
 
-        $reflProp->setValue(null, $classNames);
+        $reflectionProp->setValue(null, $classNames);
     }
 
-    private function loadInstanceCache(\ReflectionClass $refl): void
+    /**
+     * @throws \ReflectionException
+     */
+    private function loadInstanceCache(\ReflectionClass $reflectionClass): void
     {
-        $reflProp = $refl->getProperty('singletonInstances');
-        $reflProp->setAccessible(true);
-        $reflProp->setValue(null, $this->serviceLocator);
+        $reflectionProp = $reflectionClass->getProperty('singletonInstances');
+        $reflectionProp->setAccessible(true);
+        $reflectionProp->setValue(null, $this->serviceLocator);
     }
 }

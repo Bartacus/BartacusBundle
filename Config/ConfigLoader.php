@@ -40,10 +40,7 @@ class ConfigLoader
 {
     public const DEFAULT_EXTENSION = 'app';
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
@@ -81,9 +78,6 @@ class ConfigLoader
         return $event->getExtbasePersistenceClasses();
     }
 
-    /**
-     * @deprecated since 3.0.3, will be removed in 3.1.0
-     */
     public function loadFromRequestExtbasePersistenceClasses(): array
     {
         $event = new RequestExtbasePersistenceClassesEvent();
