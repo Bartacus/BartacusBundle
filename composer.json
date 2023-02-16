@@ -18,33 +18,33 @@
     ],
     "require": {
         "php": "^8.0",
-        "cweagans/composer-patches": "^1.6",
-        "doctrine/annotations": "^1.6",
-        "helhum/typo3-console": "^6.1 || ^7.0",
-        "nyholm/psr7": "^1.1",
+        "cweagans/composer-patches": "^1.7",
+        "doctrine/annotations": "^1.14",
+        "helhum/typo3-console": "^7.1",
+        "nyholm/psr7": "^1.5",
         "psr/http-server-middleware": "^1.0",
-        "symfony/config": "^5.2",
-        "symfony/event-dispatcher": "^5.2",
-        "symfony/finder": "^5.2",
-        "symfony/framework-bundle": "^5.2",
-        "symfony/http-foundation": "^5.2",
-        "symfony/http-kernel": "^5.2",
-        "symfony/options-resolver": "^5.2",
-        "symfony/proxy-manager-bridge": "^5.3",
-        "symfony/psr-http-message-bridge": "^2.0",
+        "symfony/config": "^5.4",
+        "symfony/event-dispatcher": "^5.4",
+        "symfony/finder": "^5.4",
+        "symfony/framework-bundle": "^5.4",
+        "symfony/http-foundation": "^5.4",
+        "symfony/http-kernel": "^5.4",
+        "symfony/options-resolver": "^5.4",
+        "symfony/proxy-manager-bridge": "^5.4",
+        "symfony/psr-http-message-bridge": "^2.1",
         "typo3/cms-core": "^11.5",
         "typo3/cms-extbase": "^11.5",
         "typo3/cms-frontend": "^11.5",
         "typo3/cms-install": "^11.5"
     },
     "require-dev": {
-        "symfony/debug": "^4.2",
-        "symfony/twig-bundle": "^5.2",
+        "symfony/debug": "^4.4",
+        "symfony/twig-bundle": "^5.4",
         "typo3/cms-redirects": "^11.5"
     },
     "conflict": {
         "jms/di-extra-bundle": "*",
-        "symfony/symfony": "<5.2"
+        "symfony/symfony": "<5.4"
     },
     "autoload": {
         "psr-4": {

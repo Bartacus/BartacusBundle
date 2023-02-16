@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Applied PHP strict types
+- Increased minimum composer package versions
 
 ### Fixed
 - Fixed PHP inspection warnings and errors
