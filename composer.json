@@ -39,8 +39,7 @@
     },
     "require-dev": {
         "symfony/debug": "^4.4",
-        "symfony/twig-bundle": "^5.4",
-        "typo3/cms-redirects": "^11.5"
+        "symfony/twig-bundle": "^5.4"
     },
     "conflict": {
         "jms/di-extra-bundle": "*",
