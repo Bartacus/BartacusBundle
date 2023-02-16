@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Fixed PHP inspection warnings and errors
 
+### Removed
+- Drop PHP cs fixer
+
 ## [3.2.1] - 2022-11-17
 ### Added
 - New fallback to resolve CType annotation name by extbase model
