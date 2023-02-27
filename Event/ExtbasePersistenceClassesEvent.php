@@ -27,10 +27,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 final class ExtbasePersistenceClassesEvent extends Event
 {
-    /**
-     * @var array
-     */
-    private $extbasePersistenceClasses = [[]];
+    private array $extbasePersistenceClasses = [[]];
 
     public function getExtbasePersistenceClasses(): array
     {

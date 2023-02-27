@@ -24,8 +24,6 @@ declare(strict_types=1);
 namespace Bartacus\Bundle\BartacusBundle\Typo3;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
@@ -37,62 +35,43 @@ use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 class ServiceBridge
 {
     /**
-     * @var ObjectManagerInterface
-     */
-    private $extbaseObjectManager;
-
-    /**
      * Wrapper around {@see GeneralUtility::makeInstance()}.
-     *
-     * @return object
      */
-    public function makeInstance(string $className)
+    public function makeInstance(string $className): ?object
     {
         return GeneralUtility::makeInstance($className);
     }
 
-    public function getExtbaseInstance(string $objectName)
+    public function getExtbaseInstance(string $objectName): ?object
     {
-        if (null === $this->extbaseObjectManager) {
-            $this->extbaseObjectManager = $this->makeInstance(ObjectManager::class);
-        }
-
-        return $this->extbaseObjectManager->get($objectName);
+        return GeneralUtility::makeInstance($objectName);
     }
 
     /**
      * Get a TYPO3 global into the service container.
-     *
-     * @return mixed
      */
-    public function getGlobal(string $global)
+    public function getGlobal(string $global): mixed
     {
         return $GLOBALS[$global];
     }
 
-    public function getContentObjectRenderer(): ContentObjectRenderer
+    public function getFrontendController(): ?TypoScriptFrontendController
     {
-        /** @var TypoScriptFrontendController $frontendController */
-        $frontendController = $this->getGlobal('TSFE');
-
-        return $frontendController->cObj;
+        return $this->getGlobal('TSFE');
     }
 
-    public function getPageRepository(): PageRepository
+    public function getContentObjectRenderer(): ?ContentObjectRenderer
     {
-        /** @var TypoScriptFrontendController $frontendController */
-        $frontendController = $this->getGlobal('TSFE');
+        return $this->getFrontendController()?->cObj;
+    }
 
-        return $frontendController->sys_page;
+    public function getPageRepository(): ?PageRepository
+    {
+        return $this->getFrontendController()?->sys_page;
     }
 
     public function getFrontendUser(): ?FrontendUserAuthentication
     {
-        /** @var TypoScriptFrontendController $frontendController */
-        $frontendController = $this->getGlobal('TSFE');
-
-        return $frontendController->fe_user instanceof FrontendUserAuthentication
-            ? $frontendController->fe_user
-            : null;
+        return $this->getFrontendController()?->fe_user instanceof FrontendUserAuthentication? $this->getFrontendController()->fe_user : null;
     }
 }

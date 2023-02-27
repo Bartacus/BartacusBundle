@@ -34,25 +34,10 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 final class AnnotationContentElementLoader
 {
-    /**
-     * @var string
-     */
-    private $projectDir;
-
-    /**
-     * @var array [name -> bundle metadata]
-     */
-    private $bundles;
-
-    /**
-     * @var Reader
-     */
-    private $annotationReader;
-
-    /**
-     * @var int
-     */
-    private $defaultRenderDefinitionIndex = 0;
+    private string $projectDir;
+    private array $bundles;
+    private Reader $annotationReader;
+    private int $defaultRenderDefinitionIndex = 0;
 
     public function __construct(string $projectDir, array $bundles, Reader $annotationReader)
     {
@@ -61,62 +46,73 @@ final class AnnotationContentElementLoader
         $this->annotationReader = $annotationReader;
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     */
     public function load(): RenderDefinitionCollection
     {
+        $availableDirs = [
+            $this->projectDir.'/src/Action',
+            $this->projectDir.'/src/Controller',
+        ];
+
+        foreach ($this->bundles as $bundle) {
+            $availableDirs[] = $bundle['path'].'/Action';
+            $availableDirs[] = $bundle['path'].'/Controller';
+        }
+
         $collection = new RenderDefinitionCollection();
         $dirs = [];
 
-        if (\file_exists($dir = $this->projectDir.'/src/Action')) {
-            $dirs[] = $dir;
-        }
-
-        if (\file_exists($dir = $this->projectDir.'/src/Controller')) {
-            $dirs[] = $dir;
-        }
-
-        foreach ($this->bundles as $name => $bundle) {
-            if (\file_exists($dir = $bundle['path'].'/Action')) {
-                $dirs[] = $dir;
-            }
-
-            if (\file_exists($dir = $bundle['path'].'/Controller')) {
+        foreach ($availableDirs as $dir) {
+            if (\file_exists($dir)) {
                 $dirs[] = $dir;
             }
         }
 
-        if (\count($dirs)) {
-            $finder = Finder::create()
-                ->followLinks()
-                ->files()
-                ->name('*.php')
-                ->in($dirs)
-            ;
+        if (!\count($dirs)) {
+            return $collection;
+        }
 
-            /** @var SplFileInfo $file */
-            foreach ($finder as $file) {
-                $class = $this->findClass((string) $file);
+        $finder = Finder::create()
+            ->followLinks()
+            ->files()
+            ->name('*.php')
+            ->in($dirs)
+        ;
 
-                if ($class) {
-                    $class = new \ReflectionClass($class);
-                    if ($class->isAbstract()) {
-                        continue;
-                    }
+        /** @var SplFileInfo $file */
+        foreach ($finder as $file) {
+            $class = $this->findClass((string) $file);
+            if (!$class) {
+                continue;
+            }
 
-                    $addResource = false;
-                    foreach ($class->getMethods() as $method) {
-                        $this->defaultRenderDefinitionIndex = 0;
-                        foreach ($this->annotationReader->getMethodAnnotations($method) as $annot) {
-                            if ($annot instanceof ContentElement) {
-                                $addResource = true;
-                                $this->addRenderDefinition($collection, $annot, $class, $method);
-                            }
-                        }
-                    }
+            try {
+                $class = new \ReflectionClass($class);
+            } catch (\ReflectionException) {
+                continue;
+            }
 
-                    if ($addResource) {
-                        $collection->addResource(new FileResource((string) $file));
+            if ($class->isAbstract()) {
+                continue;
+            }
+
+            $addResource = false;
+
+            foreach ($class->getMethods() as $method) {
+                $this->defaultRenderDefinitionIndex = 0;
+
+                foreach ($this->annotationReader->getMethodAnnotations($method) as $annot) {
+                    if ($annot instanceof ContentElement) {
+                        $addResource = true;
+                        $this->addRenderDefinition($collection, $annot, $class, $method);
                     }
                 }
+            }
+
+            if ($addResource) {
+                $collection->addResource(new FileResource((string) $file));
             }
         }
 
@@ -126,6 +122,7 @@ final class AnnotationContentElementLoader
     private function addRenderDefinition(RenderDefinitionCollection $collection, ContentElement $annot, \ReflectionClass $class, \ReflectionMethod $method): void
     {
         $name = $annot->getName();
+
         if (null === $name) {
             $name = $this->getDefaultName($class, $method);
         }
@@ -141,15 +138,17 @@ final class AnnotationContentElementLoader
         // loop through all parameters of the annotated method
         foreach ($method->getParameters() as $parameter) {
             // skip strings, numbers, boolean and arrays
-            if ($parameter->getType()->isBuiltin()) {
+            if ($parameter->getType() && $parameter->getType()->isBuiltin()) {
                 continue;
             }
 
             // get the parameter's class name
+            /** @noinspection PhpUnhandledExceptionInspection */
             $parameterReflectionClass = new \ReflectionClass($parameter->getType()->getName());
 
             // check if the class extends the TYPO3 extbase entity and has our static 'getRecordType' to read its CType
             if ($parameterReflectionClass->isSubclassOf(AbstractEntity::class) && $parameterReflectionClass->hasMethod('getRecordType')) {
+                /** @noinspection PhpUndefinedMethodInspection */
                 return ($parameterReflectionClass->getName())::getRecordType();
             }
         }
@@ -158,9 +157,11 @@ final class AnnotationContentElementLoader
         // e.g. still use 'array $data' without a specific annotation name
 
         $name = \mb_strtolower(\str_replace('\\', '_', $class->name).'_'.$method->name);
+
         if ($this->defaultRenderDefinitionIndex > 0) {
             $name .= '_'.$this->defaultRenderDefinitionIndex;
         }
+
         ++$this->defaultRenderDefinitionIndex;
 
         return \preg_replace([
@@ -177,23 +178,22 @@ final class AnnotationContentElementLoader
     }
 
     /**
-     * Returns the full class name for the first class in the file.
-     *
-     * @param string $file A PHP file path
-     *
-     * @return string|false Full class name if found, false otherwise
+     * @throws \InvalidArgumentException
      */
-    private function findClass(string $file)
+    private function findClass(string $file): ?string
     {
-        $class = false;
-        $namespace = false;
         $tokens = \token_get_all(\file_get_contents($file));
 
         if (1 === \count($tokens) && T_INLINE_HTML === $tokens[0][0]) {
-            throw new \InvalidArgumentException(\sprintf('The file "%s" does not contain PHP code. Did you forgot to add the "<?php" start tag at the beginning of the file?', $file));
+            throw new \InvalidArgumentException(\sprintf(
+                'The file "%s" does not contain PHP code. Did you forgot to add the "<?php" start tag at the beginning of the file?',
+                $file
+            ));
         }
 
-        $nameSpaceStringToken = defined('T_NAME_QUALIFIED') ? T_NAME_QUALIFIED : T_STRING;
+        $nameSpaceStringToken = \defined('T_NAME_QUALIFIED') ? T_NAME_QUALIFIED : T_STRING;
+        $namespace = false;
+        $class = false;
 
         for ($i = 0; isset($tokens[$i]); ++$i) {
             $token = $tokens[$i];
@@ -203,21 +203,23 @@ final class AnnotationContentElementLoader
             }
 
             if (true === $class && T_STRING === $token[0]) {
-
                 return $namespace.'\\'.$token[1];
             }
 
             if (true === $namespace && $nameSpaceStringToken === $token[0]) {
                 $namespace = $token[1];
+
                 while (isset($tokens[++$i][1]) && \in_array($tokens[$i][0], [T_NS_SEPARATOR, T_STRING], true)) {
                     $namespace .= $tokens[$i][1];
                 }
+
                 $token = $tokens[$i];
             }
 
             if (T_CLASS === $token[0]) {
                 // Skip usage of ::class constant
                 $isClassConstant = false;
+
                 for ($j = $i - 1; $j > 0; --$j) {
                     if (!isset($tokens[$j][1])) {
                         break;
@@ -244,6 +246,6 @@ final class AnnotationContentElementLoader
             }
         }
 
-        return false;
+        return null;
     }
 }

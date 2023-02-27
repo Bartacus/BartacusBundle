@@ -31,16 +31,23 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ErrorHandlerSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var bool
-     */
-    private $debug;
+    private bool $debug;
 
     public function __construct(bool $debug)
     {
         $this->debug = $debug;
     }
 
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            ConfigEvents::ADDITIONAL_CONFIGURATION => [['registerErrorHandler', 2048]],
+        ];
+    }
+
+    /**
+     * @noinspection PhpUnusedParameterInspection
+     */
     public function registerErrorHandler(Event $event): void
     {
         if ($this->debug) {
@@ -53,12 +60,5 @@ class ErrorHandlerSubscriber implements EventSubscriberInterface
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler'] = Typo3DebugExceptionHandler::class;
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler'] = Typo3ProductionExceptionHandler::class;
         }
-    }
-
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            ConfigEvents::ADDITIONAL_CONFIGURATION => [['registerErrorHandler', 2048]],
-        ];
     }
 }

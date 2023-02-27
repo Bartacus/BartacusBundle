@@ -32,6 +32,7 @@ class PhpBridgeSessionStorage extends NativeSessionStorage
 {
     /**
      * {@inheritdoc}
+     * @throws \RuntimeException
      */
     public function start(): bool
     {
@@ -39,13 +40,14 @@ class PhpBridgeSessionStorage extends NativeSessionStorage
             return true;
         }
 
-        $shouldStart = true;
-        if (\PHP_SESSION_ACTIVE === \session_status()) {
-            $shouldStart = false;
-        }
+        $shouldStart = \PHP_SESSION_ACTIVE !== \session_status();
 
         if (\ini_get('session.use_cookies') && \headers_sent($file, $line)) {
-            throw new \RuntimeException(\sprintf('Failed to start the session because headers have already been sent by "%s" at line %d.', $file, $line));
+            throw new \RuntimeException(\sprintf(
+                'Failed to start the session because headers have already been sent by "%s" at line %d.',
+                $file,
+                $line
+            ));
         }
 
         // ok to try and start the session
@@ -67,9 +69,7 @@ class PhpBridgeSessionStorage extends NativeSessionStorage
         // since the purpose of this driver is to share a handler
         foreach ($this->bags as $bag) {
             $bag->clear();
-
-            $key = $bag->getStorageKey();
-            $_SESSION[$key] = [];
+            $_SESSION[$bag->getStorageKey()] = [];
         }
 
         // reconnect the bags to the session

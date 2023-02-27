@@ -30,21 +30,15 @@ class RenderDefinitionCollection implements \IteratorAggregate, \Countable
     /**
      * @var RenderDefinition[]
      */
-    private $renderDefinitions = [];
+    private array $renderDefinitions = [];
 
     /**
-     * @var array
+     * @var ResourceInterface[]
      */
-    private $resources = [];
+    private array $resources = [];
 
     /**
-     * Gets the current RouteCollection as an Iterator that includes all routes.
-     *
-     * It implements \IteratorAggregate.
-     *
-     * @see all()
-     *
-     * @return \ArrayIterator|RenderDefinition[] An \ArrayIterator object for iterating over routes
+     * @return \ArrayIterator|RenderDefinition[]
      */
     public function getIterator(): \ArrayIterator
     {
@@ -53,8 +47,6 @@ class RenderDefinitionCollection implements \IteratorAggregate, \Countable
 
     /**
      * Gets the number of Routes in this collection.
-     *
-     * @return int The number of routes
      */
     public function count(): int
     {
@@ -74,32 +66,16 @@ class RenderDefinitionCollection implements \IteratorAggregate, \Countable
         return $this->renderDefinitions;
     }
 
-    /**
-     * Returns an array of resources loaded to build this collection.
-     *
-     * @return ResourceInterface[] An array of resources
-     */
     public function getResources(): array
     {
         return \array_unique($this->resources);
     }
 
-    /**
-     * Adds a resource for this collection.
-     *
-     * @param ResourceInterface $resource A resource instance
-     */
     public function addResource(ResourceInterface $resource)
     {
         $this->resources[] = $resource;
     }
 
-    /**
-     * Adds a render definition collection at the end of the current set by appending all
-     * render definitions of the added collection.
-     *
-     * @param RenderDefinitionCollection $collection
-     */
     public function addCollection(self $collection)
     {
         $this->renderDefinitions = \array_merge($this->renderDefinitions, $collection->all());

@@ -29,14 +29,18 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class Typo3RedirectRequestMiddlewaresSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var string
-     */
-    private $projectDir;
+    private string $projectDir;
 
     public function __construct(string $projectDir)
     {
         $this->projectDir = $projectDir;
+    }
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            ConfigEvents::REQUEST_MIDDLEWARES => [['loadMiddlewares', 16]],
+        ];
     }
 
     public function loadMiddlewares(RequestMiddlewaresEvent $event): void
@@ -65,12 +69,5 @@ class Typo3RedirectRequestMiddlewaresSubscriber implements EventSubscriberInterf
         ];
 
         $event->addRequestMiddlewares($middlewares);
-    }
-
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            ConfigEvents::REQUEST_MIDDLEWARES => [['loadMiddlewares', 16]],
-        ];
     }
 }

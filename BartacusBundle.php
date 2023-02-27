@@ -35,7 +35,7 @@ class BartacusBundle extends Bundle
      */
     public function boot()
     {
-        $this->container->get(SymfonyServiceForMakeInstanceLoader::class)->load();
+        $this->container->get(SymfonyServiceForMakeInstanceLoader::class)?->load();
     }
 
     /**

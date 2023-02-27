@@ -31,16 +31,18 @@ use Twig\TwigFunction;
 
 class LocaleAwareHttpKernelExtension extends AbstractExtension implements RequestContextAwareInterface
 {
-    /**
-     * @var RequestContext
-     */
-    private $context;
+    private ?RequestContext $context = null;
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('controller', [$this, 'controller']),
         ];
+    }
+
+    public function getContext(): RequestContext
+    {
+        return $this->context;
     }
 
     public function setContext(RequestContext $context)
@@ -48,17 +50,14 @@ class LocaleAwareHttpKernelExtension extends AbstractExtension implements Reques
         $this->context = $context;
     }
 
-    public function controller($controller, $attributes = [], $query = [])
+    public function controller($controller, array $attributes = [], array $query = []): ControllerReference
     {
-        if (!\array_key_exists('_locale', $attributes) && ($locale = $this->context->getParameter('_locale'))) {
+        $locale = $this->context->getParameter('_locale');
+
+        if ($locale && !\array_key_exists('_locale', $attributes)) {
             $attributes['_locale'] = $locale;
         }
 
         return new ControllerReference($controller, $attributes, $query);
-    }
-
-    public function getContext(): RequestContext
-    {
-        return $this->context;
     }
 }

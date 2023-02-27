@@ -25,34 +25,21 @@ namespace Bartacus\Bundle\BartacusBundle\CacheWarmer;
 
 use Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
-use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 
 class ContentElementCacheWarmer implements CacheWarmerInterface
 {
-    protected $configLoader;
+    protected ContentElementConfigLoader $configLoader;
 
     public function __construct(ContentElementConfigLoader $configLoader)
     {
         $this->configLoader = $configLoader;
     }
 
-    /**
-     * Warms up the cache.
-     *
-     * @param string $cacheDir The cache directory
-     */
-    public function warmUp($cacheDir): void
+    public function warmUp(string $cacheDir): void
     {
-        if ($this->configLoader instanceof WarmableInterface) {
-            $this->configLoader->warmUp($cacheDir);
-        }
+        $this->configLoader->warmUp($cacheDir);
     }
 
-    /**
-     * Checks whether this warmer is optional or not.
-     *
-     * @return bool always true
-     */
     public function isOptional(): bool
     {
         return true;

@@ -27,10 +27,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 final class RequestMiddlewaresEvent extends Event
 {
-    /**
-     * @var array
-     */
-    private $requestMiddlewares = [[]];
+    private array $requestMiddlewares = [[]];
 
     public function getRequestMiddlewares(): array
     {

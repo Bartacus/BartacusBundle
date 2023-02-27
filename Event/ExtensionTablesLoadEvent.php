@@ -27,10 +27,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 final class ExtensionTablesLoadEvent extends Event
 {
-    /**
-     * @var string
-     */
-    private $extension;
+    private string $extension;
 
     public function __construct(string $extension)
     {

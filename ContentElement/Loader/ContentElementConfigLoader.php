@@ -34,30 +34,11 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 final class ContentElementConfigLoader implements WarmableInterface
 {
-    /**
-     * @var RenderDefinitionCollection|null
-     */
-    private $collection;
-
-    /**
-     * @var array
-     */
-    private $options = [];
-
-    /**
-     * @var bool
-     */
-    private $typoScriptLoaded = false;
-
-    /**
-     * @var ConfigCacheFactoryInterface
-     */
-    private $configCacheFactory;
-
-    /**
-     * @var AnnotationContentElementLoader
-     */
-    private $loader;
+    private ?RenderDefinitionCollection $collection = null;
+    private array $options = [];
+    private bool $typoScriptLoaded = false;
+    private ?ConfigCacheFactoryInterface $configCacheFactory = null;
+    private AnnotationContentElementLoader $loader;
 
     public function __construct(AnnotationContentElementLoader $loader, string $cacheDir = null, bool $debug = false)
     {
@@ -68,27 +49,13 @@ final class ContentElementConfigLoader implements WarmableInterface
         ]);
     }
 
-    /**
-     * Sets the ConfigCache factory to use.
-     *
-     * @param ConfigCacheFactoryInterface $configCacheFactory The factory to use
-     */
     public function setConfigCacheFactory(ConfigCacheFactoryInterface $configCacheFactory): void
     {
         $this->configCacheFactory = $configCacheFactory;
     }
 
     /**
-     * Sets options.
-     *
-     * Available options:
-     *
-     *   * cache_dir:     The cache directory (or null to disable caching)
-     *   * debug:         Whether to enable debugging or not (false by default)
-     *
-     * @param array $options An array of options
-     *
-     * @throws \InvalidArgumentException When unsupported option is provided
+     * @throws \InvalidArgumentException
      */
     public function setOptions(array $options): void
     {
@@ -99,6 +66,7 @@ final class ContentElementConfigLoader implements WarmableInterface
 
         // check option names and live merge, if errors are encountered Exception will be thrown
         $invalid = [];
+
         foreach ($options as $key => $value) {
             if (\array_key_exists($key, $this->options)) {
                 $this->options[$key] = $value;
@@ -113,14 +81,9 @@ final class ContentElementConfigLoader implements WarmableInterface
     }
 
     /**
-     * Sets an option.
-     *
-     * @param string $key   The key
-     * @param mixed  $value The value
-     *
      * @throws \InvalidArgumentException
      */
-    public function setOption(string $key, $value): void
+    public function setOption(string $key, mixed $value): void
     {
         if (!\array_key_exists($key, $this->options)) {
             throw new \InvalidArgumentException(\sprintf('The Content Element loader does not support the "%s" option.', $key));
@@ -130,15 +93,9 @@ final class ContentElementConfigLoader implements WarmableInterface
     }
 
     /**
-     * Gets an option value.
-     *
-     * @param string $key The key
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return mixed The value
      */
-    public function getOption(string $key)
+    public function getOption(string $key): mixed
     {
         if (!\array_key_exists($key, $this->options)) {
             throw new \InvalidArgumentException(\sprintf('The Content Element loader does not support the "%s" option.', $key));
@@ -176,12 +133,6 @@ final class ContentElementConfigLoader implements WarmableInterface
         $this->typoScriptLoaded = true;
     }
 
-    /**
-     * Load the TypoScript code for the content element render definitions
-     * itself without adding them to the template.
-     *
-     * @throws \Exception
-     */
     private function loadTypoScript(): string
     {
         if (null === $this->options['cache_dir']) {
@@ -225,8 +176,8 @@ tt_content.key.field = CType
 EOTS;
 
         $renderDefinitions = $this->getRenderDefinitionCollection();
-
         $typoScripts = [];
+
         foreach ($renderDefinitions as $renderDefinition) {
             $typoScripts[] = $this->renderPluginContent($renderDefinition);
         }
@@ -248,27 +199,22 @@ EOTS;
         $pluginSignature = $renderDefinition->getName();
         $cached = $renderDefinition->isCached();
         $controller = $renderDefinition->getController();
+
         $pluginType = 'USER'.($cached ? '' : '_INT');
         $userFunc = Renderer::class.'->handle';
 
         $pluginContent = /* @lang TYPO3_TypoScript */ <<<EOTS
-# Setting {$pluginSignature} content element
-tt_content.{$pluginSignature} = {$pluginType} 
-tt_content.{$pluginSignature} {
-    userFunc = {$userFunc}
-    controller = {$controller}
+# Setting $pluginSignature content element
+tt_content.$pluginSignature = $pluginType 
+tt_content.$pluginSignature {
+    userFunc = $userFunc
+    controller = $controller
 }
 EOTS;
 
         return \trim($pluginContent);
     }
 
-    /**
-     * Provides the ConfigCache factory implementation, falling back to a
-     * default implementation if necessary.
-     *
-     * @return ConfigCacheFactoryInterface $configCacheFactory
-     */
     private function getConfigCacheFactory(): ConfigCacheFactoryInterface
     {
         if (null === $this->configCacheFactory) {

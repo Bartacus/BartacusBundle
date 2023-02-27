@@ -25,15 +25,9 @@ namespace Bartacus\Bundle\BartacusBundle\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
 
-/**
- * @deprecated since 3.0.3, will be removed in 4.0.0
- */
 final class RequestExtbasePersistenceClassesEvent extends Event
 {
-    /**
-     * @var array
-     */
-    private $extbasePersistenceClasses = [[]];
+    private array $extbasePersistenceClasses = [[]];
 
     public function getExtbasePersistenceClasses(): array
     {

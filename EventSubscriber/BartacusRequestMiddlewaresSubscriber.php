@@ -31,6 +31,13 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class BartacusRequestMiddlewaresSubscriber implements EventSubscriberInterface
 {
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            ConfigEvents::REQUEST_MIDDLEWARES => [['loadMiddlewares', 8]],
+        ];
+    }
+
     public function loadMiddlewares(RequestMiddlewaresEvent $event): void
     {
         $middlewares = [
@@ -56,12 +63,5 @@ class BartacusRequestMiddlewaresSubscriber implements EventSubscriberInterface
         ];
 
         $event->addRequestMiddlewares($middlewares);
-    }
-
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            ConfigEvents::REQUEST_MIDDLEWARES => [['loadMiddlewares', 8]],
-        ];
     }
 }

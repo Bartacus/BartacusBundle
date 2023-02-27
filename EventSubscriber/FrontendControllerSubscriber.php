@@ -26,9 +26,11 @@ namespace Bartacus\Bundle\BartacusBundle\EventSubscriber;
 use Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Error\Http\InternalServerErrorException;
+use TYPO3\CMS\Core\Error\Http\ServiceUnavailableException;
 use TYPO3\CMS\Core\Localization\Locales;
 use TYPO3\CMS\Core\Site\Entity\SiteInterface;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
@@ -41,19 +43,27 @@ use TYPO3\CMS\Core\Domain\Repository\PageRepository;
  */
 class FrontendControllerSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var ServiceBridge
-     */
-    private $serviceBridge;
+    private ServiceBridge $serviceBridge;
 
     public function __construct(ServiceBridge $serviceBridge)
     {
         $this->serviceBridge = $serviceBridge;
     }
 
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            KernelEvents::REQUEST => ['onKernelRequest', 8],
+        ];
+    }
+
+    /**
+     * @throws InternalServerErrorException
+     * @throws ServiceUnavailableException
+     */
     public function onKernelRequest(RequestEvent $event): void
     {
-        if (Kernel::MASTER_REQUEST !== $event->getRequestType()) {
+        if (HttpKernelInterface::MAIN_REQUEST !== $event->getRequestType()) {
             return;
         }
 
@@ -63,41 +73,43 @@ class FrontendControllerSubscriber implements EventSubscriberInterface
 
         $frontendController = $this->serviceBridge->getGlobal('TSFE');
 
-        if ($frontendController) {
-            if (!$frontendController->cObj instanceof ContentObjectRenderer) {
-                $frontendController->newCObj();
-            }
-
-            if (!$frontendController->tmpl instanceof TemplateService) {
-                $frontendController->tmpl = GeneralUtility::makeInstance(
-                    TemplateService::class,
-                    GeneralUtility::makeInstance(Context::class)
-                );
-            }
-
-            $site = $event->getRequest()->attributes->get('site');
-            if (empty($frontendController->tmpl->setup) && $site instanceof SiteInterface) {
-                $frontendController->id = $site->getRootPageId();
-                $frontendController->determineId();
-                $frontendController->getConfigArray();
-            }
-
-            if (!$frontendController->sys_page instanceof PageRepository) {
-                $frontendController->sys_page = GeneralUtility::makeInstance(
-                    PageRepository::class,
-                    GeneralUtility::makeInstance(Context::class)
-                );
-
-                $frontendController->settingLanguage();
-                Locales::setSystemLocaleFromSiteLanguage($frontendController->getLanguage());
-            }
+        if (!$frontendController) {
+            return;
         }
-    }
 
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            KernelEvents::REQUEST => ['onKernelRequest', 8],
-        ];
+        if (!$frontendController->cObj instanceof ContentObjectRenderer) {
+            $frontendController->newCObj();
+        }
+
+        if (!$frontendController->tmpl instanceof TemplateService) {
+            $frontendController->tmpl = GeneralUtility::makeInstance(
+                TemplateService::class,
+                GeneralUtility::makeInstance(Context::class)
+            );
+        }
+
+        $site = $event->getRequest()->attributes->get('site');
+        $isLanguageSetup = false;
+
+        if (empty($frontendController->tmpl->setup) && $site instanceof SiteInterface) {
+            $frontendController->id = $site->getRootPageId();
+            $frontendController->determineId();
+            $isLanguageSetup = true;
+
+            $frontendController->getConfigArray();
+        }
+
+        if (!$frontendController->sys_page instanceof PageRepository) {
+            $frontendController->sys_page = GeneralUtility::makeInstance(
+                PageRepository::class,
+                GeneralUtility::makeInstance(Context::class)
+            );
+
+            if (!$isLanguageSetup) {
+                $frontendController->determineId();
+            }
+
+            Locales::setSystemLocaleFromSiteLanguage($frontendController->getLanguage());
+        }
     }
 }

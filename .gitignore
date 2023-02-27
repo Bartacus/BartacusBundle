@@ -3,9 +3,6 @@ composer.lock
 composer.phar
 vendor/
 
-### PHP CS Fixer
-.php_cs.cache
-
 ### TYPO3
 public/index.php
 public/typo3/

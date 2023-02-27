@@ -36,36 +36,16 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
-use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class PrepareContentElementRenderer implements MiddlewareInterface
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
-
-    /**
-     * @var HttpKernelInterface
-     */
-    private $kernel;
-
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
-    /**
-     * @var HttpFoundationFactory
-     */
-    private $httpFoundationFactory;
-
-    /**
-     * @var PsrHttpFactory
-     */
-    private $psrHttpFactory;
+    private EventDispatcherInterface $dispatcher;
+    private HttpKernelInterface $kernel;
+    private RequestStack $requestStack;
+    private HttpFoundationFactory $httpFoundationFactory;
+    private PsrHttpFactory $psrHttpFactory;
 
     public function __construct(EventDispatcherInterface $dispatcher, HttpKernelInterface $kernel, RequestStack $requestStack)
     {
@@ -89,7 +69,7 @@ class PrepareContentElementRenderer implements MiddlewareInterface
 
         $this->requestStack->push($symfonyRequest);
 
-        $event = new RequestEvent($this->kernel, $symfonyRequest, HttpKernel::MASTER_REQUEST);
+        $event = new RequestEvent($this->kernel, $symfonyRequest, HttpKernelInterface::MAIN_REQUEST);
         $this->dispatcher->dispatch($event, KernelEvents::REQUEST);
 
         SymfonyBootstrap::setRequestForTermination($symfonyRequest);
@@ -102,17 +82,19 @@ class PrepareContentElementRenderer implements MiddlewareInterface
         $symfonyResponse = $this->httpFoundationFactory->createResponse($response);
         SymfonyBootstrap::setResponseForTermination($symfonyResponse);
 
-        $event = new ResponseEvent($this->kernel, $symfonyRequest, HttpKernel::MASTER_REQUEST, $symfonyResponse);
+        $event = new ResponseEvent($this->kernel, $symfonyRequest, HttpKernelInterface::MAIN_REQUEST, $symfonyResponse);
         $this->dispatcher->dispatch($event, KernelEvents::RESPONSE);
 
-        $this->dispatcher->dispatch(new FinishRequestEvent($this->kernel, $symfonyRequest, HttpKernel::MASTER_REQUEST), KernelEvents::FINISH_REQUEST);
+        $this->dispatcher->dispatch(
+            new FinishRequestEvent($this->kernel, $symfonyRequest, HttpKernelInterface::MAIN_REQUEST),
+            KernelEvents::FINISH_REQUEST
+        );
+
         $this->requestStack->pop();
 
         $symfonyResponse = $event->getResponse();
         SymfonyBootstrap::setResponseForTermination($symfonyResponse);
 
-        $response = $this->psrHttpFactory->createResponse($symfonyResponse);
-
-        return $response;
+        return $this->psrHttpFactory->createResponse($symfonyResponse);
     }
 }
