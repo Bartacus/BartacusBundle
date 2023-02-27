@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.3.0] - 2023-02-27
 ### Changed
 - Applied PHP strict types
 - Increased minimum composer package versions
@@ -311,9 +312,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/3.2.1...HEAD
-[3.1.5]: https://github.com/Bartacus/BartacusBundle/compare/3.2.0...3.2.1
-[3.1.5]: https://github.com/Bartacus/BartacusBundle/compare/3.1.5...3.2.0
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/3.3.0...HEAD
+[3.3.0]: https://github.com/Bartacus/BartacusBundle/compare/3.2.1...3.3.0
+[3.2.1]: https://github.com/Bartacus/BartacusBundle/compare/3.2.0...3.2.1
+[3.2.0]: https://github.com/Bartacus/BartacusBundle/compare/3.1.5...3.2.0
 [3.1.5]: https://github.com/Bartacus/BartacusBundle/compare/3.1.4...3.1.5
 [3.1.4]: https://github.com/Bartacus/BartacusBundle/compare/3.1.3...3.1.4
 [3.1.3]: https://github.com/Bartacus/BartacusBundle/compare/3.1.2...3.1.3
