@@ -83,6 +83,15 @@ class Renderer
     }
 
     /**
+     * This setter is called when the plugin is called from UserContentObject (USER)
+     * via ContentObjectRenderer->callUserFunction().
+     */
+    public function setContentObjectRenderer(ContentObjectRenderer $cObj): void
+    {
+        $this->cObj = $cObj;
+    }
+
+    /**
      * @throws ImmediateResponseException
      * @throws PageNotFoundException
      * @noinspection PhpUnusedParameterInspection
