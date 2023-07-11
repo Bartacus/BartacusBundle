@@ -93,10 +93,12 @@ class FrontendControllerSubscriber implements EventSubscriberInterface
 
         if (empty($frontendController->tmpl->setup) && $site instanceof SiteInterface) {
             $frontendController->id = $site->getRootPageId();
-            $frontendController->determineId();
+            $frontendController->determineId($GLOBALS['TYPO3_REQUEST']);
+            $GLOBALS['TYPO3_REQUEST'] = $GLOBALS['TYPO3_REQUEST']->withAttribute('frontend.controller', $frontendController);
+            $GLOBALS['TYPO3_REQUEST'] = $frontendController->getFromCache($GLOBALS['TYPO3_REQUEST']);
+            $frontendController->releaseLocks();
+            $frontendController->preparePageContentGeneration($GLOBALS['TYPO3_REQUEST']);
             $isLanguageSetup = true;
-
-            $frontendController->getConfigArray();
         }
 
         if (!$frontendController->sys_page instanceof PageRepository) {
@@ -106,7 +108,7 @@ class FrontendControllerSubscriber implements EventSubscriberInterface
             );
 
             if (!$isLanguageSetup) {
-                $frontendController->determineId();
+                $frontendController->determineId($GLOBALS['TYPO3_REQUEST']);
             }
 
             Locales::setSystemLocaleFromSiteLanguage($frontendController->getLanguage());
