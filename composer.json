@@ -6,7 +6,7 @@
     "license": "GPL-3.0-or-later",
     "authors": [
         {
-            "name": "Emily Karisch"
+            "name": "Stefan Herndler"
         },
         {
             "name": "Simon Kendler"
@@ -17,33 +17,42 @@
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
+        "ext-dom": "*",
+        "ext-intl": "*",
+        "ext-json": "*",
+        "ext-libxml": "*",
+        "ext-pcre": "*",
+        "ext-pdo": "*",
+        "ext-session": "*",
+        "ext-xml": "*",
+        "composer-runtime-api": "^2.1",
         "cweagans/composer-patches": "^1.7",
-        "doctrine/annotations": "^1.14",
-        "helhum/typo3-console": "^7.1",
+        "doctrine/annotations": "^2.0",
+        "doctrine/dbal": "^3.6",
+        "helhum/typo3-console": "^8.0",
         "nyholm/psr7": "^1.5",
         "psr/http-server-middleware": "^1.0",
-        "symfony/config": "^5.4",
-        "symfony/event-dispatcher": "^5.4",
-        "symfony/finder": "^5.4",
-        "symfony/framework-bundle": "^5.4",
-        "symfony/http-foundation": "^5.4",
-        "symfony/http-kernel": "^5.4",
-        "symfony/options-resolver": "^5.4",
-        "symfony/proxy-manager-bridge": "^5.4",
+        "symfony/config": "^6.2",
+        "symfony/event-dispatcher": "^6.2",
+        "symfony/finder": "^6.2",
+        "symfony/framework-bundle": "^6.2",
+        "symfony/http-foundation": "^6.2",
+        "symfony/http-kernel": "^6.2",
+        "symfony/options-resolver": "^6.2",
+        "symfony/proxy-manager-bridge": "^6.2",
         "symfony/psr-http-message-bridge": "^2.1",
-        "typo3/cms-core": "^11.5",
-        "typo3/cms-extbase": "^11.5",
-        "typo3/cms-frontend": "^11.5",
-        "typo3/cms-install": "^11.5"
+        "typo3/cms-core": "^12.4",
+        "typo3/cms-extbase": "^12.4",
+        "typo3/cms-frontend": "^12.4",
+        "typo3/cms-install": "^12.4"
     },
     "require-dev": {
         "symfony/debug": "^4.4",
-        "symfony/twig-bundle": "^5.4"
+        "symfony/twig-bundle": "^6.2"
     },
     "conflict": {
-        "jms/di-extra-bundle": "*",
-        "symfony/symfony": "<5.4"
+        "jms/di-extra-bundle": "*"
     },
     "autoload": {
         "psr-4": {
@@ -78,9 +87,6 @@
             },
             "typo3/cms-cli": {
                 "Patch entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/cms-cli/compare/master...Bartacus:patch/2.0.0/bartacus-entry-script.patch"
-            },
-            "helhum/typo3-console": {
-                "Patch console entry script for proper Symfony kernel bootstrap": "https://github.com/Bartacus/TYPO3-Console/compare/v6.1.0...patch/6.1/bartacus-entry-script.patch"
             }
         },
         "enable-patching": true

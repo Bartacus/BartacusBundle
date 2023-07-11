@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- TYPO3 v12.4 support
+
 ## [3.3.0] - 2023-02-27
 ### Changed
 - Applied PHP strict types
