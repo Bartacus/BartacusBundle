@@ -45,7 +45,7 @@ class Typo3RedirectRequestMiddlewaresSubscriber implements EventSubscriberInterf
 
     public function loadMiddlewares(RequestMiddlewaresEvent $event): void
     {
-        $frontendMiddlewares = require $this->projectDir.'/public/typo3/sysext/frontend/Configuration/RequestMiddlewares.php';
+        $frontendMiddlewares = require $this->projectDir.'/vendor/typo3/cms-frontend/Configuration/RequestMiddlewares.php';
 
         $middlewares = [
             'frontend' => [

@@ -35,7 +35,7 @@ class Typo3ProductionExceptionHandler extends ProductionExceptionHandler
     /**
      * @throws \Exception
      */
-    public function handleException(\Throwable $exception)
+    public function handleException(\Throwable $exception): void
     {
         $this->fixOutputBuffer($exception);
 

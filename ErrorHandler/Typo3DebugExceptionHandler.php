@@ -35,7 +35,7 @@ class Typo3DebugExceptionHandler extends DebugExceptionHandler
     /**
      * @throws \Exception
      */
-    public function handleException(\Throwable $exception)
+    public function handleException(\Throwable $exception): void
     {
         $this->fixOutputBuffer($exception);
 

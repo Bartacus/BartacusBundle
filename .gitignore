@@ -6,3 +6,4 @@ vendor/
 ### TYPO3
 public/index.php
 public/typo3/
+public/_assets/

@@ -33,7 +33,7 @@ class BartacusBundle extends Bundle
     /**
      * {@inheritdoc}
      */
-    public function boot()
+    public function boot(): void
     {
         $this->container->get(SymfonyServiceForMakeInstanceLoader::class)?->load();
     }
@@ -41,7 +41,7 @@ class BartacusBundle extends Bundle
     /**
      * {@inheritdoc}
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new SymfonyServiceForMakeInstancePass());
     }
