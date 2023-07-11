@@ -129,7 +129,7 @@ class LocaleSubscriber implements EventSubscriberInterface
         //  - this means this is a TYPO3 page request and we are something inside the TYPO3 middleware stack
         $siteLanguage = $request->attributes->get('language');
         if ($siteLanguage instanceof SiteLanguage) {
-            return $siteLanguage->getLocale();
+            return $siteLanguage->getLocale()->getName();
         }
 
         // default Symfony Route behavior
@@ -162,7 +162,7 @@ class LocaleSubscriber implements EventSubscriberInterface
         if (null !== $oldLanguageId) {
             try {
                 // use the SiteLanguage which matches the requested sys language uid
-                return $site->getLanguageById((int) $oldLanguageId)->getLocale();
+                return $site->getLanguageById((int) $oldLanguageId)->getLocale()->getName();
             } catch (\InvalidArgumentException) {
                 // the exception will be thrown if there is no SiteLanguage matching the requested sys language uid,
                 // Instead of throwing the exception we will use a fallback to the Site's default language.
@@ -170,6 +170,6 @@ class LocaleSubscriber implements EventSubscriberInterface
         }
 
         // fallback to the Site's default language
-        return $site->getDefaultLanguage()->getLocale();
+        return $site->getDefaultLanguage()->getLocale()->getName();
     }
 }
