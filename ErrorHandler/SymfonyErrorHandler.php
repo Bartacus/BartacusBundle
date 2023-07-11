@@ -36,10 +36,10 @@ class SymfonyErrorHandler extends ErrorHandler
      * @throws \Throwable
      * @throws \ErrorException
      */
-    public function handleException(\Throwable $exception)
+    public function handleException(\Throwable $exception): void
     {
         $this->fixOutputBuffer($exception);
 
-        return parent::handleException($exception);
+        parent::handleException($exception);
     }
 }
