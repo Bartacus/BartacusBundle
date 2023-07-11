@@ -53,7 +53,7 @@ class RenderDefinitionCollection implements \IteratorAggregate, \Countable
         return \count($this->renderDefinitions);
     }
 
-    public function add(RenderDefinition $renderDefinition)
+    public function add(RenderDefinition $renderDefinition): void
     {
         $this->renderDefinitions[] = $renderDefinition;
     }
@@ -71,12 +71,12 @@ class RenderDefinitionCollection implements \IteratorAggregate, \Countable
         return \array_unique($this->resources);
     }
 
-    public function addResource(ResourceInterface $resource)
+    public function addResource(ResourceInterface $resource): void
     {
         $this->resources[] = $resource;
     }
 
-    public function addCollection(self $collection)
+    public function addCollection(self $collection): void
     {
         $this->renderDefinitions = \array_merge($this->renderDefinitions, $collection->all());
         $this->resources = \array_merge($this->resources, $collection->getResources());

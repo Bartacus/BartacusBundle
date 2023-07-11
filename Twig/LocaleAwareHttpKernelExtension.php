@@ -45,7 +45,7 @@ class LocaleAwareHttpKernelExtension extends AbstractExtension implements Reques
         return $this->context;
     }
 
-    public function setContext(RequestContext $context)
+    public function setContext(RequestContext $context): void
     {
         $this->context = $context;
     }
