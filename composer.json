@@ -77,7 +77,7 @@
             },
             "typo3/cms-core": {
                 "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/v10.4.1...Bartacus:patch/10.4/core/bartacus-entry-script.patch",
-                "Make TYPO3 own PSR-7 implementation really compliant": "https://github.com/TYPO3/TYPO3.CMS/compare/v10.4.1...Bartacus:patch/10.4/core/psr7-compliance.patch"
+                "Patch TYPO3 GeneralUtility to enable Symfony ServiceBridge": "https://github.com/TYPO3/typo3/compare/v12.4.2...Bartacus:patch/12.4/core/service-bridge.patch"
             },
             "typo3/cms-frontend": {
                 "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/v10.4.1...Bartacus:patch/10.4/frontend/bartacus-entry-script.patch"
