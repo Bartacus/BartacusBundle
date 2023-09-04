@@ -77,7 +77,7 @@
                 "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/v10.4.1...Bartacus:patch/10.4/install/bartacus-entry-script.patch"
             },
             "typo3/cms-cli": {
-                "Patch entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/cms-cli/compare/master...Bartacus:patch/2.0.0/bartacus-entry-script.patch"
+                "Patch entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/cms-cli/compare/2.0.0...Bartacus:patch/2.0.0/bartacus-entry-script.patch"
             },
             "helhum/typo3-console": {
                 "Patch console entry script for proper Symfony kernel bootstrap": "https://github.com/Bartacus/TYPO3-Console/compare/v6.1.0...patch/6.1/bartacus-entry-script.patch"
