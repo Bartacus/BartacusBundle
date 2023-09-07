@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.2] - 2023-09-07
+### Fixed
+- Fix TYPO3 cache identifiers
+
+## [4.0.1] - 2023-09-04
+### Fixed
+- Fix Symfony bootstraping for TYPO3 CLI
+
 ## [4.0.0] - 2023-07-11
 ### Added
 - TYPO3 v12.4 support
@@ -316,7 +324,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/4.0.0...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/4.0.2...HEAD
+[4.0.1]: https://github.com/Bartacus/BartacusBundle/compare/4.0.1...4.0.2
+[4.0.1]: https://github.com/Bartacus/BartacusBundle/compare/4.0.0...4.0.1
 [4.0.0]: https://github.com/Bartacus/BartacusBundle/compare/3.3.0...4.0.0
 [3.3.0]: https://github.com/Bartacus/BartacusBundle/compare/3.2.1...3.3.0
 [3.2.1]: https://github.com/Bartacus/BartacusBundle/compare/3.2.0...3.2.1
