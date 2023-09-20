@@ -52,7 +52,7 @@ class ServiceBridge
      */
     public function getGlobal(string $global): mixed
     {
-        return $GLOBALS[$global];
+        return $GLOBALS[$global] ?? null;
     }
 
     public function getFrontendController(): ?TypoScriptFrontendController
