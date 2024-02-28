@@ -21,28 +21,18 @@ declare(strict_types=1);
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Bundle\BartacusBundle\Annotation;
+namespace Bartacus\Bundle\BartacusBundle\Attribute;
 
-/**
- * Define a Symfony controller actions as TYPO3 content element handler.
- *
- * @Annotation
- * @Target({"METHOD"})
- */
-final class ContentElement
+#[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_METHOD)]
+class ContentElement
 {
-    private ?string $name = null;
-    private bool $cached = true;
+    private ?string $name;
+    private bool $cached;
 
-    public function __construct(array $options = [])
+    public function __construct(?string $name = null, bool $cached = true)
     {
-        if (isset($options['value'])) {
-            $this->name = (string) $options['value'];
-        }
-
-        if (isset($options['cached'])) {
-            $this->cached = \filter_var($options['cached'], \FILTER_VALIDATE_BOOLEAN);
-        }
+        $this->name = $name;
+        $this->cached = $cached;
     }
 
     public function getName(): ?string

@@ -17,7 +17,7 @@ full stack framework into your TYPO3 CMS.
 - Auto-mapping of application specific Extbase models and repositories
 
 #### Content Element Rendering
-- Adds the `@ContentElement()` annotation and builds the TypoScript config for each element
+- Adds the `#[ContentElement()]` PHP attribute and builds the TypoScript config for each element
 - Injects `tt_content` Extbase models to Symfony controllers
 - Extracts the Symfony response of each controller back to TYPO3 content
 - Handles `404 Not Found` exceptions thrown by Symfony controllers
