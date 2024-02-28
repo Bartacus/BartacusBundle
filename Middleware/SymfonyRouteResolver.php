@@ -27,7 +27,6 @@ use Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
@@ -157,10 +156,12 @@ class SymfonyRouteResolver implements MiddlewareInterface
         $server = [];
         $uri = $psrRequest->getUri();
 
-        $server['SERVER_NAME'] = $uri->getHost();
-        $server['SERVER_PORT'] = $uri->getPort();
-        $server['REQUEST_URI'] = $uri->getPath();
-        $server['QUERY_STRING'] = $uri->getQuery();
+        if ($uri) {
+            $server['SERVER_NAME'] = $uri->getHost();
+            $server['SERVER_PORT'] = $uri->getPort();
+            $server['REQUEST_URI'] = $uri->getPath();
+            $server['QUERY_STRING'] = $uri->getQuery();
+        }
 
         $server['REQUEST_METHOD'] = $psrRequest->getMethod();
 
