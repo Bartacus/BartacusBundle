@@ -21,33 +21,23 @@ declare(strict_types=1);
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Bundle\BartacusBundle\ContentElement\Definition;
+namespace Bartacus\Bundle\BartacusBundle\DependencyInjection\Compiler;
 
-class RenderDefinition
+use Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+
+class ContentElementAttributePass implements CompilerPassInterface
 {
-    private string $name;
-    private bool $cached;
-    private string $controller;
-
-    public function __construct(string $name, bool $cached, string $controller)
+    public function process(ContainerBuilder $container): void
     {
-        $this->name = $name;
-        $this->cached = $cached;
-        $this->controller = $controller;
-    }
+        $taggedServices = $container->findTaggedServiceIds('controller.service_arguments');
+        $classnames = [];
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
+        foreach ($taggedServices as $id => $tags) {
+            $classnames[] = $container->findDefinition($id)->getClass();
+        }
 
-    public function isCached(): bool
-    {
-        return $this->cached;
-    }
-
-    public function getController(): string
-    {
-        return $this->controller;
+        $container->findDefinition(ContentElementConfigLoader::class)->replaceArgument(0, $classnames);
     }
 }

@@ -156,12 +156,10 @@ class SymfonyRouteResolver implements MiddlewareInterface
         $server = [];
         $uri = $psrRequest->getUri();
 
-        if ($uri) {
-            $server['SERVER_NAME'] = $uri->getHost();
-            $server['SERVER_PORT'] = $uri->getPort();
-            $server['REQUEST_URI'] = $uri->getPath();
-            $server['QUERY_STRING'] = $uri->getQuery();
-        }
+        $server['SERVER_NAME'] = $uri->getHost();
+        $server['SERVER_PORT'] = $uri->getPort();
+        $server['REQUEST_URI'] = $uri->getPath();
+        $server['QUERY_STRING'] = $uri->getQuery();
 
         $server['REQUEST_METHOD'] = $psrRequest->getMethod();
 

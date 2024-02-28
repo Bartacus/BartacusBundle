@@ -23,30 +23,29 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\ContentElement\Loader;
 
-use Bartacus\Bundle\BartacusBundle\ContentElement\Definition\RenderDefinition;
-use Bartacus\Bundle\BartacusBundle\ContentElement\Definition\RenderDefinitionCollection;
+use Bartacus\Bundle\BartacusBundle\Attribute\ContentElement;
 use Bartacus\Bundle\BartacusBundle\ContentElement\Renderer;
+use ReflectionException;
 use Symfony\Component\Config\ConfigCacheFactory;
 use Symfony\Component\Config\ConfigCacheFactoryInterface;
 use Symfony\Component\Config\ConfigCacheInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 final class ContentElementConfigLoader implements WarmableInterface
 {
-    private ?RenderDefinitionCollection $collection = null;
-    private array $options = [];
+    private array $classnames;
+    private ?string $cacheDir;
+    private bool $debug;
     private bool $typoScriptLoaded = false;
     private ?ConfigCacheFactoryInterface $configCacheFactory = null;
-    private AnnotationContentElementLoader $loader;
 
-    public function __construct(AnnotationContentElementLoader $loader, string $cacheDir = null, bool $debug = false)
+    public function __construct(array $classnames, string $cacheDir = null, bool $debug = false)
     {
-        $this->loader = $loader;
-        $this->setOptions([
-            'cache_dir' => $cacheDir,
-            'debug' => $debug,
-        ]);
+        $this->classnames = $classnames;
+        $this->cacheDir = $cacheDir;
+        $this->debug = $debug;
     }
 
     public function setConfigCacheFactory(ConfigCacheFactoryInterface $configCacheFactory): void
@@ -55,67 +54,17 @@ final class ContentElementConfigLoader implements WarmableInterface
     }
 
     /**
-     * @throws \InvalidArgumentException
-     */
-    public function setOptions(array $options): void
-    {
-        $this->options = [
-            'cache_dir' => null,
-            'debug' => false,
-        ];
-
-        // check option names and live merge, if errors are encountered Exception will be thrown
-        $invalid = [];
-
-        foreach ($options as $key => $value) {
-            if (\array_key_exists($key, $this->options)) {
-                $this->options[$key] = $value;
-            } else {
-                $invalid[] = $key;
-            }
-        }
-
-        if ($invalid) {
-            throw new \InvalidArgumentException(\sprintf('The Content Element loader does not support the following options: "%s".', \implode('", "', $invalid)));
-        }
-    }
-
-    /**
-     * @throws \InvalidArgumentException
-     */
-    public function setOption(string $key, mixed $value): void
-    {
-        if (!\array_key_exists($key, $this->options)) {
-            throw new \InvalidArgumentException(\sprintf('The Content Element loader does not support the "%s" option.', $key));
-        }
-
-        $this->options[$key] = $value;
-    }
-
-    /**
-     * @throws \InvalidArgumentException
-     */
-    public function getOption(string $key): mixed
-    {
-        if (!\array_key_exists($key, $this->options)) {
-            throw new \InvalidArgumentException(\sprintf('The Content Element loader does not support the "%s" option.', $key));
-        }
-
-        return $this->options[$key];
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function warmUp($cacheDir): void
     {
-        $currentDir = $this->getOption('cache_dir');
+        $currentDir = $this->cacheDir;
 
         // force cache generation
-        $this->setOption('cache_dir', $cacheDir);
+        $this->cacheDir = $cacheDir;
         $this->loadTypoScript();
 
-        $this->setOption('cache_dir', $currentDir);
+        $this->cacheDir = $currentDir;
     }
 
     public function load(): void
@@ -135,18 +84,17 @@ final class ContentElementConfigLoader implements WarmableInterface
 
     private function loadTypoScript(): string
     {
-        if (null === $this->options['cache_dir']) {
-            return $this->concatenateTypoScript();
+        $typoscriptContent = $this->concatenateTypoScript();
+
+        if (null === $this->cacheDir) {
+            return $typoscriptContent;
         }
 
         $cache = $this->getConfigCacheFactory()
             ->cache(
-                $this->options['cache_dir'].'/content_elements.typoscript',
-                function (ConfigCacheInterface $cache) {
-                    $cache->write(
-                        $this->concatenateTypoScript(),
-                        $this->getRenderDefinitionCollection()->getResources()
-                    );
+                $this->cacheDir.'/content_elements.typoscript',
+                function (ConfigCacheInterface $cache) use ($typoscriptContent) {
+                    $cache->write($typoscriptContent);
                 }
             )
         ;
@@ -175,30 +123,43 @@ tt_content.key.field = CType
 
 EOTS;
 
-        $renderDefinitions = $this->getRenderDefinitionCollection();
-        $typoScripts = [];
-
-        foreach ($renderDefinitions as $renderDefinition) {
-            $typoScripts[] = $this->renderPluginContent($renderDefinition);
-        }
-
-        return $startingConfig.\implode("\n\n", $typoScripts);
+        return $startingConfig.implode("\n\n", $this->getPluginTypoScripts());
     }
 
-    private function getRenderDefinitionCollection(): RenderDefinitionCollection
+    private function getPluginTypoScripts(): array
     {
-        if (null === $this->collection) {
-            $this->collection = $this->loader->load();
+        $typoscript = [];
+
+        foreach ($this->classnames as $classname) {
+            try {
+                $reflectionClass = new \ReflectionClass($classname);
+            } catch (ReflectionException) {
+                continue;
+            }
+
+            foreach ($reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $reflectionMethod) {
+                foreach ($reflectionMethod->getAttributes() as $reflectionAttribute) {
+                    if (ContentElement::class === $reflectionAttribute->getName()) {
+                        $typoscript[] = $this->getPluginDefinition($reflectionAttribute->newInstance(), $reflectionMethod, $reflectionClass->getName());
+
+                        break;
+                    }
+                }
+            }
         }
 
-        return $this->collection;
+        return $typoscript;
     }
 
-    private function renderPluginContent(RenderDefinition $renderDefinition): string
+    private function getPluginDefinition(ContentElement $contentElement, \ReflectionMethod $reflectionMethod, string $classname): string
     {
-        $pluginSignature = $renderDefinition->getName();
-        $cached = $renderDefinition->isCached();
-        $controller = $renderDefinition->getController();
+        $pluginSignature = $contentElement->getName();
+        if (!$pluginSignature) {
+            $pluginSignature = $this->autodetectNameFromMethodArguments($reflectionMethod);
+        }
+
+        $cached = $contentElement->isCached();
+        $controller = $classname.'::'.$reflectionMethod->getName();
 
         $pluginType = 'USER'.($cached ? '' : '_INT');
         $userFunc = Renderer::class.'->handle';
@@ -215,10 +176,33 @@ EOTS;
         return \trim($pluginContent);
     }
 
+    private function autodetectNameFromMethodArguments(\ReflectionMethod $reflectionMethod): ?string
+    {
+        // loop through all parameters of the annotated method
+        foreach ($reflectionMethod->getParameters() as $parameter) {
+            // skip strings, numbers, boolean and arrays
+            if ($parameter->getType() && $parameter->getType()->isBuiltin()) {
+                continue;
+            }
+
+            // get the parameter's class name
+            /** @noinspection PhpUnhandledExceptionInspection */
+            $parameterReflectionClass = new \ReflectionClass($parameter->getType()->getName());
+
+            // check if the class extends the TYPO3 extbase entity and has our static 'getRecordType' to read its CType
+            if ($parameterReflectionClass->isSubclassOf(AbstractEntity::class) && $parameterReflectionClass->hasMethod('getRecordType')) {
+                /** @noinspection PhpUndefinedMethodInspection */
+                return ($parameterReflectionClass->getName())::getRecordType();
+            }
+        }
+
+        return null;
+    }
+
     private function getConfigCacheFactory(): ConfigCacheFactoryInterface
     {
         if (null === $this->configCacheFactory) {
-            $this->configCacheFactory = new ConfigCacheFactory($this->options['debug']);
+            $this->configCacheFactory = new ConfigCacheFactory($this->debug);
         }
 
         return $this->configCacheFactory;

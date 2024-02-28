@@ -30,18 +30,12 @@
         </service>
 
         <service id="Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader">
-            <argument type="service" id="Bartacus\Bundle\BartacusBundle\ContentElement\Loader\AnnotationContentElementLoader" />
+            <argument /> <!-- classnames -->
             <argument>%kernel.cache_dir%</argument>
             <argument>%kernel.debug%</argument>
             <call method="setConfigCacheFactory">
                 <argument type="service" id="config_cache_factory" />
             </call>
-        </service>
-
-        <service id="Bartacus\Bundle\BartacusBundle\ContentElement\Loader\AnnotationContentElementLoader">
-            <argument>%kernel.project_dir%</argument>
-            <argument>%kernel.bundles_metadata%</argument>
-            <argument type="service" id="Doctrine\Common\Annotations\Reader" />
         </service>
 
         <service id="Bartacus\Bundle\BartacusBundle\Config\ConfigLoader" public="true">
