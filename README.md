@@ -19,6 +19,7 @@ full stack framework into your TYPO3 CMS.
 #### Content Element Rendering
 - Adds the `#[ContentElement()]` PHP attribute and builds the TypoScript config for each element
 - Injects `tt_content` Extbase models to Symfony controllers
+- Allows custom caching of uncached TYPO3 content elements
 - Extracts the Symfony response of each controller back to TYPO3 content
 - Handles `404 Not Found` exceptions thrown by Symfony controllers
 
