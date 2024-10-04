@@ -160,6 +160,9 @@ EOTS;
 
         $cached = $contentElement->isCached();
         $controller = $classname.'::'.$reflectionMethod->getName();
+        $customCacheEnable = $contentElement->usesCustomCache();
+        $customCacheLifetime = $contentElement->getCustomCacheLifetime();
+        $customCacheTagList = implode(',', $contentElement->getCustomCacheTags());
 
         $pluginType = 'USER'.($cached ? '' : '_INT');
         $userFunc = Renderer::class.'->handle';
@@ -170,6 +173,11 @@ tt_content.$pluginSignature = $pluginType
 tt_content.$pluginSignature {
     userFunc = $userFunc
     controller = $controller
+    custom_cache {
+        enabled = $customCacheEnable
+        lifetime = $customCacheLifetime
+        tags = $customCacheTagList
+    }
 }
 EOTS;
 

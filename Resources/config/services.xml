@@ -68,6 +68,7 @@
             <argument type="service" id="argument_resolver" />
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="TYPO3\CMS\Frontend\Controller\ErrorController" />
+            <argument type="service" id="typo3.cache.cache_hash" />
             <tag name="bartacus.make_instance" />
         </service>
 
