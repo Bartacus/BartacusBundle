@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "^8.3",
         "ext-dom": "*",
         "ext-intl": "*",
         "ext-json": "*",
@@ -28,25 +28,24 @@
         "ext-xml": "*",
         "composer-runtime-api": "^2.1",
         "cweagans/composer-patches": "^1.7",
-        "helhum/typo3-console": "^8.0",
         "nyholm/psr7": "^1.5",
         "psr/http-server-middleware": "^1.0",
-        "symfony/config": "^6.2",
-        "symfony/event-dispatcher": "^6.2",
-        "symfony/framework-bundle": "^6.2",
-        "symfony/http-foundation": "^6.2",
-        "symfony/http-kernel": "^6.2",
-        "symfony/options-resolver": "^6.2",
-        "symfony/proxy-manager-bridge": "^6.2",
-        "symfony/psr-http-message-bridge": "^2.1",
-        "typo3/cms-core": "^12.4",
-        "typo3/cms-extbase": "^12.4",
-        "typo3/cms-frontend": "^12.4",
-        "typo3/cms-install": "^12.4"
+        "symfony/config": "^7.1",
+        "symfony/event-dispatcher": "^7.1",
+        "symfony/framework-bundle": "^7.1",
+        "symfony/http-foundation": "^7.1",
+        "symfony/http-kernel": "^7.1",
+        "symfony/options-resolver": "^7.1",
+        "symfony/proxy-manager-bridge": "^6.4",
+        "symfony/psr-http-message-bridge": "^7.1",
+        "typo3/cms-core": "^13.3",
+        "typo3/cms-extbase": "^13.3",
+        "typo3/cms-frontend": "^13.3",
+        "typo3/cms-install": "^13.3"
     },
     "require-dev": {
         "symfony/debug": "^4.4",
-        "symfony/twig-bundle": "^6.2"
+        "symfony/twig-bundle": "^7.1"
     },
     "conflict": {
         "jms/di-extra-bundle": "*"
@@ -66,21 +65,15 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "5.0.x-dev"
+            "dev-master": "6.0.x-dev"
         },
         "patches": {
-            "typo3/cms-backend": {
-                "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/v10.4.1...Bartacus:patch/10.4/backend/bartacus-entry-script.patch"
-            },
             "typo3/cms-core": {
-                "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/v10.4.1...Bartacus:patch/10.4/core/bartacus-entry-script.patch",
-                "Patch TYPO3 GeneralUtility to enable Symfony ServiceBridge": "https://github.com/TYPO3/typo3/compare/v12.4.2...Bartacus:patch/12.4/core/service-bridge.patch"
-            },
-            "typo3/cms-frontend": {
-                "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/v10.4.1...Bartacus:patch/10.4/frontend/bartacus-entry-script.patch"
+                "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/v13.3.1...Bartacus:patch/13.3/core/bartacus-entry-script.patch",
+                "Patch TYPO3 GeneralUtility to enable Symfony ServiceBridge": "https://github.com/TYPO3/typo3/compare/v13.3.1...Bartacus:patch/13.3/core/service-bridge.patch"
             },
             "typo3/cms-install": {
-                "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/v10.4.1...Bartacus:patch/10.4/install/bartacus-entry-script.patch"
+                "Patch TYPO3 entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/TYPO3.CMS/compare/v13.3.1...Bartacus:patch/13.3/install/bartacus-entry-script.patch"
             },
             "typo3/cms-cli": {
                 "Patch entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/cms-cli/compare/3.1.1...Bartacus:patch/3.0.0/bartacus-entry-script.patch"
