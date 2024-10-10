@@ -35,9 +35,12 @@ class ContentElementCacheWarmer implements CacheWarmerInterface
         $this->configLoader = $configLoader;
     }
 
-    public function warmUp(string $cacheDir): void
+    public function warmUp(string $cacheDir, ?string $buildDir = null): array
     {
         $this->configLoader->warmUp($cacheDir);
+
+        // No need to preload anything
+        return[];
     }
 
     public function isOptional(): bool

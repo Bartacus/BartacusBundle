@@ -56,7 +56,7 @@ final class ContentElementConfigLoader implements WarmableInterface
     /**
      * {@inheritdoc}
      */
-    public function warmUp($cacheDir): void
+    public function warmUp(string $cacheDir, ?string $buildDir = null): array
     {
         $currentDir = $this->cacheDir;
 
@@ -65,6 +65,9 @@ final class ContentElementConfigLoader implements WarmableInterface
         $this->loadTypoScript();
 
         $this->cacheDir = $currentDir;
+
+        // No need to preload anything
+        return [];
     }
 
     public function load(): void
