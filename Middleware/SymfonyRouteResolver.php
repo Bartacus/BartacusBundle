@@ -40,6 +40,7 @@ use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\LanguageAspectFactory;
 use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Frontend\Cache\CacheInstruction;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Middleware\PrepareTypoScriptFrontendRendering;
 use TYPO3\CMS\Frontend\Middleware\TypoScriptFrontendInitialization;
@@ -114,9 +115,13 @@ class SymfonyRouteResolver implements MiddlewareInterface
             /** @noinspection CallableParameterUseCaseInTypeContextInspection */
             $request = $GLOBALS['TYPO3_REQUEST'];
 
+            // avoid frontend caching and build the full config
+            $cacheInstruction = new CacheInstruction();
+            $cacheInstruction->disableCache('Symfony Routes need a fresh and full Setup config.');
+            $request = $request->withAttribute('frontend.cache.instruction', $cacheInstruction);
+
             $this->typoScriptFrontendRendering->process($request, $this->dummyRequestHandler);
             /** @noinspection CallableParameterUseCaseInTypeContextInspection */
-            /** @noinspection PhpConditionAlreadyCheckedInspection */
             $request = $GLOBALS['TYPO3_REQUEST'];
         } catch (PageInformationCreationFailedException) {
         }
