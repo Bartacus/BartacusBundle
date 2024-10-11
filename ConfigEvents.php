@@ -36,7 +36,7 @@ final class ConfigEvents
      *
      * @Event("Symfony\Component\EventDispatcher\Event")
      */
-    public const ADDITIONAL_CONFIGURATION = 'bartacus.config.additional_configuration';
+    public const string ADDITIONAL_CONFIGURATION = 'bartacus.config.additional_configuration';
 
     /**
      * The REQUEST_MIDDLEWARES event occurs at when the request middlewares
@@ -44,7 +44,7 @@ final class ConfigEvents
      *
      * @Event("Bartacus\Bundle\BartacusBundle\Event\RequestMiddlewaresEvent")
      */
-    public const REQUEST_MIDDLEWARES = 'bartacus.config.request_middlewares';
+    public const string REQUEST_MIDDLEWARES = 'bartacus.config.request_middlewares';
 
     /**
      * The EXTENSION_TABLES event occurs at when the extension tables file
@@ -52,7 +52,7 @@ final class ConfigEvents
      *
      * @Event("Bartacus\Bundle\BartacusBundle\Event\ExtensionTablesLoadEvent")
      */
-    public const EXTENSION_TABLES = 'bartacus.config.ext_tables';
+    public const string EXTENSION_TABLES = 'bartacus.config.ext_tables';
 
     /**
      * The EXTENSION_LOCALCONF event occurs at when the request extension localconf file
@@ -60,7 +60,7 @@ final class ConfigEvents
      *
      * @Event("Bartacus\Bundle\BartacusBundle\Event\ExtensionTablesLoadEvent")
      */
-    public const EXTENSION_LOCAL_CONF = 'bartacus.config.ext_localconf';
+    public const string EXTENSION_LOCAL_CONF = 'bartacus.config.ext_localconf';
 
     /**
      * The REQUEST_EXTBASE_PERSISTENCE_CLASSES event occurs at when the request the extbase persistence classes
@@ -68,7 +68,7 @@ final class ConfigEvents
      *
      * @Event("Bartacus\Bundle\BartacusBundle\Event\RequestExtbasePersistenceClassesEvent")
      */
-    public const REQUEST_EXTBASE_PERSISTENCE_CLASSES = 'bartacus.config.request_extbase_persistence_classes';
+    public const string REQUEST_EXTBASE_PERSISTENCE_CLASSES = 'bartacus.config.request_extbase_persistence_classes';
 
     /**
      * The EXTBASE_PERSISTENCE_CLASSES event occurs at when the request the extbase persistence classes
@@ -76,5 +76,5 @@ final class ConfigEvents
      *
      * @Event("Bartacus\Bundle\BartacusBundle\Event\ExtbasePersistenceClassesEvent")
      */
-    public const EXTBASE_PERSISTENCE_CLASSES = 'bartacus.config.extbase_persistence_classes';
+    public const string EXTBASE_PERSISTENCE_CLASSES = 'bartacus.config.extbase_persistence_classes';
 }

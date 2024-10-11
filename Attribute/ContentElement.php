@@ -26,21 +26,15 @@ namespace Bartacus\Bundle\BartacusBundle\Attribute;
 #[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_METHOD)]
 class ContentElement
 {
-    public const RESPONSE_CACHE_HEADER = 'cache_tags';
+    public const string RESPONSE_CACHE_HEADER = 'cache_tags';
 
-    private ?string $name;
-    private bool $cached;
-    private bool $useCustomCache;
-    private ?int $customCacheLifetime;
-    private array $customCacheTags;
-
-    public function __construct(?string $name = null, bool $cached = true, bool $useCustomCache = false, ?int $customCacheLifetime = null, array $customCacheTags = [])
-    {
-        $this->name = $name;
-        $this->cached = $cached;
-        $this->useCustomCache = $useCustomCache;
-        $this->customCacheLifetime = $customCacheLifetime;
-        $this->customCacheTags = $customCacheTags;
+    public function __construct(
+        private readonly ?string $name = null,
+        private readonly bool $cached = true,
+        private readonly bool $useCustomCache = false,
+        private readonly ?int $customCacheLifetime = null,
+        private readonly array $customCacheTags = [],
+    ) {
     }
 
     public function getName(): ?string

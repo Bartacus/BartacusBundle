@@ -28,16 +28,14 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class MakeInstanceServiceLocator implements \ArrayAccess
 {
-    private ServiceLocator $serviceLocator;
-
     /**
      * @var object[]
      */
     private array $singletonInstances = [];
 
-    public function __construct(ServiceLocator $serviceLocator)
-    {
-        $this->serviceLocator = $serviceLocator;
+    public function __construct(
+        private readonly ServiceLocator $serviceLocator,
+    ) {
     }
 
     public function offsetExists($offset): bool

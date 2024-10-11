@@ -29,25 +29,22 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use TYPO3\CMS\Core\Context\Context;
-use TYPO3\CMS\Core\Error\Http\InternalServerErrorException;
-use TYPO3\CMS\Core\Error\Http\ServiceUnavailableException;
 use TYPO3\CMS\Core\Localization\Locales;
 use TYPO3\CMS\Core\Site\Entity\SiteInterface;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Core\Domain\Repository\PageRepository;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
  * Initializes the several stuff on the TSFE, when not done yet.
  */
 class FrontendControllerSubscriber implements EventSubscriberInterface
 {
-    private ServiceBridge $serviceBridge;
-
-    public function __construct(ServiceBridge $serviceBridge)
-    {
-        $this->serviceBridge = $serviceBridge;
+    public function __construct(
+        private readonly ServiceBridge $serviceBridge,
+    ) {
     }
 
     public static function getSubscribedEvents(): array
@@ -57,10 +54,6 @@ class FrontendControllerSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @throws InternalServerErrorException
-     * @throws ServiceUnavailableException
-     */
     public function onKernelRequest(RequestEvent $event): void
     {
         if (HttpKernelInterface::MAIN_REQUEST !== $event->getRequestType()) {
@@ -71,9 +64,8 @@ class FrontendControllerSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $frontendController = $this->serviceBridge->getGlobal('TSFE');
-
-        if (!$frontendController) {
+        $frontendController = $this->serviceBridge->getFrontendController();
+        if (!$frontendController instanceof TypoScriptFrontendController) {
             return;
         }
 

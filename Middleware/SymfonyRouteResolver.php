@@ -43,30 +43,20 @@ use TYPO3\CMS\Core\Routing\SiteRouteResult;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Middleware\TypoScriptFrontendInitialization;
+use TYPO3\CMS\Frontend\Page\PageInformationCreationFailedException;
 
 class SymfonyRouteResolver implements MiddlewareInterface
 {
-    private HttpKernelInterface $kernel;
-    private Router $router;
     private HttpFoundationFactory $httpFoundationFactory;
     private PsrHttpFactory $psrHttpFactory;
-    private Context $context;
-    private RequestHandlerInterface $dummyRequestHandler;
-    private TypoScriptFrontendInitialization $frontendInitialization;
 
     public function __construct(
-        HttpKernelInterface $kernel,
-        Router $router,
-        Context $context,
-        RequestHandlerInterface $dummyRequestHandler,
-        TypoScriptFrontendInitialization $frontendInitialization
+        private readonly HttpKernelInterface $kernel,
+        private readonly Router $router,
+        private readonly Context $context,
+        private readonly RequestHandlerInterface $dummyRequestHandler,
+        private readonly TypoScriptFrontendInitialization $frontendInitialization,
     ) {
-        $this->kernel = $kernel;
-        $this->router = $router;
-        $this->context = $context;
-        $this->dummyRequestHandler = $dummyRequestHandler;
-        $this->frontendInitialization = $frontendInitialization;
-
         $this->httpFoundationFactory = new HttpFoundationFactory();
 
         $psr17Factory = new Psr17Factory();
@@ -99,12 +89,12 @@ class SymfonyRouteResolver implements MiddlewareInterface
             return;
         }
 
-        $site = $request->getAttribute('site', null);
+        $site = $request->getAttribute('site');
         if (!$site instanceof Site) {
             return;
         }
 
-        $previousRouting = $request->getAttribute('routing', null);
+        $previousRouting = $request->getAttribute('routing');
         if (!$previousRouting instanceof SiteRouteResult) {
             return;
         }
@@ -127,7 +117,10 @@ class SymfonyRouteResolver implements MiddlewareInterface
         $languageAspect = LanguageAspectFactory::createFromSiteLanguage($language);
         $this->context->setAspect('language', $languageAspect);
 
-        $this->frontendInitialization->process($request, $this->dummyRequestHandler);
+        try {
+            $this->frontendInitialization->process($request, $this->dummyRequestHandler);
+        } catch (PageInformationCreationFailedException) {
+        }
 
         // unset the changes
         $request = $request->withAttribute('routing', $previousRouting);

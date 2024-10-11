@@ -38,13 +38,11 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class ConfigLoader
 {
-    public const DEFAULT_EXTENSION = 'app';
+    public const string DEFAULT_EXTENSION = 'app';
 
-    private EventDispatcherInterface $eventDispatcher;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
+    public function __construct(
+        private readonly EventDispatcherInterface $eventDispatcher,
+    ) {
     }
 
     public function loadFromAdditionalConfiguration(): void

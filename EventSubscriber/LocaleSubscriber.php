@@ -40,15 +40,11 @@ use TYPO3\CMS\Core\Site\SiteFinder;
  */
 class LocaleSubscriber implements EventSubscriberInterface
 {
-    private RequestStack $requestStack;
-    private string $defaultLocale;
-    private ?RequestContextAwareInterface $router;
-
-    public function __construct(RequestStack $requestStack, string $defaultLocale = 'en', ?RequestContextAwareInterface $router = null)
-    {
-        $this->requestStack = $requestStack;
-        $this->defaultLocale = $defaultLocale;
-        $this->router = $router;
+    public function __construct(
+        private readonly RequestStack $requestStack,
+        private readonly string $defaultLocale = 'en',
+        private readonly ?RequestContextAwareInterface $router = null,
+    ) {
     }
 
     public static function getSubscribedEvents(): array

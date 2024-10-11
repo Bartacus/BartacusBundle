@@ -30,16 +30,10 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 final class SymfonyServiceForMakeInstanceLoader
 {
-    /**
-     * @var string[]
-     */
-    private array $classNames;
-    private MakeInstanceServiceLocator $serviceLocator;
-
-    public function __construct(array $classNames, MakeInstanceServiceLocator $serviceLocator)
-    {
-        $this->classNames = $classNames;
-        $this->serviceLocator = $serviceLocator;
+    public function __construct(
+        private readonly array $classNames,
+        private readonly MakeInstanceServiceLocator $serviceLocator,
+    ) {
     }
 
     /**
