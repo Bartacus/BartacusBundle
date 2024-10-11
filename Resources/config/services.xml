@@ -85,6 +85,7 @@
             <argument type="service" id="TYPO3\CMS\Core\Context\Context" />
             <argument type="service" id="Bartacus\Bundle\BartacusBundle\RequestHandler\DummyRequestHandler" />
             <argument type="service" id="TYPO3\CMS\Frontend\Middleware\TypoScriptFrontendInitialization" />
+            <argument type="service" id="TYPO3\CMS\Frontend\Middleware\PrepareTypoScriptFrontendRendering" />
             <tag name="bartacus.make_instance" />
         </service>
 
