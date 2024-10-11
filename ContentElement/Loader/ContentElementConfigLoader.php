@@ -40,7 +40,7 @@ final class ContentElementConfigLoader implements WarmableInterface
 
     public function __construct(
         private readonly array $classnames,
-        private readonly ?string $cacheDir = null,
+        private ?string $cacheDir = null,
         private readonly bool $debug = false,
     ) {
     }
