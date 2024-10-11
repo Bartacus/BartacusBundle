@@ -72,11 +72,6 @@
             <tag name="bartacus.make_instance" />
         </service>
 
-        <service id="Bartacus\Bundle\BartacusBundle\EventSubscriber\FrontendControllerSubscriber">
-            <argument type="service" id="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" />
-            <tag name="kernel.event_subscriber" />
-        </service>
-
         <service id="Bartacus\Bundle\BartacusBundle\Middleware\PrepareContentElementRenderer">
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="http_kernel" />
