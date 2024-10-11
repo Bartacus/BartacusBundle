@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 - TYPO3 helhum console
 - TSFE subscriber to load TYPO3 stuff for Symfony routes
+- Converting TYPO3 request to PSR request in `$GLOBALS['TYPO3_REQUEST']`
 
 ## [5.1.0] - 2024-10-04
 ### Added

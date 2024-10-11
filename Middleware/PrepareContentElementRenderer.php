@@ -70,9 +70,6 @@ class PrepareContentElementRenderer implements MiddlewareInterface
 
         SymfonyBootstrap::setRequestForTermination($symfonyRequest);
 
-        $request = $this->psrHttpFactory->createRequest($symfonyRequest);
-        $GLOBALS['TYPO3_REQUEST'] = $request;
-
         $response = $handler->handle($request);
 
         $symfonyResponse = $this->httpFoundationFactory->createResponse($response);
