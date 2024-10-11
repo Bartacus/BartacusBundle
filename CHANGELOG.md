@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.0.0] - 2024-10-11
+- Set minimum TYPO3 version to 13.3
+- Set minimum Symfony version to 7.1
+- Set minimum php version to 8.3
+
+### Removed
+- TYPO3 helhum console
+
 ## [5.1.0] - 2024-10-04
 ### Added
 - Custom cache support for content element rendering
