@@ -77,6 +77,9 @@
             },
             "typo3/cms-cli": {
                 "Patch entry point for proper Symfony kernel bootstrap": "https://github.com/TYPO3/cms-cli/compare/3.1.1...Bartacus:patch/3.0.0/bartacus-entry-script.patch"
+            },
+            "typo3/cms-extbase": {
+                "Patch Extbase manager for proper CLI usage": "https://github.com/TYPO3/TYPO3.CMS/compare/v13.3.1...Bartacus:patch/13.3/extbase/configuration-manager.patch"
             }
         },
         "enable-patching": true
