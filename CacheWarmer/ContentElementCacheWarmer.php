@@ -28,16 +28,17 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
 class ContentElementCacheWarmer implements CacheWarmerInterface
 {
-    protected ContentElementConfigLoader $configLoader;
-
-    public function __construct(ContentElementConfigLoader $configLoader)
-    {
-        $this->configLoader = $configLoader;
+    public function __construct(
+        protected readonly ContentElementConfigLoader $configLoader,
+    ) {
     }
 
-    public function warmUp(string $cacheDir): void
+    public function warmUp(string $cacheDir, ?string $buildDir = null): array
     {
         $this->configLoader->warmUp($cacheDir);
+
+        // No need to preload anything
+        return[];
     }
 
     public function isOptional(): bool

@@ -29,11 +29,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class Typo3RedirectRequestMiddlewaresSubscriber implements EventSubscriberInterface
 {
-    private string $projectDir;
-
-    public function __construct(string $projectDir)
-    {
-        $this->projectDir = $projectDir;
+    public function __construct(
+        private readonly string $projectDir,
+    ) {
     }
 
     public static function getSubscribedEvents(): array

@@ -30,11 +30,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 final class ContentElementConfigLoaderSubscriber implements EventSubscriberInterface
 {
-    private ContentElementConfigLoader $contentElement;
-
-    public function __construct(ContentElementConfigLoader $contentElement)
-    {
-        $this->contentElement = $contentElement;
+    public function __construct(
+        private readonly ContentElementConfigLoader $contentElement,
+    ) {
     }
 
     public static function getSubscribedEvents(): array

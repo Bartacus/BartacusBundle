@@ -57,32 +57,17 @@ class Renderer
      * Inject by the user function call from TYPO3 :/.
      */
     public ?ContentObjectRenderer $cObj = null;
-    private RequestStack $requestStack;
-    private HttpKernel $kernel;
-    private ControllerResolverInterface $resolver;
-    private ArgumentResolverInterface $argumentResolver;
-    private EventDispatcherInterface $dispatcher;
-    private ErrorController $errorController;
     private PsrHttpFactory $psrHttpFactory;
-    private FrontendInterface $cache;
 
     public function __construct(
-        RequestStack $requestStack,
-        HttpKernel $kernel,
-        ControllerResolverInterface $resolver,
-        ArgumentResolverInterface $argumentResolver,
-        EventDispatcherInterface $eventDispatcher,
-        ErrorController $errorController,
-        FrontendInterface $cache
+        private readonly RequestStack $requestStack,
+        private readonly HttpKernel $kernel,
+        private readonly ControllerResolverInterface $resolver,
+        private readonly ArgumentResolverInterface $argumentResolver,
+        private readonly EventDispatcherInterface $dispatcher,
+        private readonly ErrorController $errorController,
+        private readonly FrontendInterface $cache
     ) {
-        $this->requestStack = $requestStack;
-        $this->kernel = $kernel;
-        $this->resolver = $resolver;
-        $this->argumentResolver = $argumentResolver;
-        $this->dispatcher = $eventDispatcher;
-        $this->errorController = $errorController;
-        $this->cache = $cache;
-
         $psr17Factory = new Psr17Factory();
         $this->psrHttpFactory = new PsrHttpFactory($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
     }

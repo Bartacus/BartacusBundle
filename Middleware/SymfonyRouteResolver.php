@@ -38,35 +38,27 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\LanguageAspectFactory;
-use TYPO3\CMS\Core\Routing\RouteNotFoundException;
-use TYPO3\CMS\Core\Routing\SiteRouteResult;
+use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Frontend\Cache\CacheInstruction;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+use TYPO3\CMS\Frontend\Middleware\PrepareTypoScriptFrontendRendering;
 use TYPO3\CMS\Frontend\Middleware\TypoScriptFrontendInitialization;
+use TYPO3\CMS\Frontend\Page\PageInformationCreationFailedException;
 
 class SymfonyRouteResolver implements MiddlewareInterface
 {
-    private HttpKernelInterface $kernel;
-    private Router $router;
     private HttpFoundationFactory $httpFoundationFactory;
     private PsrHttpFactory $psrHttpFactory;
-    private Context $context;
-    private RequestHandlerInterface $dummyRequestHandler;
-    private TypoScriptFrontendInitialization $frontendInitialization;
 
     public function __construct(
-        HttpKernelInterface $kernel,
-        Router $router,
-        Context $context,
-        RequestHandlerInterface $dummyRequestHandler,
-        TypoScriptFrontendInitialization $frontendInitialization
+        private readonly HttpKernelInterface $kernel,
+        private readonly Router $router,
+        private readonly Context $context,
+        private readonly RequestHandlerInterface $dummyRequestHandler,
+        private readonly TypoScriptFrontendInitialization $frontendInitialization,
+        private readonly PrepareTypoScriptFrontendRendering $typoScriptFrontendRendering,
     ) {
-        $this->kernel = $kernel;
-        $this->router = $router;
-        $this->context = $context;
-        $this->dummyRequestHandler = $dummyRequestHandler;
-        $this->frontendInitialization = $frontendInitialization;
-
         $this->httpFoundationFactory = new HttpFoundationFactory();
 
         $psr17Factory = new Psr17Factory();
@@ -95,41 +87,46 @@ class SymfonyRouteResolver implements MiddlewareInterface
 
     private function initializeTemporaryTSFE(ServerRequestInterface $request): void
     {
+        // do nothing if TSFE is already initialized
         if ($GLOBALS['TSFE'] instanceof TypoScriptFrontendController) {
             return;
         }
 
-        $site = $request->getAttribute('site', null);
+        // abort if site not found
+        $site = $request->getAttribute('site');
         if (!$site instanceof Site) {
             return;
         }
 
-        $previousRouting = $request->getAttribute('routing', null);
-        if (!$previousRouting instanceof SiteRouteResult) {
-            return;
-        }
-
-        $fakeRouting = new SiteRouteResult(
-            $previousRouting->getUri(),
-            $previousRouting->getSite(),
-                $previousRouting->getLanguage() ?? $site->getDefaultLanguage()
-        );
-
-        try {
-            $pageArguments = $site->getRouter()->matchRequest($request, $fakeRouting);
-            $request = $request->withAttribute('routing', $pageArguments);
-        } catch (RouteNotFoundException) {
-            // route cannot be found if it's a symfony route
-        }
+        // simulate a TYPO3 request to the site's root page in order to generate the TSFE + template config, ...
+        $fakePageArguments = new PageArguments($site->getRootPageId(), '0', []);
+        $previousRouting = $request->getAttribute('routing');
+        $request = $request->withAttribute('routing', $fakePageArguments);
 
         // set language aspect
         $language = $request->getAttribute('language', $site->getDefaultLanguage());
         $languageAspect = LanguageAspectFactory::createFromSiteLanguage($language);
         $this->context->setAspect('language', $languageAspect);
 
-        $this->frontendInitialization->process($request, $this->dummyRequestHandler);
+        try {
+            // call TYPO3 middlewares to generate the TSFE + TypoScript config
+            // and keep the $request up-to-date with all new attributes
+            $this->frontendInitialization->process($request, $this->dummyRequestHandler);
+            /** @noinspection CallableParameterUseCaseInTypeContextInspection */
+            $request = $GLOBALS['TYPO3_REQUEST'];
 
-        // unset the changes
+            // avoid frontend caching and build the full config
+            $cacheInstruction = new CacheInstruction();
+            $cacheInstruction->disableCache('Symfony Routes need a fresh and full Setup config.');
+            $request = $request->withAttribute('frontend.cache.instruction', $cacheInstruction);
+
+            $this->typoScriptFrontendRendering->process($request, $this->dummyRequestHandler);
+            /** @noinspection CallableParameterUseCaseInTypeContextInspection */
+            $request = $GLOBALS['TYPO3_REQUEST'];
+        } catch (PageInformationCreationFailedException) {
+        }
+
+        // unset the routing changes
         $request = $request->withAttribute('routing', $previousRouting);
         $GLOBALS['TYPO3_REQUEST'] = $request;
     }

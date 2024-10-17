@@ -27,11 +27,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 final class ExtensionTablesLoadEvent extends Event
 {
-    private string $extension;
-
-    public function __construct(string $extension)
-    {
-        $this->extension = $extension;
+    public function __construct(
+        private readonly string $extension,
+    ) {
     }
 
     public function getExtension(): string

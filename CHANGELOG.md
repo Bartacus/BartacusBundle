@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+## [6.0.0] - 2024-10-17
+- Set minimum TYPO3 version to 13.4
+- Set minimum Symfony version to 7.1
+- Set minimum php version to 8.3
+
+### Changed
+- Creating TSFE and template config in Symfony context
+
+### Removed
+- TYPO3 helhum console
+- Converting TYPO3 request to PSR request in `$GLOBALS['TYPO3_REQUEST']`
+- Support of old TYPO3 `id` + `L` parameters as TYPO3 removed them too
+
 ## [5.1.0] - 2024-10-04
 ### Added
 - Custom cache support for content element rendering
@@ -333,7 +348,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/5.1.0...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/6.0.0...HEAD
+[6.0.0]: https://github.com/Bartacus/BartacusBundle/compare/5.1.0...6.0.0
 [5.1.0]: https://github.com/Bartacus/BartacusBundle/compare/5.0.0...5.1.0
 [5.0.0]: https://github.com/Bartacus/BartacusBundle/compare/4.0.2...5.0.0
 [4.0.2]: https://github.com/Bartacus/BartacusBundle/compare/4.0.1...4.0.2

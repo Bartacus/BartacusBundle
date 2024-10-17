@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Typo3;
 
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -52,7 +53,7 @@ class ServiceBridge
      */
     public function getGlobal(string $global): mixed
     {
-        return $GLOBALS[$global];
+        return $GLOBALS[$global] ?? null;
     }
 
     public function getFrontendController(): ?TypoScriptFrontendController
@@ -72,6 +73,12 @@ class ServiceBridge
 
     public function getFrontendUser(): ?FrontendUserAuthentication
     {
-        return $this->getFrontendController()?->fe_user instanceof FrontendUserAuthentication? $this->getFrontendController()->fe_user : null;
+        $request = $GLOBALS['TYPO3_REQUEST'] ?? null;
+
+        if ($request instanceof ServerRequestInterface) {
+            return $request->getAttribute('frontend.user');
+        }
+
+        return null;
     }
 }

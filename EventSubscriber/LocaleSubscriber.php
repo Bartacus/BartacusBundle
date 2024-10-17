@@ -30,25 +30,19 @@ use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\RequestContextAwareInterface;
-use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
-use TYPO3\CMS\Core\Site\SiteFinder;
 
 /**
  * Normalizes and initializes the locale based on the current request.
  */
 class LocaleSubscriber implements EventSubscriberInterface
 {
-    private RequestStack $requestStack;
-    private string $defaultLocale;
-    private ?RequestContextAwareInterface $router;
-
-    public function __construct(RequestStack $requestStack, string $defaultLocale = 'en', ?RequestContextAwareInterface $router = null)
-    {
-        $this->requestStack = $requestStack;
-        $this->defaultLocale = $defaultLocale;
-        $this->router = $router;
+    public function __construct(
+        private readonly RequestStack $requestStack,
+        private readonly string $defaultLocale = 'en',
+        private readonly ?RequestContextAwareInterface $router = null,
+    ) {
     }
 
     public static function getSubscribedEvents(): array
@@ -139,37 +133,13 @@ class LocaleSubscriber implements EventSubscriberInterface
             return $locale;
         }
 
-        // extract the TYPO3 Site model resolved by the SiteResolver middleware
-        $site = $request->attributes->get('site');
-        $oldPageId = $request->query->get('id');
-        $oldLanguageId = $request->query->get('L');
-
-        // default TYPO3 RootPage behavior + default SOLR page indexer behavior
-        //  - check if at least a TYPO3 site was resolved
-        if (!$site instanceof Site) {
-            try {
-                // try to find the Site by the requested page id (old TYPO3 request data which might still be in use)
-                $site = (new SiteFinder())->getSiteByPageId((int) $oldPageId);
-            } catch (SiteNotFoundException) {
-                // page is outside any site and cannot be resolved
-                // or we got no information about a requested TYPO3 page or Symfony Route
-                // -> no locale found
-                return null;
-            }
-        }
-
-        // check if the old language information is specified in the query (might by an old request like SOLR does)
-        if (null !== $oldLanguageId) {
-            try {
-                // use the SiteLanguage which matches the requested sys language uid
-                return $site->getLanguageById((int) $oldLanguageId)->getLocale()->getName();
-            } catch (\InvalidArgumentException) {
-                // the exception will be thrown if there is no SiteLanguage matching the requested sys language uid,
-                // Instead of throwing the exception we will use a fallback to the Site's default language.
-            }
-        }
-
         // fallback to the Site's default language
-        return $site->getDefaultLanguage()->getLocale()->getName();
+        $site = $request->attributes->get('site');
+
+        if ($site instanceof Site) {
+            return $site->getDefaultLanguage()->getLocale()->getName();
+        }
+
+        return null;
     }
 }

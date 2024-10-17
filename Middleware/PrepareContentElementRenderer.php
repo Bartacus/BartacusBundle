@@ -41,18 +41,14 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class PrepareContentElementRenderer implements MiddlewareInterface
 {
-    private EventDispatcherInterface $dispatcher;
-    private HttpKernelInterface $kernel;
-    private RequestStack $requestStack;
     private HttpFoundationFactory $httpFoundationFactory;
     private PsrHttpFactory $psrHttpFactory;
 
-    public function __construct(EventDispatcherInterface $dispatcher, HttpKernelInterface $kernel, RequestStack $requestStack)
-    {
-        $this->dispatcher = $dispatcher;
-        $this->kernel = $kernel;
-        $this->requestStack = $requestStack;
-
+    public function __construct(
+        private readonly EventDispatcherInterface $dispatcher,
+        private readonly HttpKernelInterface $kernel,
+        private readonly RequestStack $requestStack,
+    ) {
         $this->httpFoundationFactory = new HttpFoundationFactory();
 
         $psr17Factory = new Psr17Factory();
@@ -73,9 +69,6 @@ class PrepareContentElementRenderer implements MiddlewareInterface
         $this->dispatcher->dispatch($event, KernelEvents::REQUEST);
 
         SymfonyBootstrap::setRequestForTermination($symfonyRequest);
-
-        $request = $this->psrHttpFactory->createRequest($symfonyRequest);
-        $GLOBALS['TYPO3_REQUEST'] = $request;
 
         $response = $handler->handle($request);
 

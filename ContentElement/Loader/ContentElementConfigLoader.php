@@ -35,17 +35,14 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 final class ContentElementConfigLoader implements WarmableInterface
 {
-    private array $classnames;
-    private ?string $cacheDir;
-    private bool $debug;
     private bool $typoScriptLoaded = false;
     private ?ConfigCacheFactoryInterface $configCacheFactory = null;
 
-    public function __construct(array $classnames, string $cacheDir = null, bool $debug = false)
-    {
-        $this->classnames = $classnames;
-        $this->cacheDir = $cacheDir;
-        $this->debug = $debug;
+    public function __construct(
+        private readonly array $classnames,
+        private ?string $cacheDir = null,
+        private readonly bool $debug = false,
+    ) {
     }
 
     public function setConfigCacheFactory(ConfigCacheFactoryInterface $configCacheFactory): void
@@ -56,7 +53,7 @@ final class ContentElementConfigLoader implements WarmableInterface
     /**
      * {@inheritdoc}
      */
-    public function warmUp($cacheDir): void
+    public function warmUp(string $cacheDir, ?string $buildDir = null): array
     {
         $currentDir = $this->cacheDir;
 
@@ -65,21 +62,22 @@ final class ContentElementConfigLoader implements WarmableInterface
         $this->loadTypoScript();
 
         $this->cacheDir = $currentDir;
+
+        // No need to preload anything
+        return [];
     }
 
     public function load(): void
     {
-        if (true === $this->typoScriptLoaded) {
-            return;
+        if (!$this->typoScriptLoaded) {
+            ExtensionManagementUtility::addTypoScript(
+                'Bartacus',
+                'setup',
+                $this->loadTypoScript()
+            );
+
+            $this->typoScriptLoaded = true;
         }
-
-        ExtensionManagementUtility::addTypoScript(
-            'Bartacus',
-            'setup',
-            $this->loadTypoScript()
-        );
-
-        $this->typoScriptLoaded = true;
     }
 
     private function loadTypoScript(): string

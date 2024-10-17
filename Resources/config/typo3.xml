@@ -155,7 +155,11 @@
         <service id="TYPO3\CMS\Frontend\Middleware\TypoScriptFrontendInitialization" shared="false">
             <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
             <argument>TYPO3\CMS\Frontend\Middleware\TypoScriptFrontendInitialization</argument>
-            <argument>TYPO3\CMS\Core\Context\Context</argument>
+        </service>
+
+        <service id="TYPO3\CMS\Frontend\Middleware\PrepareTypoScriptFrontendRendering" shared="false">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
+            <argument>TYPO3\CMS\Frontend\Middleware\PrepareTypoScriptFrontendRendering</argument>
         </service>
     </services>
 </container>

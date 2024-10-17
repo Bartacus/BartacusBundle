@@ -31,11 +31,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ErrorHandlerSubscriber implements EventSubscriberInterface
 {
-    private bool $debug;
-
-    public function __construct(bool $debug)
-    {
-        $this->debug = $debug;
+    public function __construct(
+        private readonly bool $debug,
+    ) {
     }
 
     public static function getSubscribedEvents(): array
