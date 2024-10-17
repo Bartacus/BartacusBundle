@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 - TYPO3 helhum console
 - Converting TYPO3 request to PSR request in `$GLOBALS['TYPO3_REQUEST']`
+- Support of old TYPO3 `id` + `L` parameters as TYPO3 removed them too
 
 ## [5.1.0] - 2024-10-04
 ### Added
