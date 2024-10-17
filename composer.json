@@ -28,7 +28,7 @@
         "ext-xml": "*",
         "composer-runtime-api": "^2.1",
         "cweagans/composer-patches": "^1.7",
-        "nyholm/psr7": "^1.5",
+        "nyholm/psr7": "^1.8",
         "psr/http-server-middleware": "^1.0",
         "symfony/config": "^7.1",
         "symfony/event-dispatcher": "^7.1",
@@ -38,10 +38,10 @@
         "symfony/options-resolver": "^7.1",
         "symfony/proxy-manager-bridge": "^6.4",
         "symfony/psr-http-message-bridge": "^7.1",
-        "typo3/cms-core": "^13.3",
-        "typo3/cms-extbase": "^13.3",
-        "typo3/cms-frontend": "^13.3",
-        "typo3/cms-install": "^13.3"
+        "typo3/cms-core": "^13.4",
+        "typo3/cms-extbase": "^13.4",
+        "typo3/cms-frontend": "^13.4",
+        "typo3/cms-install": "^13.4"
     },
     "require-dev": {
         "symfony/debug": "^4.4",
