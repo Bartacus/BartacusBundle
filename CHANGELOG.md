@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [6.1.0] - 2025-02-11
+- Use modified TYPO3 request for Symfony routes
+- Initialize cObj for Symfony routes
+
 ## [6.0.0] - 2024-10-17
 - Set minimum TYPO3 version to 13.4
 - Set minimum Symfony version to 7.1
@@ -348,7 +352,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/6.0.0...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/6.1.0...HEAD
+[6.1.0]: https://github.com/Bartacus/BartacusBundle/compare/6.0.0...6.1.0
 [6.0.0]: https://github.com/Bartacus/BartacusBundle/compare/5.1.0...6.0.0
 [5.1.0]: https://github.com/Bartacus/BartacusBundle/compare/5.0.0...5.1.0
 [5.0.0]: https://github.com/Bartacus/BartacusBundle/compare/4.0.2...5.0.0

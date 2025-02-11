@@ -74,7 +74,7 @@ class SymfonyRouteResolver implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        $this->initializeTemporaryTSFE($request);
+        $request = $this->initializeTemporaryTSFE($request);
 
         $symfonyRequest = $this->httpFoundationFactory->createRequest($request);
         SymfonyBootstrap::setRequestForTermination($symfonyRequest);
@@ -85,17 +85,17 @@ class SymfonyRouteResolver implements MiddlewareInterface
         return $this->psrHttpFactory->createResponse($symfonyResponse);
     }
 
-    private function initializeTemporaryTSFE(ServerRequestInterface $request): void
+    private function initializeTemporaryTSFE(ServerRequestInterface $request): ServerRequestInterface
     {
         // do nothing if TSFE is already initialized
         if ($GLOBALS['TSFE'] instanceof TypoScriptFrontendController) {
-            return;
+            return $request;
         }
 
         // abort if site not found
         $site = $request->getAttribute('site');
         if (!$site instanceof Site) {
-            return;
+            return $request;
         }
 
         // simulate a TYPO3 request to the site's root page in order to generate the TSFE + template config, ...
@@ -120,7 +120,12 @@ class SymfonyRouteResolver implements MiddlewareInterface
             $cacheInstruction->disableCache('Symfony Routes need a fresh and full Setup config.');
             $request = $request->withAttribute('frontend.cache.instruction', $cacheInstruction);
 
+            // set the cObj for the frontend controller
+            $frontendController = $request->getAttribute('frontend.controller');
+            $frontendController?->newCObj($request);
+
             $this->typoScriptFrontendRendering->process($request, $this->dummyRequestHandler);
+
             /** @noinspection CallableParameterUseCaseInTypeContextInspection */
             $request = $GLOBALS['TYPO3_REQUEST'];
         } catch (PageInformationCreationFailedException) {
@@ -129,6 +134,8 @@ class SymfonyRouteResolver implements MiddlewareInterface
         // unset the routing changes
         $request = $request->withAttribute('routing', $previousRouting);
         $GLOBALS['TYPO3_REQUEST'] = $request;
+
+        return $request;
     }
 
     private function handleWithSymfony(ServerRequestInterface $request): bool
