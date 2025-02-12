@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [6.2.0] - 2025-02-12
+- Adapt patch of Extbase manager for proper CLI usage
+
 ## [6.1.0] - 2025-02-11
 - Use modified TYPO3 request for Symfony routes
 - Initialize cObj for Symfony routes
@@ -352,7 +355,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/6.1.0...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/6.2.0...HEAD
+[6.2.0]: https://github.com/Bartacus/BartacusBundle/compare/6.1.0...6.2.0
 [6.1.0]: https://github.com/Bartacus/BartacusBundle/compare/6.0.0...6.1.0
 [6.0.0]: https://github.com/Bartacus/BartacusBundle/compare/5.1.0...6.0.0
 [5.1.0]: https://github.com/Bartacus/BartacusBundle/compare/5.0.0...5.1.0
