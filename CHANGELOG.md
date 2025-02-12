@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.2.0] - 2025-02-12
+
+### Fixed
+
+- Use modified TYPO3 request for Symfony routes
+- Initialize cObj for Symfony routes
+
 ## [5.1.0] - 2024-10-04
 ### Added
 - Custom cache support for content element rendering
@@ -333,7 +340,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/5.1.0...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/5.2.0...HEAD
+[5.2.0]: https://github.com/Bartacus/BartacusBundle/compare/5.1.0...5.2.0
 [5.1.0]: https://github.com/Bartacus/BartacusBundle/compare/5.0.0...5.1.0
 [5.0.0]: https://github.com/Bartacus/BartacusBundle/compare/4.0.2...5.0.0
 [4.0.2]: https://github.com/Bartacus/BartacusBundle/compare/4.0.1...4.0.2

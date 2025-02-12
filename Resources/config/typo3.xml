@@ -20,12 +20,12 @@
   -->
 
 <container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
         <service id="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" />
-        
+
         <service id="TYPO3\CMS\Core\Context\Context" shared="false">
             <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
             <argument>TYPO3\CMS\Core\Context\Context</argument>
@@ -156,6 +156,11 @@
             <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
             <argument>TYPO3\CMS\Frontend\Middleware\TypoScriptFrontendInitialization</argument>
             <argument>TYPO3\CMS\Core\Context\Context</argument>
+        </service>
+
+        <service id="TYPO3\CMS\Frontend\Middleware\PrepareTypoScriptFrontendRendering" shared="false">
+            <factory service="Bartacus\Bundle\BartacusBundle\Typo3\ServiceBridge" method="makeInstance" />
+            <argument>TYPO3\CMS\Frontend\Middleware\PrepareTypoScriptFrontendRendering</argument>
         </service>
     </services>
 </container>

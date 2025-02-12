@@ -43,6 +43,7 @@ use TYPO3\CMS\Core\Routing\SiteRouteResult;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Middleware\TypoScriptFrontendInitialization;
+use TYPO3\CMS\Frontend\Middleware\PrepareTypoScriptFrontendRendering;
 
 class SymfonyRouteResolver implements MiddlewareInterface
 {
@@ -53,19 +54,22 @@ class SymfonyRouteResolver implements MiddlewareInterface
     private Context $context;
     private RequestHandlerInterface $dummyRequestHandler;
     private TypoScriptFrontendInitialization $frontendInitialization;
+    private PrepareTypoScriptFrontendRendering $prepareTypoScriptFrontendRendering;
 
     public function __construct(
         HttpKernelInterface $kernel,
         Router $router,
         Context $context,
         RequestHandlerInterface $dummyRequestHandler,
-        TypoScriptFrontendInitialization $frontendInitialization
+        TypoScriptFrontendInitialization $frontendInitialization,
+        PrepareTypoScriptFrontendRendering $prepareTypoScriptFrontendRendering
     ) {
         $this->kernel = $kernel;
         $this->router = $router;
         $this->context = $context;
         $this->dummyRequestHandler = $dummyRequestHandler;
         $this->frontendInitialization = $frontendInitialization;
+        $this->prepareTypoScriptFrontendRendering = $prepareTypoScriptFrontendRendering;
 
         $this->httpFoundationFactory = new HttpFoundationFactory();
 
@@ -82,7 +86,7 @@ class SymfonyRouteResolver implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        $this->initializeTemporaryTSFE($request);
+        $request = $this->initializeTemporaryTSFE($request);
 
         $symfonyRequest = $this->httpFoundationFactory->createRequest($request);
         SymfonyBootstrap::setRequestForTermination($symfonyRequest);
@@ -93,26 +97,27 @@ class SymfonyRouteResolver implements MiddlewareInterface
         return $this->psrHttpFactory->createResponse($symfonyResponse);
     }
 
-    private function initializeTemporaryTSFE(ServerRequestInterface $request): void
+    private function initializeTemporaryTSFE(ServerRequestInterface $request): ServerRequestInterface
     {
-        if ($GLOBALS['TSFE'] instanceof TypoScriptFrontendController) {
-            return;
+        $frontendController = $GLOBALS['TSFE'] ?? null;
+        if ($frontendController instanceof TypoScriptFrontendController) {
+            return $request;
         }
 
         $site = $request->getAttribute('site', null);
         if (!$site instanceof Site) {
-            return;
+            return $request;
         }
 
         $previousRouting = $request->getAttribute('routing', null);
         if (!$previousRouting instanceof SiteRouteResult) {
-            return;
+            return $request;
         }
 
         $fakeRouting = new SiteRouteResult(
             $previousRouting->getUri(),
             $previousRouting->getSite(),
-                $previousRouting->getLanguage() ?? $site->getDefaultLanguage()
+            $previousRouting->getLanguage() ?? $site->getDefaultLanguage()
         );
 
         try {
@@ -127,11 +132,28 @@ class SymfonyRouteResolver implements MiddlewareInterface
         $languageAspect = LanguageAspectFactory::createFromSiteLanguage($language);
         $this->context->setAspect('language', $languageAspect);
 
-        $this->frontendInitialization->process($request, $this->dummyRequestHandler);
+        try {
+            $this->frontendInitialization->process($request, $this->dummyRequestHandler);
+            $request = $request->withAttribute('frontend.controller', $GLOBALS['TSFE']);
+
+            $frontendController = $request->getAttribute('frontend.controller');
+            // turn of caching
+            $frontendController->no_cache = true;
+            $this->prepareTypoScriptFrontendRendering->process($request, $this->dummyRequestHandler);
+            // update the request
+            $request = $GLOBALS['TYPO3_REQUEST'];
+
+            // set the cObj for the frontend controller
+            $frontendController?->newCObj($request);
+
+        } catch (PageInformationCreationFailedException) {
+        }
 
         // unset the changes
         $request = $request->withAttribute('routing', $previousRouting);
         $GLOBALS['TYPO3_REQUEST'] = $request;
+
+        return $request;
     }
 
     private function handleWithSymfony(ServerRequestInterface $request): bool
