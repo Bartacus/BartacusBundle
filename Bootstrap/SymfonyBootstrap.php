@@ -93,9 +93,10 @@ final class SymfonyBootstrap
         // check if a Symfony request object was set (either content element rendering or Symfony route handler)
         // (may occur for TYPO3 StaticRoutes and PageNotFoundHandler)
         if (!self::$request instanceof Request) {
+            $typo3Request = $GLOBALS['TYPO3_REQUEST'] ?? null;
             // try to create Symfony request based on the TYPO3 server request
-            if ($GLOBALS['TYPO3_REQUEST'] instanceof ServerRequest) {
-                self::$request = (new HttpFoundationFactory())->createRequest($GLOBALS['TYPO3_REQUEST']);
+            if ($typo3Request instanceof ServerRequest) {
+                self::$request = (new HttpFoundationFactory())->createRequest($typo3Request);
             } else {
                 // fallback if neither the Symfony request was specified nor the TYPO3 server request is defined
                 self::$request = Request::createFromGlobals();

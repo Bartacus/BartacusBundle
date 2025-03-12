@@ -88,7 +88,7 @@ class SymfonyRouteResolver implements MiddlewareInterface
     private function initializeTemporaryTSFE(ServerRequestInterface $request): ServerRequestInterface
     {
         // do nothing if TSFE is already initialized
-        if ($GLOBALS['TSFE'] instanceof TypoScriptFrontendController) {
+        if (($GLOBALS['TSFE'] ?? null) instanceof TypoScriptFrontendController) {
             return $request;
         }
 
