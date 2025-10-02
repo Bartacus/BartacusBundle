@@ -273,6 +273,9 @@ class Renderer
         $response = $event->getResponse();
 
         if ($response instanceof RedirectResponse) {
+            // remove already generated content by layout renderer
+            ob_clean();
+
             $response->send();
             $this->kernel->terminate($request, $response);
 
