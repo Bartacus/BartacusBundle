@@ -1,0 +1,8 @@
+#file: noinspection YamlServiceArgumentInspection
+# TYPO3 extension forces their services to be registered in here
+# and the 'frontend.contentobject' tagging needs to be done as TYPO3 extension instead of as a Symfony bundle
+# to be properly registered and loaded.
+services:
+    Bartacus\Bundle\BartacusBundle\Template\TwigTemplateContentObject:
+        tags:
+            - { name: frontend.contentobject, identifier: 'TWIGTEMPLATE' }

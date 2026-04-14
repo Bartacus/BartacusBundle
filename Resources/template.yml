@@ -1,0 +1,18 @@
+services:
+    # Symfony container parts are registered here and TYPO3 related tags are within 'Configuration/Services.yaml'
+    # (required by hard-coded TYPO3 package manager path)
+    Bartacus\Bundle\BartacusBundle\Template\TwigTemplateContentObject:
+        arguments:
+            - '@Twig\Environment'
+        tags:
+            - { name: bartacus.make_instance }
+
+    Bartacus\Bundle\BartacusBundle\Template\ContentObjectExtension:
+        tags:
+            - { name: twig.extension }
+
+    Bartacus\Bundle\BartacusBundle\Template\ContentObjectRuntime:
+        arguments:
+            - '@TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface'
+        tags:
+            - { name: twig.runtime }

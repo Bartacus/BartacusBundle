@@ -1,0 +1,29 @@
+Subject: [PATCH] Patch entry point for proper Symfony kernel bootstrap
+---
+Index: typo3/sysext/core/Resources/Private/Php/index.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/typo3/sysext/core/Resources/Private/Php/index.php b/typo3/sysext/core/Resources/Private/Php/index.php
+--- a/typo3/sysext/core/Resources/Private/Php/index.php	(revision e16ec78165a7d60f09dcac04bfbb309409e174b3)
++++ b/typo3/sysext/core/Resources/Private/Php/index.php	(date 1781199604263)
+@@ -15,6 +15,7 @@
+ 
+ call_user_func(static function () {
+     $classLoader = require __DIR__ . '/../../../../../../vendor/autoload.php';
++    \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::initKernel();
+     \TYPO3\CMS\Core\Core\SystemEnvironmentBuilder::run();
+ 
+     $isInstallToolDirectAccess = false;
+@@ -26,8 +27,10 @@
+ 
+     if ($container->has(\TYPO3\CMS\Core\Http\Application::class)) {
+         $container->get(\TYPO3\CMS\Core\Http\Application::class)->run();
++        \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::terminate();
+         return;
+     }
+ 
+     $container->get(\TYPO3\CMS\Install\Http\Application::class)->run();
++    \Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap::terminate();
+ });

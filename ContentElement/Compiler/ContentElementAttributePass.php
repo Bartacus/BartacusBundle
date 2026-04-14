@@ -21,29 +21,23 @@ declare(strict_types=1);
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Bundle\BartacusBundle;
+namespace Bartacus\Bundle\BartacusBundle\ContentElement\Compiler;
 
-use Bartacus\Bundle\BartacusBundle\ContentElement\Compiler\ContentElementAttributePass;
-use Bartacus\Bundle\BartacusBundle\ServiceBridge\Compiler\SymfonyServiceForMakeInstancePass;
-use Bartacus\Bundle\BartacusBundle\ServiceBridge\SymfonyServiceForMakeInstanceLoader;
+use Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class BartacusBundle extends Bundle
+class ContentElementAttributePass implements CompilerPassInterface
 {
-    /**
-     * @throws \ReflectionException
-     */
-    public function boot(): void
+    public function process(ContainerBuilder $container): void
     {
-        /** @var SymfonyServiceForMakeInstanceLoader $service */
-        $service = $this->container->get(SymfonyServiceForMakeInstanceLoader::class);
-        $service?->load();
-    }
+        $taggedServices = $container->findTaggedServiceIds('controller.service_arguments');
+        $classnames = [];
 
-    public function build(ContainerBuilder $container): void
-    {
-        $container->addCompilerPass(new SymfonyServiceForMakeInstancePass());
-        $container->addCompilerPass(new ContentElementAttributePass());
+        foreach ($taggedServices as $id => $tags) {
+            $classnames[] = $container->findDefinition($id)->getClass();
+        }
+
+        $container->findDefinition(ContentElementConfigLoader::class)->replaceArgument(0, $classnames);
     }
 }

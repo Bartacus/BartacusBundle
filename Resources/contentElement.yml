@@ -1,0 +1,44 @@
+services:
+    Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader:
+        arguments:
+            - null # classnames
+            - '%kernel.cache_dir%'
+            - '%kernel.debug%'
+        calls:
+            - [setConfigCacheFactory, ['@config_cache_factory']]
+
+    Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementCacheWarmer:
+        arguments:
+            - '@Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader'
+        tags:
+            - { name: kernel.cache_warmer }
+
+    Bartacus\Bundle\BartacusBundle\ContentElement\EventSubscriber\ContentElementMiddlewareSubscriber:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    Bartacus\Bundle\BartacusBundle\ContentElement\EventSubscriber\ContentElementConfigLoaderSubscriber:
+        arguments:
+            - '@Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    Bartacus\Bundle\BartacusBundle\ContentElement\Middleware\ContentElementRendererMiddleware:
+        arguments:
+            - '@event_dispatcher'
+            - '@http_kernel'
+            - '@request_stack'
+        tags:
+            - { name: bartacus.make_instance }
+
+    Bartacus\Bundle\BartacusBundle\ContentElement\Renderer\ContentElementRenderer:
+        arguments:
+            - '@request_stack'
+            - '@http_kernel'
+            - '@controller_resolver'
+            - '@argument_resolver'
+            - '@event_dispatcher'
+            - '@TYPO3\CMS\Frontend\Controller\ErrorController'
+            - '@typo3.cache.cache_hash'
+        tags:
+            - { name: bartacus.make_instance }

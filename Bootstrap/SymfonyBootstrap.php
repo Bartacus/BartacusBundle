@@ -23,8 +23,7 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Bootstrap;
 
-use App\Kernel as AppKernel;
-use Bartacus\Bundle\BartacusBundle\ErrorHandler\SymfonyErrorHandler;
+use Bartacus\Bundle\BartacusBundle\ErrorHandler\Symfony\SymfonyErrorHandler;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\ErrorHandler\BufferingLogger;
 use Symfony\Component\ErrorHandler\Debug;
@@ -46,13 +45,15 @@ final class SymfonyBootstrap
 
     public static function initKernel(): void
     {
+        if (!class_exists('\App\Kernel')) {
+            return;
+        }
+
         /** @var Kernel $fakeKernel */
-        $fakeKernel = new AppKernel('prod', false);
-        $projectDir = $fakeKernel->getProjectDir();
+        $fakeKernel = new \App\Kernel('prod', false);
+        require $fakeKernel->getProjectDir().'/config/bootstrap.php';
 
-        require $projectDir.'/config/bootstrap.php';
-
-        if ($_SERVER['APP_DEBUG']) {
+        if ($_SERVER['APP_DEBUG'] ?? null) {
             \umask(0000);
             Debug::enable();
         }
@@ -63,14 +64,14 @@ final class SymfonyBootstrap
         $trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? $_ENV['TRUSTED_PROXIES'] ?? false;
         $trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? $_ENV['TRUSTED_HOSTS'] ?? false;
 
-        $trustedHeaderSet = (Request::HEADER_X_FORWARDED_FOR
-                | Request::HEADER_X_FORWARDED_HOST
-                | Request::HEADER_X_FORWARDED_PORT
-                | Request::HEADER_X_FORWARDED_PROTO
-            ) ^ Request::HEADER_X_FORWARDED_HOST
-        ;
-
         if ($trustedProxies) {
+            $trustedHeaderSet = (Request::HEADER_X_FORWARDED_FOR
+                    | Request::HEADER_X_FORWARDED_HOST
+                    | Request::HEADER_X_FORWARDED_PORT
+                    | Request::HEADER_X_FORWARDED_PROTO
+                ) ^ Request::HEADER_X_FORWARDED_HOST
+            ;
+
             Request::setTrustedProxies(\explode(',', $trustedProxies), $trustedHeaderSet);
         }
 
@@ -78,7 +79,8 @@ final class SymfonyBootstrap
             Request::setTrustedHosts([$trustedHosts]);
         }
 
-        self::$kernel = new AppKernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
+        /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+        self::$kernel = new \App\Kernel($_SERVER['APP_ENV'] ?? 'dev', (bool) $_SERVER['APP_DEBUG']);
         self::$kernel->boot();
     }
 
@@ -94,6 +96,7 @@ final class SymfonyBootstrap
         // (may occur for TYPO3 StaticRoutes and PageNotFoundHandler)
         if (!self::$request instanceof Request) {
             $typo3Request = $GLOBALS['TYPO3_REQUEST'] ?? null;
+
             // try to create Symfony request based on the TYPO3 server request
             if ($typo3Request instanceof ServerRequest) {
                 self::$request = (new HttpFoundationFactory())->createRequest($typo3Request->withUploadedFiles([]));
