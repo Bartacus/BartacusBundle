@@ -96,7 +96,7 @@ final class SymfonyBootstrap
             $typo3Request = $GLOBALS['TYPO3_REQUEST'] ?? null;
             // try to create Symfony request based on the TYPO3 server request
             if ($typo3Request instanceof ServerRequest) {
-                self::$request = (new HttpFoundationFactory())->createRequest($typo3Request);
+                self::$request = (new HttpFoundationFactory())->createRequest($typo3Request->withUploadedFiles([]));
             } else {
                 // fallback if neither the Symfony request was specified nor the TYPO3 server request is defined
                 self::$request = Request::createFromGlobals();
