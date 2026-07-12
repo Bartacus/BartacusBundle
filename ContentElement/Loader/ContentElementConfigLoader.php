@@ -23,8 +23,8 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\ContentElement\Loader;
 
-use Bartacus\Bundle\BartacusBundle\Attribute\ContentElement;
-use Bartacus\Bundle\BartacusBundle\ContentElement\Renderer;
+use Bartacus\Bundle\BartacusBundle\ContentElement\Attribute\ContentElement;
+use Bartacus\Bundle\BartacusBundle\ContentElement\Renderer\ContentElementRenderer;
 use ReflectionException;
 use Symfony\Component\Config\ConfigCacheFactory;
 use Symfony\Component\Config\ConfigCacheFactoryInterface;
@@ -50,9 +50,6 @@ final class ContentElementConfigLoader implements WarmableInterface
         $this->configCacheFactory = $configCacheFactory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function warmUp(string $cacheDir, ?string $buildDir = null): array
     {
         $currentDir = $this->cacheDir;
@@ -70,11 +67,7 @@ final class ContentElementConfigLoader implements WarmableInterface
     public function load(): void
     {
         if (!$this->typoScriptLoaded) {
-            ExtensionManagementUtility::addTypoScript(
-                'Bartacus',
-                'setup',
-                $this->loadTypoScript()
-            );
+            ExtensionManagementUtility::addTypoScript('Bartacus', 'setup', $this->loadTypoScript());
 
             $this->typoScriptLoaded = true;
         }
@@ -84,7 +77,7 @@ final class ContentElementConfigLoader implements WarmableInterface
     {
         $typoscriptContent = $this->concatenateTypoScript();
 
-        if (null === $this->cacheDir) {
+        if (!$this->cacheDir) {
             return $typoscriptContent;
         }
 
@@ -138,9 +131,13 @@ EOTS;
             foreach ($reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $reflectionMethod) {
                 foreach ($reflectionMethod->getAttributes() as $reflectionAttribute) {
                     if (ContentElement::class === $reflectionAttribute->getName()) {
-                        $typoscript[] = $this->getPluginDefinition($reflectionAttribute->newInstance(), $reflectionMethod, $reflectionClass->getName());
+                        $contentElement = $reflectionAttribute->newInstance();
 
-                        break;
+                        if ($contentElement instanceof ContentElement) {
+                            $typoscript[] = $this->getPluginDefinition($contentElement, $reflectionMethod, $reflectionClass->getName());
+
+                            break;
+                        }
                     }
                 }
             }
@@ -163,7 +160,7 @@ EOTS;
         $customCacheTagList = implode(',', $contentElement->getCustomCacheTags());
 
         $pluginType = 'USER'.($cached ? '' : '_INT');
-        $userFunc = Renderer::class.'->handle';
+        $userFunc = ContentElementRenderer::class.'->handle';
 
         $pluginContent = /* @lang TYPO3_TypoScript */ <<<EOTS
 # Setting $pluginSignature content element
@@ -179,21 +176,21 @@ tt_content.$pluginSignature {
 }
 EOTS;
 
-        return \trim($pluginContent);
+        return mb_trim($pluginContent);
     }
 
     private function autodetectNameFromMethodArguments(\ReflectionMethod $reflectionMethod): ?string
     {
         // loop through all parameters of the annotated method
         foreach ($reflectionMethod->getParameters() as $parameter) {
-            // skip strings, numbers, boolean and arrays
-            if ($parameter->getType() && $parameter->getType()->isBuiltin()) {
+            $parameterType = $parameter->getType();
+            if (!$parameterType instanceof \ReflectionNamedType || $parameterType->isBuiltin()) {
                 continue;
             }
 
             // get the parameter's class name
             /** @noinspection PhpUnhandledExceptionInspection */
-            $parameterReflectionClass = new \ReflectionClass($parameter->getType()->getName());
+            $parameterReflectionClass = new \ReflectionClass($parameterType->getName());
 
             // check if the class extends the TYPO3 extbase entity and has our static 'getRecordType' to read its CType
             if ($parameterReflectionClass->isSubclassOf(AbstractEntity::class) && $parameterReflectionClass->hasMethod('getRecordType')) {
@@ -207,7 +204,7 @@ EOTS;
 
     private function getConfigCacheFactory(): ConfigCacheFactoryInterface
     {
-        if (null === $this->configCacheFactory) {
+        if (!$this->configCacheFactory) {
             $this->configCacheFactory = new ConfigCacheFactory($this->debug);
         }
 

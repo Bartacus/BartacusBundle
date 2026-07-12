@@ -23,63 +23,35 @@ declare(strict_types=1);
 
 namespace Bartacus\Bundle\BartacusBundle\Config;
 
-use Bartacus\Bundle\BartacusBundle\ConfigEvents;
-use Bartacus\Bundle\BartacusBundle\Event\ExtbasePersistenceClassesEvent;
-use Bartacus\Bundle\BartacusBundle\Event\ExtensionLocalConfLoadEvent;
-use Bartacus\Bundle\BartacusBundle\Event\ExtensionTablesLoadEvent;
-use Bartacus\Bundle\BartacusBundle\Event\RequestExtbasePersistenceClassesEvent;
-use Bartacus\Bundle\BartacusBundle\Event\RequestMiddlewaresEvent;
+use Bartacus\Bundle\BartacusBundle\Config\Event\AdditionalConfigurationEvent;
+use Bartacus\Bundle\BartacusBundle\Config\Event\RequestExtbasePersistenceClassesEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Contracts\EventDispatcher\Event;
 
-/**
- * Delegating central config loader called on various places within TYPO3
- * to load and configure specific parts of the system.
- */
 class ConfigLoader
 {
-    public const string DEFAULT_EXTENSION = 'app';
-
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
+    /**
+     * Fired by the project at the end of `config/system/additional.php`.
+     * Loads content elements and triggers custom error handling in dev mode.
+     */
     public function loadFromAdditionalConfiguration(): void
     {
-        $this->eventDispatcher->dispatch(new Event(), ConfigEvents::ADDITIONAL_CONFIGURATION);
+        $event = new AdditionalConfigurationEvent();
+        $this->eventDispatcher->dispatch($event, AdditionalConfigurationEvent::EVENT_NAME);
     }
 
-    public function loadFromRequestMiddlewares(): array
-    {
-        $event = new RequestMiddlewaresEvent();
-        $this->eventDispatcher->dispatch($event, ConfigEvents::REQUEST_MIDDLEWARES);
-
-        return $event->getRequestMiddlewares();
-    }
-
-    public function loadFromExtensionTables(string $extension = self::DEFAULT_EXTENSION): void
-    {
-        $this->eventDispatcher->dispatch(new ExtensionTablesLoadEvent($extension), ConfigEvents::EXTENSION_TABLES);
-    }
-
-    public function loadFromExtensionLocalConf(string $extension = self::DEFAULT_EXTENSION): void
-    {
-        $this->eventDispatcher->dispatch(new ExtensionLocalConfLoadEvent($extension), ConfigEvents::EXTENSION_LOCAL_CONF);
-    }
-
-    public function loadExtbasePersistenceClasses(): array
-    {
-        $event = new ExtbasePersistenceClassesEvent();
-        $this->eventDispatcher->dispatch($event, ConfigEvents::EXTBASE_PERSISTENCE_CLASSES);
-
-        return $event->getExtbasePersistenceClasses();
-    }
-
+    /**
+     * Fired by the project at the beginning of `public/typo3conf/ext/app/Configuration/Extbase/Persistence/Classes.php`.
+     * Loads custom extbase configuration from pixelart extbase-domain-bundle.
+     */
     public function loadFromRequestExtbasePersistenceClasses(): array
     {
         $event = new RequestExtbasePersistenceClassesEvent();
-        $this->eventDispatcher->dispatch($event, ConfigEvents::REQUEST_EXTBASE_PERSISTENCE_CLASSES);
+        $this->eventDispatcher->dispatch($event, RequestExtbasePersistenceClassesEvent::EVENT_NAME);
 
         return $event->getExtbasePersistenceClasses();
     }

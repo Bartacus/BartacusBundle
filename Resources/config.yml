@@ -1,0 +1,5 @@
+services:
+    Bartacus\Bundle\BartacusBundle\Config\ConfigLoader:
+        public: true
+        arguments:
+            - '@event_dispatcher'

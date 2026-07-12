@@ -1,0 +1,6 @@
+services:
+    Bartacus\Bundle\BartacusBundle\Twig\ControllerExtension:
+        calls:
+            - [setContext, ['@router.request_context']]
+        tags:
+            - { name: twig.extension }

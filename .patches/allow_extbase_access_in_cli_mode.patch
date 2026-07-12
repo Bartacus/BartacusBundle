@@ -1,0 +1,19 @@
+Subject: [PATCH] Patch extbase configuration manager to allow access without request (cli context)
+---
+Index: typo3/sysext/extbase/Classes/Configuration/ConfigurationManager.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/typo3/sysext/extbase/Classes/Configuration/ConfigurationManager.php b/typo3/sysext/extbase/Classes/Configuration/ConfigurationManager.php
+--- a/typo3/sysext/extbase/Classes/Configuration/ConfigurationManager.php	(revision e16ec78165a7d60f09dcac04bfbb309409e174b3)
++++ b/typo3/sysext/extbase/Classes/Configuration/ConfigurationManager.php	(date 1781200065141)
+@@ -86,7 +86,7 @@
+             // Note custom extensions should typically not catch this exception. The dependency to
+             // the current request is still an important dependency in most extbase places, e.g. in
+             // controller and view related code.
+-            throw new NoServerRequestGivenException('No request given. ConfigurationManager has not been initialized properly.', 1721920500);
++            $request = (new \TYPO3\CMS\Core\Http\ServerRequest())->withAttribute('applicationType', \TYPO3\CMS\Core\Core\SystemEnvironmentBuilder::REQUESTTYPE_BE);
+         }
+         if (ApplicationType::fromRequest($request)->isFrontend()) {
+             if ($configurationType === self::CONFIGURATION_TYPE_FULL_TYPOSCRIPT) {

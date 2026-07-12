@@ -21,29 +21,25 @@ declare(strict_types=1);
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bartacus\Bundle\BartacusBundle\DependencyInjection;
+namespace Bartacus\Bundle\BartacusBundle\ErrorHandler\Typo3;
 
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Bartacus\Bundle\BartacusBundle\ErrorHandler\Trait\OutputBufferTrait;
+use TYPO3\CMS\Core\Error\ProductionExceptionHandler;
 
-class BartacusExtension extends Extension
+/**
+ * The custom TYPO3 debug exception handler is used when APP_DEBUG is false and TYPO3->SYS->display_errors is 1.
+ */
+class Typo3ProductionExceptionHandler extends ProductionExceptionHandler
 {
+    use OutputBufferTrait;
+
     /**
      * @throws \Exception
      */
-    public function load(array $configs, ContainerBuilder $container): void
+    public function handleException(\Throwable $exception): void
     {
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources'));
-        $loader->load('config.yml');
-        $loader->load('contentElement.yml');
-        $loader->load('errorHandler.yml');
-        $loader->load('localization.yml');
-        $loader->load('routing.yml');
-        $loader->load('serviceBridge.yml');
-        $loader->load('staticRoute.yml');
-        $loader->load('template.yml');
-        $loader->load('twig.yml');
+        $this->fixOutputBuffer($exception);
+
+        parent::handleException($exception);
     }
 }

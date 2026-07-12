@@ -1,0 +1,28 @@
+Subject: [PATCH] Patch TYPO3 GeneralUtility to enable Symfony ServiceBridge
+---
+Index: typo3/sysext/core/Classes/Utility/GeneralUtility.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/typo3/sysext/core/Classes/Utility/GeneralUtility.php b/typo3/sysext/core/Classes/Utility/GeneralUtility.php
+--- a/typo3/sysext/core/Classes/Utility/GeneralUtility.php	(revision e16ec78165a7d60f09dcac04bfbb309409e174b3)
++++ b/typo3/sysext/core/Classes/Utility/GeneralUtility.php	(date 1781199853806)
+@@ -62,7 +62,7 @@
+      *
+      * @var array<class-string, SingletonInterface>
+      */
+-    protected static array $singletonInstances = [];
++    protected static array|\Bartacus\Bundle\BartacusBundle\ServiceBridge\MakeInstanceServiceLocator $singletonInstances = [];
+ 
+     /**
+      * Instances returned by `makeInstance`, using the class names as array keys
+@@ -3059,7 +3059,7 @@
+      * @internal
+      * @return array<class-string, SingletonInterface>
+      */
+-    public static function getSingletonInstances(): array
++    public static function getSingletonInstances(): array|\Bartacus\Bundle\BartacusBundle\ServiceBridge\MakeInstanceServiceLocator
+     {
+         return static::$singletonInstances;
+     }

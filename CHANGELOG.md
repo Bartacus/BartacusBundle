@@ -6,6 +6,34 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [7.0.0] - 2026-07-12
+### Breaking Changes
+- Set minimum TYPO3 version to `v14.3.0`
+- Set minimum PHP version to `8.4.0`
+- Content element attribute namespace refactored (new `Bartacus\Bundle\BartacusBundle\ContentElement\Attribute\ContentElement`)
+- ServiceBridge namespace refactored (new `Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge`)
+- Multiple TYPO3 classes removed from ServiceBridge as they don't exist anymore
+- TYPO3 Upgrade wizard auto configuration removed
+- `ConfigEvents` class removed, event names are now defined as `PUBLIC CONST string EVENT_NAME = ...` in their respective event class
+- Drop `RequestMiddlewaresEvent` and custom middleware event subscribers in favor of native TYPO3 middleware configuration
+
+### Added
+- Custom static route handling which fires `Bartacus\Bundle\BartacusBundle\StaticRoute\Event\StaticRouteEvent` event
+- Built-in `/robots.txt` static routes handling
+- Integrate `BartacusTwigBundle`
+
+### Changed
+- Integrates TYPO3 patches directly into Bartacus
+- Convert Symfony config files from XML to YAML
+- Refactored namespaces to group files by their purpose
+- Updated list of Bartacus tasks / purposes in `README.md`
+- 
+### Removed
+- Unused `PhpBridgeSessionStorage`
+- Unused event `ExtensionTablesLoadEvent`
+- Unused event `ExtensionLocalConfLoadEvent`
+- Unused event `ExtbasePersistenceClassesEvent`
+
 ## [6.2.2] - 2025-10-02
 - Remove already generated content by layout renderer
 
@@ -361,9 +389,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/6.2.2...HEAD
-[6.2.2]: https://github.com/Bartacus/BartacusBundle/compare/6.2.2...6.2.1
-[6.2.1]: https://github.com/Bartacus/BartacusBundle/compare/6.2.1...6.2.0
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/7.0.0...HEAD
+[7.0.0]: https://github.com/Bartacus/BartacusBundle/compare/6.2.2...7.0.0
+[6.2.2]: https://github.com/Bartacus/BartacusBundle/compare/6.2.1...6.2.2
+[6.2.1]: https://github.com/Bartacus/BartacusBundle/compare/6.2.0...6.2.1
 [6.2.0]: https://github.com/Bartacus/BartacusBundle/compare/6.1.0...6.2.0
 [6.1.0]: https://github.com/Bartacus/BartacusBundle/compare/6.0.0...6.1.0
 [6.0.0]: https://github.com/Bartacus/BartacusBundle/compare/5.1.0...6.0.0

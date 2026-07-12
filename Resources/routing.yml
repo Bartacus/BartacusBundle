@@ -1,0 +1,18 @@
+services:
+    Bartacus\Bundle\BartacusBundle\Routing\DummyRequestHandler: ~
+
+    Bartacus\Bundle\BartacusBundle\Routing\Typo3RequestSimulator:
+        arguments:
+            - '@TYPO3\CMS\Core\Context\Context'
+            - '@Bartacus\Bundle\BartacusBundle\Routing\DummyRequestHandler'
+            - '@TYPO3\CMS\Frontend\Middleware\PrepareTypoScriptFrontendRendering'
+        tags:
+            - { name: bartacus.make_instance }
+
+    Bartacus\Bundle\BartacusBundle\Routing\SymfonyRouteResolverMiddleware:
+        arguments:
+            - '@http_kernel'
+            - '@router'
+            - '@Bartacus\Bundle\BartacusBundle\Routing\Typo3RequestSimulator'
+        tags:
+            - { name: bartacus.make_instance }

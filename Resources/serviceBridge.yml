@@ -1,0 +1,171 @@
+services:
+    Bartacus\Bundle\BartacusBundle\ServiceBridge\MakeInstanceServiceLocator: ~
+
+    Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge: ~
+
+    Bartacus\Bundle\BartacusBundle\ServiceBridge\SymfonyServiceForMakeInstanceLoader:
+        public: true
+        arguments:
+            - null # classnames
+            - '@Bartacus\Bundle\BartacusBundle\ServiceBridge\MakeInstanceServiceLocator'
+
+    TYPO3\CMS\Core\Context\Context:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', makeInstance]
+        arguments:
+            - 'TYPO3\CMS\Core\Context\Context'
+
+    TYPO3\CMS\Core\Authentication\BackendUserAuthentication:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', getBackendUser]
+
+    TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', getFrontendUser]
+
+    TYPO3\CMS\Core\Cache\CacheManager:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', makeInstance]
+        arguments:
+            - 'TYPO3\CMS\Core\Cache\CacheManager'
+
+    TYPO3\CMS\Core\Cache\Frontend\FrontendInterface:
+        alias: typo3.cache.cache_hash
+
+    typo3.cache.cache_hash:
+        class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+        public: true
+        factory: ['@TYPO3\CMS\Core\Cache\CacheManager', getCache]
+        arguments:
+            - 'hash'
+
+    typo3.cache.cache_pages:
+        class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+        public: true
+        factory: ['@TYPO3\CMS\Core\Cache\CacheManager', getCache]
+        arguments:
+            - 'pages'
+
+    typo3.cache.cache_pagesection:
+        class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+        public: true
+        factory: ['@TYPO3\CMS\Core\Cache\CacheManager', getCache]
+        arguments:
+            - 'pagesection'
+
+    typo3.cache.cache_rootline:
+        class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+        public: true
+        factory: ['@TYPO3\CMS\Core\Cache\CacheManager', getCache]
+        arguments:
+            - 'rootline'
+
+    TYPO3\CMS\Frontend\Page\CacheHashCalculator:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', makeInstance]
+        arguments:
+            - 'TYPO3\CMS\Frontend\Page\CacheHashCalculator'
+
+    TYPO3\CMS\Frontend\Controller\ErrorController:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', makeInstance]
+        arguments:
+            - 'TYPO3\CMS\Frontend\Controller\ErrorController'
+
+    TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', getContentObjectRenderer]
+
+    TYPO3\CMS\Core\Resource\FileRepository:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', makeInstance]
+        arguments:
+            - 'TYPO3\CMS\Core\Resource\FileRepository'
+
+    TYPO3\CMS\Core\Registry:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', makeInstance]
+        arguments:
+            - 'TYPO3\CMS\Core\Registry'
+
+    TYPO3\CMS\Core\Database\ConnectionPool:
+        shared: false
+        public: true
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', makeInstance]
+        arguments:
+            - 'TYPO3\CMS\Core\Database\ConnectionPool'
+
+    TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager:
+        shared: false
+        public: true
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', getExtbaseInstance]
+        arguments:
+            - 'TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager'
+
+    TYPO3\CMS\Core\DataHandling\DataHandler:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', makeInstance]
+        arguments:
+            - 'TYPO3\CMS\Core\DataHandling\DataHandler'
+
+    TYPO3\CMS\Core\Log\LogManagerInterface:
+        alias: TYPO3\CMS\Core\Log\LogManager
+
+    TYPO3\CMS\Core\Log\LogManager:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', makeInstance]
+        arguments:
+            - 'TYPO3\CMS\Core\Log\LogManager'
+
+    TYPO3\CMS\Core\Resource\Filter\FileExtensionFilter:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', makeInstance]
+        arguments:
+            - 'TYPO3\CMS\Core\Resource\Filter\FileExtensionFilter'
+
+    TYPO3\CMS\Core\Resource\Filter\FileNameFilter:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', makeInstance]
+        arguments:
+            - 'TYPO3\CMS\Core\Resource\Filter\FileNameFilter'
+
+    TYPO3\CMS\Core\Resource\ResourceFactory:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', makeInstance]
+        arguments:
+            - 'TYPO3\CMS\Core\Resource\ResourceFactory'
+
+    TYPO3\CMS\Core\MetaTag\MetaTagManagerRegistry:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', makeInstance]
+        arguments:
+            - 'TYPO3\CMS\Core\MetaTag\MetaTagManagerRegistry'
+
+    TYPO3\CMS\Core\Session\SessionManager:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', makeInstance]
+        arguments:
+            - 'TYPO3\CMS\Core\Session\SessionManager'
+
+    TYPO3\CMS\Core\Localization\LanguageService:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', getLanguageService]
+
+    TYPO3\CMS\Frontend\Middleware\PrepareTypoScriptFrontendRendering:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', makeInstance]
+        arguments:
+            - 'TYPO3\CMS\Frontend\Middleware\PrepareTypoScriptFrontendRendering'
+
+    TYPO3\CMS\Core\TypoScript\TypoScriptService:
+        shared: false
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', makeInstance]
+        arguments:
+            - 'TYPO3\CMS\Core\TypoScript\TypoScriptService'
+
+    TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface:
+        shared: false
+        class: TYPO3\CMS\Extbase\Configuration\ConfigurationManager
+        factory: ['@Bartacus\Bundle\BartacusBundle\ServiceBridge\ServiceBridge', getExtbaseInstance]
+        arguments:
+            - 'TYPO3\CMS\Extbase\Configuration\ConfigurationManager'

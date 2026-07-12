@@ -1,0 +1,11 @@
+services:
+    Bartacus\Bundle\BartacusBundle\StaticRoute\EventSubscriber\RobotsTxtSubscriber:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    Bartacus\Bundle\BartacusBundle\StaticRoute\Middleware\StaticRouteMiddleware:
+        public: true
+        arguments:
+            - '@event_dispatcher'
+        tags:
+            - { name: bartacus.make_instance }

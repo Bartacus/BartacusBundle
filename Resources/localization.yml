@@ -1,0 +1,9 @@
+services:
+    locale_listener:
+        class: Bartacus\Bundle\BartacusBundle\Localization\LocaleSubscriber
+        arguments:
+            - '@request_stack'
+            - '%kernel.default_locale%'
+            - '@?router'
+        tags:
+            - { name: kernel.event_subscriber }

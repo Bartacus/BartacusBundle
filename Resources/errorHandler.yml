@@ -1,0 +1,6 @@
+services:
+    Bartacus\Bundle\BartacusBundle\ErrorHandler\ErrorHandlerSubscriber:
+        arguments:
+            - '%kernel.debug%'
+        tags:
+            - { name: kernel.event_subscriber }
