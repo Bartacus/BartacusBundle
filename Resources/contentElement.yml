@@ -13,10 +13,6 @@ services:
         tags:
             - { name: kernel.cache_warmer }
 
-    Bartacus\Bundle\BartacusBundle\ContentElement\EventSubscriber\ContentElementMiddlewareSubscriber:
-        tags:
-            - { name: kernel.event_subscriber }
-
     Bartacus\Bundle\BartacusBundle\ContentElement\EventSubscriber\ContentElementConfigLoaderSubscriber:
         arguments:
             - '@Bartacus\Bundle\BartacusBundle\ContentElement\Loader\ContentElementConfigLoader'

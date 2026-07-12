@@ -25,7 +25,6 @@ namespace Bartacus\Bundle\BartacusBundle\Config;
 
 use Bartacus\Bundle\BartacusBundle\Config\Event\AdditionalConfigurationEvent;
 use Bartacus\Bundle\BartacusBundle\Config\Event\RequestExtbasePersistenceClassesEvent;
-use Bartacus\Bundle\BartacusBundle\Config\Event\RequestMiddlewaresEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ConfigLoader
@@ -43,18 +42,6 @@ class ConfigLoader
     {
         $event = new AdditionalConfigurationEvent();
         $this->eventDispatcher->dispatch($event, AdditionalConfigurationEvent::EVENT_NAME);
-    }
-
-    /**
-     * Fired by the project at the beginning of `public/typo3conf/ext/app/Configuration/RequestMiddlewares.php`.
-     * Registers content element renderer and symfony routing middlewares.
-     */
-    public function loadFromRequestMiddlewares(): array
-    {
-        $event = new RequestMiddlewaresEvent();
-        $this->eventDispatcher->dispatch($event, RequestMiddlewaresEvent::EVENT_NAME);
-
-        return $event->getRequestMiddlewares();
     }
 
     /**

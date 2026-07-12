@@ -3,10 +3,6 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    Bartacus\Bundle\BartacusBundle\StaticRoute\EventSubscriber\StaticRouteMiddlewareSubscriber:
-        tags:
-            - { name: kernel.event_subscriber }
-
     Bartacus\Bundle\BartacusBundle\StaticRoute\Middleware\StaticRouteMiddleware:
         public: true
         arguments:

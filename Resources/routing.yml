@@ -16,7 +16,3 @@ services:
             - '@Bartacus\Bundle\BartacusBundle\Routing\Typo3RequestSimulator'
         tags:
             - { name: bartacus.make_instance }
-
-    Bartacus\Bundle\BartacusBundle\Routing\SymfonyRouteMiddlewareSubscriber:
-        tags:
-            - { name: kernel.event_subscriber }

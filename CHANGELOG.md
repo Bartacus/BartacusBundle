@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## [7.0.0] - 2026-07-07
+## [7.0.0] - 2026-07-12
 ### Breaking Changes
 - Set minimum TYPO3 version to `v14.3.0`
 - Set minimum PHP version to `8.4.0`
@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Multiple TYPO3 classes removed from ServiceBridge as they don't exist anymore
 - TYPO3 Upgrade wizard auto configuration removed
 - `ConfigEvents` class removed, event names are now defined as `PUBLIC CONST string EVENT_NAME = ...` in their respective event class
+- Drop `RequestMiddlewaresEvent` and custom middleware event subscribers in favor of native TYPO3 middleware configuration
 
 ### Added
 - Custom static route handling which fires `Bartacus\Bundle\BartacusBundle\StaticRoute\Event\StaticRouteEvent` event
