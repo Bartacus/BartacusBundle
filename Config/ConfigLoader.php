@@ -45,8 +45,8 @@ class ConfigLoader
     }
 
     /**
-     * Fired by the project at the beginning of `public/typo3conf/ext/app/Configuration/Extbase/Persistence/Classes.php`.
-     * Loads custom extbase configuration from pixelart extbase-domain-bundle.
+     * Loads custom extbase configuration.
+     * e.g. pixelart's extbase-domain-bundle.
      */
     public function loadFromRequestExtbasePersistenceClasses(): array
     {
