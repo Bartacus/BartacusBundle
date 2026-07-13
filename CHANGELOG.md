@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [7.1.0] - 2026-07-13
+### Changed
+- Use TYPO3 extbase persistence loading to fire `loadFromRequestExtbasePersistenceClasses`
+
 ## [7.0.0] - 2026-07-12
 ### Breaking Changes
 - Set minimum TYPO3 version to `v14.3.0`
@@ -389,7 +393,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/7.0.0...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/7.1.0...HEAD
+[7.1.0]: https://github.com/Bartacus/BartacusBundle/compare/7.0.0...7.1.0
 [7.0.0]: https://github.com/Bartacus/BartacusBundle/compare/6.2.2...7.0.0
 [6.2.2]: https://github.com/Bartacus/BartacusBundle/compare/6.2.1...6.2.2
 [6.2.1]: https://github.com/Bartacus/BartacusBundle/compare/6.2.0...6.2.1

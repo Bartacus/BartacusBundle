@@ -21,19 +21,12 @@ declare(strict_types=1);
  * along with the BartacusBundle. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @noinspection PhpUndefinedVariableInspection
- */
-$EM_CONF[$_EXTKEY] = [
-    'title' => 'Bartacus Bundle',
-    'description' => 'Integrates the Symfony framework fully into your TYPO3.',
-    'category' => 'Base',
-    'author' => 'Stefan Herndler',
-    'state' => 'stable',
-    'version' => '7.1.0',
-    'constraints' => [
-        'depends' => [
-            'typo3' => '14.3.0-14.9.99',
-        ],
-    ],
-];
+use Bartacus\Bundle\BartacusBundle\Bootstrap\SymfonyBootstrap;
+use Bartacus\Bundle\BartacusBundle\Config\ConfigLoader;
+
+return (static function () {
+    /** @var ConfigLoader $configLoader */
+    $configLoader = SymfonyBootstrap::getKernel()->getContainer()->get(ConfigLoader::class);
+
+    return $configLoader->loadFromRequestExtbasePersistenceClasses();
+})();
