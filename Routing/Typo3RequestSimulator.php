@@ -96,9 +96,15 @@ class Typo3RequestSimulator
         }
 
         if (!$fallbackSite) {
-            // use the 1st site as fallback site
-            $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
-            $fallbackSite = $siteFinder->getAllSites()[0] ?? null;
+            // use the 1st site which has a valid hostname as fallback site
+            $sites = GeneralUtility::makeInstance(SiteFinder::class)->getAllSites();
+
+            foreach ($sites as $possibleSite) {
+                if ($possibleSite->getBase()->getHost()) {
+                    $fallbackSite = $possibleSite;
+                    break;
+                }
+            }
 
             if (!$fallbackSite instanceof Site) {
                 return null;

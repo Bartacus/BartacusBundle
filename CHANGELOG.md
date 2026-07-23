@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [7.1.2]
+### Fixed
+- Fix fetching valid site to simulate TYPO3 context in Symfony route/cli
+
 ## [7.1.1]
 ### Removed
 - Remove deprecated TYPO3 extension config files
@@ -397,7 +401,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/7.1.1...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/7.1.2...HEAD
+[7.1.2]: https://github.com/Bartacus/BartacusBundle/compare/7.1.1...7.1.2
 [7.1.1]: https://github.com/Bartacus/BartacusBundle/compare/7.1.0...7.1.1
 [7.1.0]: https://github.com/Bartacus/BartacusBundle/compare/7.0.0...7.1.0
 [7.0.0]: https://github.com/Bartacus/BartacusBundle/compare/6.2.2...7.0.0
