@@ -81,7 +81,7 @@ class RobotsTxtSubscriber implements EventSubscriberInterface
         // add the absolute path to all sitemap.xml files
         foreach ($event->getSite()->getLanguages() as $siteLanguage) {
             $uri = $siteLanguage->getBase();
-            $content[] = 'Sitemap: '.mb_rtrim($uri->getScheme().'//'.$uri->getHost().$uri->getPath(), '/').'/sitemap.xml';
+            $content[] = 'Sitemap: '.mb_rtrim($uri->getScheme().'://'.$uri->getHost().$uri->getPath(), '/').'/sitemap.xml';
         }
 
         $content[] = "\n";
