@@ -38,6 +38,9 @@
         "symfony/debug": "^4.4",
         "symfony/twig-bundle": "^7.4"
     },
+    "suggest": {
+        "in2code/powermail": "TYPO3 extension for custom form building"
+    },
     "autoload": {
         "psr-4": {
             "Bartacus\\Bundle\\BartacusBundle\\": ""

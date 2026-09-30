@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [7.1.4]
+### Fixed
+- Fix in2code/powermail dependency to load before Bartacus
+
 ## [7.1.3]
 ### Fixed
 - Fix sitemap.xml url generation in robots.txt handling
@@ -405,7 +409,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/7.1.3...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/7.1.4...HEAD
+[7.1.4]: https://github.com/Bartacus/BartacusBundle/compare/7.1.3...7.1.4
 [7.1.3]: https://github.com/Bartacus/BartacusBundle/compare/7.1.2...7.1.3
 [7.1.2]: https://github.com/Bartacus/BartacusBundle/compare/7.1.1...7.1.2
 [7.1.1]: https://github.com/Bartacus/BartacusBundle/compare/7.1.0...7.1.1
