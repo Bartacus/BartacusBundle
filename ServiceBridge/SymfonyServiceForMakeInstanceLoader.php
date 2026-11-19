@@ -58,8 +58,6 @@ final class SymfonyServiceForMakeInstanceLoader
     private function injectBartacusMakeInstanceClasses(\ReflectionClass $reflectionClass): void
     {
         $reflectionProp = $reflectionClass->getProperty('finalClassNameCache');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $reflectionProp->setAccessible(true);
 
         $classes = \array_combine($this->classNames, $this->classNames);
 
@@ -77,8 +75,6 @@ final class SymfonyServiceForMakeInstanceLoader
     private function injectServiceLocatorToSingletonInstances(\ReflectionClass $reflectionClass): void
     {
         $reflectionProp = $reflectionClass->getProperty('singletonInstances');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $reflectionProp->setAccessible(true);
         $reflectionProp->setValue(null, $this->serviceLocator);
     }
 }

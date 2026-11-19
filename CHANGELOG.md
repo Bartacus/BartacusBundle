@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [7.1.5]
+### Changed
+- Remove deprecated `setAccessible()` call as it has no effect anymore
+
 ## [7.1.4]
 ### Fixed
 - Fix in2code/powermail dependency to load before Bartacus
@@ -409,7 +413,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/7.1.4...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/7.1.5...HEAD
+[7.1.5]: https://github.com/Bartacus/BartacusBundle/compare/7.1.4...7.1.5
 [7.1.4]: https://github.com/Bartacus/BartacusBundle/compare/7.1.3...7.1.4
 [7.1.3]: https://github.com/Bartacus/BartacusBundle/compare/7.1.2...7.1.3
 [7.1.2]: https://github.com/Bartacus/BartacusBundle/compare/7.1.1...7.1.2
