@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [7.1.6]
+### Fixed
+- Ensure correct middleware ordering for Bartacus static routes
+
 ## [7.1.5]
 ### Changed
 - Remove deprecated `setAccessible()` call as it has no effect anymore
@@ -413,7 +417,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/7.1.5...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/7.1.6...HEAD
+[7.1.6]: https://github.com/Bartacus/BartacusBundle/compare/7.1.5...7.1.6
 [7.1.5]: https://github.com/Bartacus/BartacusBundle/compare/7.1.4...7.1.5
 [7.1.4]: https://github.com/Bartacus/BartacusBundle/compare/7.1.3...7.1.4
 [7.1.3]: https://github.com/Bartacus/BartacusBundle/compare/7.1.2...7.1.3

@@ -37,7 +37,7 @@ return [
         'bartacus/static-route-resolver' => [
             'target' => StaticRouteMiddleware::class,
             'after' => [
-                'typo3/cms-frontend/site-resolver',
+                'typo3/cms-frontend/authentication',
             ],
             'before' => [
                 'typo3/cms-frontend/base-redirect-resolver',
