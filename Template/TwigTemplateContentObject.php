@@ -82,9 +82,26 @@ class TwigTemplateContentObject extends AbstractContentObject
         $name = $this->getTemplate($conf);
         $template = $this->twig->load($name);
 
-        $this->renderIntoPageRenderer($template, $context);
+        // Important to render the 'body' before the header as css code splitting might be active.
+        // Each element inside the 'body' registers the css file which should be loaded and passes it into an internal
+        // memory which is read while rendering the 'header' block.
+        $body = $this->renderBlock($template, 'body', $context);
+        $header = $this->renderBlock($template, 'header', $context);
+        $footer = $this->renderBlock($template, 'footer', $context);
 
-        return $this->renderBlock($template, 'body', $context);
+        if ($header || $footer) {
+            $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+
+            if ($header) {
+                $pageRenderer->addHeaderData($header);
+            }
+
+            if ($footer) {
+                $pageRenderer->addFooterData($footer);
+            }
+        }
+
+        return $body;
     }
 
     private function getTemplate(array $conf): string
@@ -135,27 +152,6 @@ class TwigTemplateContentObject extends AbstractContentObject
         }
 
         return [];
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    private function renderIntoPageRenderer(TemplateWrapper $template, array $context): void
-    {
-        $header = $this->renderBlock($template, 'header', $context);
-        $footer = $this->renderBlock($template, 'footer', $context);
-
-        if ($header || $footer) {
-            $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-
-            if ($header) {
-                $pageRenderer->addHeaderData($header);
-            }
-
-            if ($footer) {
-                $pageRenderer->addFooterData($footer);
-            }
-        }
     }
 
     /**

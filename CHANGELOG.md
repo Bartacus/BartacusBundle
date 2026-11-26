@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [7.2.0] - 2026-11-26
+### Changed
+- Swap rendering order of `TWIGTEMPLATE` blocks (body before header)
+
 ## [7.1.6]
 ### Fixed
 - Ensure correct middleware ordering for Bartacus static routes
@@ -417,7 +421,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Release for TYPO3 8.7 LTS
 
-[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/7.1.6...HEAD
+[Unreleased]: https://github.com/Bartacus/BartacusBundle/compare/7.2.0...HEAD
+[7.2.0]: https://github.com/Bartacus/BartacusBundle/compare/7.1.6...7.2.0
 [7.1.6]: https://github.com/Bartacus/BartacusBundle/compare/7.1.5...7.1.6
 [7.1.5]: https://github.com/Bartacus/BartacusBundle/compare/7.1.4...7.1.5
 [7.1.4]: https://github.com/Bartacus/BartacusBundle/compare/7.1.3...7.1.4
