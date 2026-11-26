@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [7.2.0] - 2026-11-26
+### Changed
+- Swap rendering order of `TWIGTEMPLATE` blocks (body before header)
+
 ## [7.1.6]
 ### Fixed
 - Ensure correct middleware ordering for Bartacus static routes
